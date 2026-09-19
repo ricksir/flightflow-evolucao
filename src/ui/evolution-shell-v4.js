@@ -22,6 +22,21 @@
     return kind === 'dep' ? 'DEP' : kind === 'trf' ? 'TRF' : kind === 'ter' ? 'TER' : '';
   }
 
+  function ensureShellIdentity(root) {
+    const scope = root || (typeof document !== 'undefined' ? document : null);
+    if (!scope) return false;
+
+    const title = scope.querySelector('#appTitle');
+    if (!title) return false;
+    if (title.querySelector('.evo-product-badge')) return true;
+
+    const badge = scope.createElement('span');
+    badge.className = 'evo-product-badge';
+    badge.textContent = 'EVOLUÇÃO';
+    title.appendChild(badge);
+    return true;
+  }
+
   function decorateTimeline(root) {
     const scope = root || (typeof document !== 'undefined' ? document : null);
     if (!scope) return { items: 0, milestones: 0 };
@@ -90,6 +105,7 @@
     const list = scope.querySelector('#timelineList');
     if (!list) return null;
 
+    ensureShellIdentity(scope);
     decorateTimeline(scope);
     if (typeof MutationObserver !== 'function') return null;
 
@@ -106,5 +122,5 @@
     }
   }
 
-  return Object.freeze({ classifyMilestone, milestoneLabel, decorateTimeline, init });
+  return Object.freeze({ classifyMilestone, milestoneLabel, ensureShellIdentity, decorateTimeline, init });
 });
