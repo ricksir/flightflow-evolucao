@@ -4577,6 +4577,7 @@ html[data-palette="velox"] .topbar .file-actions .btn-primary {
 
 :root {
   --evo-frame-rail-width: 84px;
+  --evo-frame-rail-gutter: 8px;
   --evo-frame-panel-width: 380px;
   --evo-frame-gap: 8px;
   --evo-frame-radius: 16px;
@@ -4586,7 +4587,7 @@ html[data-palette="velox"] .topbar .file-actions .btn-primary {
   .app {
     padding: 8px 8px 8px 0;
     gap: var(--evo-frame-gap);
-    grid-template-columns: var(--evo-frame-rail-width) minmax(0,1fr);
+    grid-template-columns: calc(var(--evo-frame-rail-width) + var(--evo-frame-rail-gutter)) minmax(0,1fr);
     grid-template-rows: auto minmax(0,1fr) auto;
     grid-template-areas:
       "rail topbar"
@@ -4596,7 +4597,7 @@ html[data-palette="velox"] .topbar .file-actions .btn-primary {
 
   .evo-rail {
     min-height: calc(100vh - 16px);
-    margin-left: 8px;
+    margin-left: var(--evo-frame-rail-gutter);
     padding-inline: 7px;
     border-radius: 0 var(--evo-frame-radius) var(--evo-frame-radius) 0;
   }
@@ -4647,11 +4648,8 @@ html[data-palette="velox"] .topbar .file-actions .btn-primary {
 @media (min-width: 901px) and (max-width: 1180px) {
   :root {
     --evo-frame-rail-width: 82px;
+    --evo-frame-rail-gutter: 6px;
     --evo-frame-panel-width: 340px;
-  }
-
-  .evo-rail {
-    margin-left: 6px;
   }
 
   .app {
