@@ -2846,3 +2846,44 @@ html[data-theme="dark"] .field-card {
     transition: none;
   }
 }
+
+
+/* Pilot Shell V1 — compatibility with established visual contracts. */
+.workspace-card {
+  background-image:
+    linear-gradient(180deg,rgba(255,255,255,.72),rgba(231,240,244,.90));
+}
+
+.inspector-card {
+  background-image:
+    linear-gradient(180deg,rgba(255,255,255,.96),rgba(240,246,248,.94));
+}
+
+html[data-theme="dark"] .workspace-card {
+  background:
+    linear-gradient(180deg,rgba(16,52,67,.98),rgba(8,31,43,.98));
+}
+
+html[data-theme="dark"] .inspector-card {
+  background:
+    linear-gradient(180deg,rgba(15,47,61,.98),rgba(7,28,39,.98));
+}
+
+html[data-palette="velox"] .workspace-card {
+  background:
+    linear-gradient(160deg,rgba(20,50,48,.98),rgba(6,27,31,.99));
+}
+
+html[data-palette="velox"] .inspector-card {
+  background:
+    linear-gradient(180deg,rgba(18,46,44,.98),rgba(7,29,32,.99));
+}
+
+@media (max-width: 900px) {
+  .scene-caption {
+    left: 14px;
+    right: 14px;
+    width: auto;
+    max-width: none;
+  }
+}
