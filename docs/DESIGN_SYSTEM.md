@@ -203,12 +203,18 @@ O Design System apenas integra shell, cards e tipografia.
 
 Semântica espacial permanece:
 
-- histórico processado: vermelho;
-- rota declarada sem ETIM: azul tracejado;
-- fechamento terminal derivado por Ordem TER: amarelo tracejado;
+- histórico processado: vermelho sólido;
+- continuação publicada/declarada sem ETIM: azul técnico tracejado;
+- fechamento terminal previsto antes da Ordem TER: âmbar tracejado;
+- fechamento terminal derivado por Ordem TER (estado ativo): âmbar sólido;
+- ADES: marcador próprio, distinto de fixo histórico;
 - transferências: semântica própria já existente.
 
-Nunca usar estilo para esconder a distinção entre dado histórico e dado derivado.
+A mudança de tracejado para sólido no fechamento terminal representa apenas a transição visual `preview → active`; não cria ETIM, STAR, CFL ou fixos e não muda a geometria.
+
+Labels permanentes devem priorizar origem, destino, ponto atual, ponto selecionado e transferências relevantes. Metadata secundária deve ter menor contraste e aparecer por contexto/hover quando possível.
+
+Nunca usar estilo para esconder a distinção entre dado histórico, publicado e derivado.
 
 ### FPV e STRIP
 

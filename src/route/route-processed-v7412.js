@@ -247,6 +247,275 @@
       .ffrp-map .route-terminal.pending{stroke-opacity:.76;stroke-width:3.2;stroke-dasharray:5 9}
       #ffrpVectorFixLayer .ffrp-vroute-terminal.pending{stroke-opacity:.76;stroke-width:3.2;stroke-dasharray:5 9}
       @media(max-width:1180px){.ffrp-body{grid-template-columns:minmax(0,1fr) minmax(250px,285px)}}
+      /* FlightFlow Evolução — Operational Map V3.
+         Gramática cartográfica apenas visual; geometria e estados permanecem inalterados. */
+      .ffrp-map-stage{
+        background:
+          linear-gradient(rgba(63,101,118,.055) 1px,transparent 1px),
+          linear-gradient(90deg,rgba(63,101,118,.055) 1px,transparent 1px),
+          linear-gradient(180deg,#e8f0f3 0%,#dce8ed 100%);
+        background-size:32px 32px,32px 32px,100% 100%;
+      }
+      .ffrp-map{
+        background:transparent;
+      }
+      .ffrp-map .grid{
+        stroke:#42697a;
+        stroke-opacity:.075;
+      }
+      .ffrp-map .grid-label{
+        fill:#587581;
+        opacity:.58;
+        font-size:10px;
+      }
+
+      /* Histórico = dado observado/processado: vermelho, contínuo e dominante. */
+      .ffrp-map .route-line,
+      #ffrpVectorFixLayer .ffrp-vroute-history{
+        stroke:#d92d2a;
+        stroke-width:4.2;
+        stroke-dasharray:none;
+        stroke-opacity:.96;
+        filter:drop-shadow(0 1px 1px rgba(65,25,24,.16));
+      }
+      .ffrp-map .route-underlay{
+        stroke:#fff;
+        stroke-width:7;
+        stroke-opacity:.72;
+      }
+
+      /* Continuação publicada sem ETIM: azul técnico, deliberadamente tracejada. */
+      .ffrp-map .route-declared,
+      #ffrpVectorFixLayer .ffrp-vroute-declared{
+        stroke:#177b98;
+        stroke-width:2.8;
+        stroke-dasharray:7 7;
+        stroke-opacity:.92;
+        filter:none;
+      }
+
+      /* Terminal: mesma geometria, duas leituras visuais distintas. */
+      .ffrp-map .route-terminal,
+      #ffrpVectorFixLayer .ffrp-vroute-terminal{
+        stroke:#d58a00;
+        stroke-width:3.8;
+        stroke-dasharray:none;
+        stroke-opacity:.98;
+        filter:drop-shadow(0 0 2px rgba(213,138,0,.14));
+      }
+      .ffrp-map .route-terminal.pending,
+      #ffrpVectorFixLayer .ffrp-vroute-terminal.pending{
+        stroke-width:3;
+        stroke-dasharray:5 9;
+        stroke-opacity:.72;
+        filter:none;
+      }
+      .ffrp-map .route-terminal-underlay,
+      #ffrpVectorFixLayer .ffrp-vroute-terminal-underlay{
+        stroke:#fff3d8;
+        stroke-width:6;
+        stroke-opacity:.72;
+      }
+      .ffrp-map .route-terminal-underlay.pending,
+      #ffrpVectorFixLayer .ffrp-vroute-terminal-underlay.pending{
+        stroke-opacity:.34;
+      }
+
+      /* Leaflet nativo segue a mesma gramática sem alterar o estado do polyline. */
+      .ffrp-native-terminal-route.ffrp-native-terminal-active{
+        stroke-dasharray:none!important;
+        stroke:#d58a00!important;
+        stroke-opacity:.98!important;
+      }
+      .ffrp-native-terminal-route.ffrp-native-terminal-preview{
+        stroke-dasharray:5 9!important;
+        stroke:#d58a00!important;
+        stroke-opacity:.72!important;
+      }
+      .ffrp-native-terminal-underlay{
+        stroke:#fff3d8!important;
+      }
+
+      /* Pontos: prioridade para posição atual, seleção, transferência e ADES. */
+      .ffrp-map .wp circle{
+        fill:#f9fcfd;
+        stroke:#315f72;
+        stroke-width:1.7;
+      }
+      .ffrp-map .wp.airport circle{
+        fill:#fff4cf;
+        stroke:#9a6809;
+      }
+      .ffrp-map .wp.declared circle{
+        fill:#e8f5f8;
+        stroke:#177b98;
+        stroke-dasharray:3 3;
+      }
+      .ffrp-map .wp.destination circle{
+        fill:#fff2c9;
+        stroke:#b37600;
+        stroke-width:2.3;
+        stroke-dasharray:4 3;
+      }
+      .ffrp-map .wp.is-current circle{
+        fill:#fff;
+        stroke:#0f7897;
+        stroke-width:4;
+        filter:drop-shadow(0 0 5px rgba(15,120,151,.38));
+      }
+      .ffrp-map .wp.is-selected circle{
+        stroke:#d58a00;
+        stroke-width:3.5;
+      }
+      .ffrp-map.focus-mode .wp.is-muted{
+        opacity:.20;
+      }
+
+      /* Labels: nome primeiro; metadata como segunda camada, menos pesada. */
+      .ffrp-map .wp text{
+        fill:#163440;
+        font:850 13px/1 "Arial Narrow","Aptos Narrow",Inter,system-ui,sans-serif;
+        letter-spacing:.018em;
+        stroke:#f4f9fa;
+        stroke-width:4.5px;
+      }
+      .ffrp-map .wp .meta{
+        fill:#607d89;
+        font:700 9.5px/1.1 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+        opacity:.84;
+      }
+      .ffrp-map .label-leader{
+        stroke:#647f8a;
+        stroke-width:1;
+        stroke-opacity:.35;
+      }
+      .leaflet-tooltip.ffrp-native-fix-label{
+        border:1px solid rgba(22,52,64,.14);
+        border-radius:7px;
+        background:rgba(248,252,253,.95);
+        box-shadow:0 3px 10px rgba(24,64,82,.10);
+        color:#163440;
+      }
+      .leaflet-tooltip.ffrp-native-fix-label b{
+        font-family:"Arial Narrow","Aptos Narrow",Inter,system-ui,sans-serif;
+        letter-spacing:.02em;
+      }
+      .leaflet-tooltip.ffrp-native-fix-label span{
+        color:#68818b;
+      }
+
+      /* HUD e legenda passam a parecer instrumentos cartográficos, não cards SaaS. */
+      .ffrp-map-hud{
+        max-width:min(360px,calc(100% - 20px));
+        gap:4px;
+      }
+      .ffrp-map-hud-card{
+        padding:7px 9px;
+        border:1px solid rgba(22,52,64,.12);
+        border-radius:8px;
+        background:rgba(248,252,253,.92);
+        box-shadow:0 4px 14px rgba(24,64,82,.08);
+        backdrop-filter:blur(8px);
+      }
+      .ffrp-map-hud-card strong{
+        color:#163440;
+        font:900 .72rem/1.2 "Arial Narrow","Aptos Narrow",Inter,system-ui,sans-serif;
+        letter-spacing:.025em;
+      }
+      .ffrp-map-hud-card span{
+        margin-top:2px;
+        color:#6b838d;
+        font-size:.61rem;
+      }
+      .ffrp-legend{
+        width:min(350px,calc(100% - 20px));
+        max-width:none;
+        border:1px solid rgba(22,52,64,.13);
+        border-radius:9px!important;
+        background:rgba(248,252,253,.94);
+        box-shadow:0 4px 14px rgba(24,64,82,.09);
+        backdrop-filter:blur(8px);
+      }
+      .ffrp-legend summary{
+        min-height:31px;
+        padding:0 9px;
+        color:#244a5b;
+        font:850 .63rem/1 Inter,system-ui,sans-serif;
+        letter-spacing:.015em;
+      }
+      .ffrp-legend summary::after{
+        width:18px;
+        height:18px;
+        border-radius:5px;
+        background:rgba(23,123,152,.08);
+        color:#177b98;
+      }
+      .ffrp-legend-items{
+        display:grid;
+        grid-template-columns:1fr 1fr;
+        gap:8px 10px;
+        padding:9px 10px 10px;
+        border-top:1px solid rgba(22,52,64,.09);
+      }
+      .ffrp-legend-items span{
+        min-width:0;
+        white-space:normal;
+        color:#526f7a;
+        font-size:.59rem;
+        line-height:1.25;
+      }
+      .ffrp-lg-line{
+        width:24px;
+        border-top:3px solid #d92d2a;
+      }
+      .ffrp-lg-declared{
+        width:24px;
+        border-top:2px dashed #177b98;
+      }
+      .ffrp-lg-terminal-preview{
+        width:24px;
+        border-top:2px dashed #d58a00;
+      }
+      .ffrp-lg-terminal-active{
+        width:24px;
+        border-top:3px solid #d58a00;
+      }
+
+      /* Explicação inferior vira rodapé cartográfico discreto. */
+      .ffrp-map-note{
+        min-height:36px;
+        padding:7px 10px;
+        border-top:1px solid rgba(22,52,64,.10);
+        background:#f7fbfc;
+        color:#526f7b;
+        font-size:.67rem;
+        line-height:1.35;
+      }
+
+      @media(max-width:900px){
+        .ffrp-legend{
+          width:min(330px,calc(100% - 16px));
+        }
+        .ffrp-map-hud{
+          max-width:min(320px,calc(100% - 16px));
+        }
+      }
+      @media(max-width:640px){
+        .ffrp-legend-items{
+          grid-template-columns:1fr;
+        }
+        .ffrp-map-hud{
+          max-width:calc(100% - 96px);
+        }
+      }
+      @media(prefers-reduced-motion:reduce){
+        .ffrp-map .wp,
+        #ffrpVectorFixLayer .ffrp-vfix{
+          transition:none!important;
+        }
+      }
+
+
       @media(max-width:900px){.ffrp-body{grid-template-columns:1fr;grid-template-rows:minmax(380px,1fr) minmax(170px,230px)}.ffrp-map-stage{min-height:360px}.ffrp-side{padding:8px}}
 
 
@@ -1619,7 +1888,7 @@
               <div id="ffrpMapHud" class="ffrp-map-hud"></div>
               <details id="ffrpLegend" class="ffrp-legend">
                 <summary>Legenda operacional</summary>
-                <div class="ffrp-legend-items"><span><i class="ffrp-lg-dot ffrp-lg-airport"></i>Aeródromo</span><span><i class="ffrp-lg-dot"></i>Fixo/Waypoint</span><span><i class="ffrp-lg-dot ffrp-lg-coord"></i>Coordenada</span><span><i class="ffrp-lg-transfer"></i>Transferência</span><span><i class="ffrp-lg-line"></i>Rota processada</span><span><i class="ffrp-lg-declared"></i>Rota declarada s/ ETIM</span><span><i class="ffrp-lg-terminal"></i>Fechamento terminal / Ordem TER</span><span><i class="ffrp-lg-destination"></i>ADES</span></div>
+                <div class="ffrp-legend-items"><span><i class="ffrp-lg-line"></i>Histórico processado</span><span><i class="ffrp-lg-declared"></i>Continuação publicada · sem ETIM</span><span><i class="ffrp-lg-terminal ffrp-lg-terminal-preview"></i>Terminal previsto</span><span><i class="ffrp-lg-terminal ffrp-lg-terminal-active"></i>Terminal ativo · TER</span><span><i class="ffrp-lg-dot ffrp-lg-airport"></i>Aeródromo</span><span><i class="ffrp-lg-dot"></i>Fixo/Waypoint</span><span><i class="ffrp-lg-dot ffrp-lg-coord"></i>Coordenada</span><span><i class="ffrp-lg-transfer"></i>Transferência</span><span><i class="ffrp-lg-destination"></i>ADES</span></div>
               </details>
             </div>
             <div id="ffrpMapNote" class="ffrp-map-note" role="status"></div>

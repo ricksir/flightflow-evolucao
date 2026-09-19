@@ -75,3 +75,19 @@ A segunda rodada refina a hierarquia do piloto sem criar uma segunda lógica de 
 - claro, escuro e Dashboard moderno compartilham a mesma gramática visual.
 
 A V2 continua sem alterar motor temporal, parser, geometria ou navegação.
+
+
+## Operational Map V3
+
+A terceira rodada estabelece uma gramática cartográfica explícita:
+
+- **histórico processado:** vermelho sólido;
+- **continuação publicada sem ETIM:** azul técnico tracejado;
+- **terminal previsto:** âmbar tracejado;
+- **terminal ativo após Ordem TER:** âmbar sólido;
+- **ADES:** marcador terminal próprio;
+- **ponto atual/selecionado:** prioridade visual sobre os demais fixos.
+
+A cartografia reduz peso de grid, leaders e metadata para preservar a rota como protagonista. A legenda passa a explicar separadamente preview e active do fechamento terminal.
+
+A V3 é visual. A mesma geometria terminal e o mesmo estado `preview/active` continuam sendo calculados pelo núcleo já protegido.
