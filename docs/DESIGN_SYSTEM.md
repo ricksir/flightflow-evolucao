@@ -319,7 +319,7 @@ Diretrizes:
 - superfície escura constante, inclusive no tema claro;
 - três zonas: navegação / scrubber / suporte;
 - centro temporal sempre maior que os grupos laterais;
-- controles com raio de 4–5 px, sem aparência de cápsula;
+- contêiner externo preserva o raio de shell de 16 px;\n- controles internos usam raio de 4–5 px, sem aparência de cápsula;
 - kicker temporal com 9 px;
 - marcos DEP/TRF/TER com 9 px no desktop;
 - horários com 11 px e números tabulares;
