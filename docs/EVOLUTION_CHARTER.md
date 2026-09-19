@@ -148,3 +148,23 @@ A V6 é CSS/documentação/testes. Não modifica o HTML da barra, listeners, `sc
 
 O `input#scrubber` original continua sendo a única autoridade de navegação por arraste. Os marcos V4 continuam apenas projetados visualmente sobre ele.
 
+## Operational Command Bar V7
+
+A sétima rodada consolida o cabeçalho como uma **barra de comando operacional**, mantendo a topbar escura em todos os temas.
+
+- identidade FlightFlow permanece à esquerda como primeira zona;
+- carregamento/origem do plano ocupa a zona central de trabalho;
+- **ATS LIVE** funciona como estado compacto, não como cartão decorativo;
+- ações globais formam um banco de comandos à direita;
+- os grupos deixam de parecer cápsulas independentes e passam a ser separados por linhas técnicas;
+- botões internos usam raio curto de 4 px, enquanto o contêiner externo preserva 16 px;
+- nome do arquivo usa tipografia monoespaçada de metadata;
+- o tema claro mantém o cabeçalho escuro para preservar a referência visual aprovada;
+- Velox altera o acento, não a estrutura.
+
+### Fronteira arquitetural
+
+A V7 é CSS/documentação/testes. Não altera HTML, IDs, listeners, leitura de arquivo, parser, estado ATS, `goTo()`, timeline, scrubber, geometria ou fechamento terminal.
+
+Os controles `fileInput`, `chooseFileBtn`, `readStartBtn`, `demoBtn`, `newFileBtn`, `exportBtn`, `configBtn`, `fullscreenBtn` e `helpBtn` continuam sendo exatamente os mesmos elementos funcionais.
+
