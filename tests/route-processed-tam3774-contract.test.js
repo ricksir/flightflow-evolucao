@@ -271,6 +271,11 @@ test('TAM3774 fecha visualmente no ADES somente após Ordem TER, sem alterar o h
   const profile = api.buildMovementProfile();
   assert.ok(profile?.terminalClosure, 'perfil deve registrar contrato de fechamento terminal');
   const terminalIndex = profile.terminalClosure.nativeIndex;
+  const preTerPlaybackLimit = api.routePlaybackLimit(snapshot, terminalIndex - 1);
+  assert.ok(preTerPlaybackLimit > 0 && preTerPlaybackLimit < 1, 'Play pré-TER deve continuar limitado ao último ETIM real');
+  assertNear(preTerPlaybackLimit, limit, 'Play pré-TER preserva limite temporal em IMTBI');
+  assert.equal(api.routePlaybackLimit(snapshot, terminalIndex), 1, 'Play no TER deve percorrer o fechamento até o ADES');
+  assert.equal(api.routePlaybackLimit(snapshot, terminalIndex + 1), 1, 'Play após TER deve permanecer encerrado no ADES');
   assert.ok(terminalIndex > 0, 'Ordem TER deve ocorrer depois do início do histórico');
   assert.ok(profile.targets[terminalIndex - 1] < 1, 'evento anterior à Ordem TER não pode antecipar o ADES');
   assert.equal(profile.targets[terminalIndex], 1, 'Ordem TER deve levar a aeronave ao ADES');
@@ -310,6 +315,7 @@ test('sem Ordem TER o TAM3774 continua sem fechamento sintético até SBCT', () 
 
   assert.equal(api.terminalClosureContext(), null);
   assert.equal(api.terminalClosureState(snapshot, 999).active, false);
+  assert.equal(api.routePlaybackLimit(snapshot, 999), api.timedProgressLimit(snapshot), 'sem Ordem TER o Play não pode inventar movimento até o ADES');
   assert.equal(api.movementPointsForProfile(snapshot).some(point => point.ident === 'SBCT'), false);
   assert.equal(api.pseudoDestinationTail(snapshot), null);
 });
