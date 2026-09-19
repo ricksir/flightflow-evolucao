@@ -278,3 +278,16 @@ Qualquer alteração relevante do Design System deve preservar:
 - 0 `SPATIAL_EQ_DIAG`.
 
 O log bruto continua sendo a fonte de certificação, não apenas o badge do workflow.
+
+
+### Marcos da timeline Evolução
+
+A camada visual Evolução pode destacar eventos já reconhecidos pelo histórico:
+
+- **DEP:** ciano/azul operacional;
+- **TRF:** violeta de transferência;
+- **TER:** âmbar.
+
+Os marcos aparecem na lista de eventos e no scrubber, mas são estritamente informativos. Eles não substituem `messageType`, não alteram o índice da timeline e não podem implementar navegação própria.
+
+O destaque TER no cabeçalho existe somente quando o item TER correspondente está ativo na timeline. A autoridade operacional continua sendo o estado já calculado pelo núcleo/Rota Processada.
