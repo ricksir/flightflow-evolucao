@@ -115,10 +115,10 @@
   }
 
   if (typeof document !== 'undefined') {
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', () => init(document), { once: true });
-    } else {
+    if (document.readyState === 'complete') {
       init(document);
+    } else {
+      document.addEventListener('DOMContentLoaded', () => init(document), { once: true });
     }
   }
 
