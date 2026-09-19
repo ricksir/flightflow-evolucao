@@ -2336,3 +2336,554 @@ html[data-palette="velox"] .ats-address-register:hover{
   border-color:rgba(73,231,173,.62);
   background:rgba(73,231,173,.10);
 }
+
+
+/* ==========================================================================
+   FlightFlow Evolução — Pilot Shell V1
+   Reorganização exclusivamente visual do shell. Mantém IDs, estado, parser,
+   navegação temporal, mapa, rota e controles existentes.
+   ========================================================================== */
+:root {
+  --evo-navy-950: #061c29;
+  --evo-navy-900: #082a3a;
+  --evo-teal-800: #0a526a;
+  --evo-teal-700: #116b83;
+  --evo-map-surface: #e7f0f4;
+  --evo-map-surface-2: #d8e6ec;
+  --evo-ink: #163440;
+  --evo-muted: #6d8792;
+  --evo-line: rgba(22,52,64,.13);
+  --evo-route: #d92d2a;
+  --evo-terminal: #d58a00;
+  --evo-info: #177b98;
+  --evo-rail-width: 92px;
+  --evo-shell-gap: 10px;
+  --evo-shell-radius: 16px;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background:
+    radial-gradient(circle at 38% -10%, rgba(23,123,152,.08), transparent 30%),
+    #dbe7ec;
+}
+
+.app {
+  min-height: 100vh;
+  padding: 10px 10px 10px 0;
+  gap: var(--evo-shell-gap);
+  display: grid;
+  grid-template-columns: var(--evo-rail-width) minmax(0,1fr);
+  grid-template-rows: auto minmax(0,1fr) auto;
+  grid-template-areas:
+    "rail topbar"
+    "rail content"
+    "rail transport";
+  background: transparent;
+}
+
+.evo-rail {
+  grid-area: rail;
+  position: sticky;
+  top: 0;
+  align-self: stretch;
+  min-height: calc(100vh - 20px);
+  margin: 0 0 0 10px;
+  padding: 12px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 18px;
+  border: 1px solid rgba(173,220,235,.10);
+  border-radius: 0 var(--evo-shell-radius) var(--evo-shell-radius) 0;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.025), transparent 18%),
+    linear-gradient(180deg, var(--evo-navy-900), var(--evo-navy-950));
+  box-shadow: 12px 0 32px rgba(4,27,39,.14);
+  color: #eaf7fb;
+  z-index: 40;
+}
+
+.evo-rail-brand {
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  padding: 4px 0 12px;
+  border-bottom: 1px solid rgba(190,227,239,.10);
+}
+
+.evo-rail-mark {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: linear-gradient(145deg,#167791,#0a526a);
+  color: #fff;
+  font-size: 1.05rem;
+  box-shadow: inset 0 1px rgba(255,255,255,.15), 0 8px 20px rgba(0,0,0,.18);
+}
+
+.evo-rail-name {
+  font: 900 .72rem/1 "Arial Narrow","Aptos Narrow",Inter,system-ui,sans-serif;
+  letter-spacing: .11em;
+}
+
+.evo-rail-edition,
+.evo-rail-version {
+  font: 800 .48rem/1.2 Inter,system-ui,sans-serif;
+  letter-spacing: .11em;
+  color: #8fb4c1;
+}
+
+.evo-rail-nav {
+  display: grid;
+  gap: 7px;
+}
+
+.evo-rail-item {
+  min-height: 58px;
+  padding: 8px 4px;
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: 5px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  color: #93afba;
+  text-decoration: none;
+  font: 750 .56rem/1.1 Inter,system-ui,sans-serif;
+  transition: background .16s ease, color .16s ease, border-color .16s ease;
+}
+
+.evo-rail-item:hover,
+.evo-rail-item:focus-visible {
+  color: #f4fbfd;
+  border-color: rgba(113,195,219,.18);
+  background: rgba(65,161,190,.09);
+  outline: none;
+}
+
+.evo-rail-item.active {
+  color: #fff;
+  border-color: rgba(77,184,214,.26);
+  background: linear-gradient(145deg,rgba(23,123,152,.28),rgba(10,82,106,.18));
+  box-shadow: inset 3px 0 #46b4d1;
+}
+
+.evo-rail-icon {
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.evo-rail-foot {
+  margin-top: auto;
+  text-align: center;
+  padding: 10px 2px 2px;
+  border-top: 1px solid rgba(190,227,239,.08);
+}
+
+.topbar {
+  grid-area: topbar;
+  min-height: 62px;
+  padding: 8px 12px;
+  border-radius: var(--evo-shell-radius);
+  background:
+    linear-gradient(90deg,rgba(20,100,126,.10),transparent 42%),
+    var(--evo-navy-900);
+  border: 1px solid rgba(155,211,228,.12);
+  box-shadow: 0 10px 28px rgba(4,27,39,.13);
+}
+
+.brand {
+  min-width: 215px;
+}
+
+.brand-mark {
+  width: 36px;
+  height: 36px;
+}
+
+.brand-title {
+  color: #f6fbfd;
+}
+
+.brand-subtitle {
+  color: #a9c5cf;
+}
+
+.brand-credit {
+  display: none;
+}
+
+.file-actions {
+  min-width: 0;
+  flex: 1 1 auto;
+  border-left-color: rgba(169,211,225,.09);
+  border-right-color: rgba(169,211,225,.09);
+}
+
+.file-actions .btn {
+  min-height: 34px;
+  border-radius: 9px;
+}
+
+.selected-file {
+  color: #9fbbc5;
+}
+
+.ops-live {
+  min-width: auto;
+  padding: 6px 9px;
+  border-radius: 10px;
+  background: rgba(14,92,116,.18);
+  border-color: rgba(92,183,209,.13);
+}
+
+.ops-live small {
+  display: none;
+}
+
+.header-actions {
+  border-color: rgba(145,204,221,.10);
+  background: rgba(255,255,255,.025);
+}
+
+.content {
+  grid-area: content;
+  min-height: 0;
+  gap: var(--evo-shell-gap);
+  grid-template-columns: minmax(0,1fr) minmax(340px,365px);
+}
+
+.workspace-card,
+.inspector-card {
+  border-radius: var(--evo-shell-radius);
+  border-color: rgba(22,52,64,.10);
+  box-shadow: 0 14px 34px rgba(24,64,82,.10);
+}
+
+.workspace-card {
+  background: #edf4f7;
+}
+
+.scene-head {
+  min-height: 64px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--evo-line);
+  background: rgba(255,255,255,.72);
+}
+
+.flight-id-block .eyebrow {
+  color: var(--evo-muted);
+  letter-spacing: .09em;
+}
+
+.flight-route strong {
+  color: var(--evo-ink);
+  font-family: "Arial Narrow","Aptos Narrow",Inter,system-ui,sans-serif;
+  letter-spacing: .025em;
+}
+
+.route-airports {
+  color: var(--evo-info);
+}
+
+.scene-status {
+  margin-left: auto;
+  padding: 4px;
+  background: #f6fafb;
+  border-color: var(--evo-line);
+}
+
+.status-badge,
+.stage-badge,
+.frame-counter {
+  border-radius: 8px;
+}
+
+.scene-wrap {
+  margin: 0;
+  border-radius: 0 0 var(--evo-shell-radius) var(--evo-shell-radius);
+  border: 0;
+  background: var(--evo-map-surface);
+}
+
+.real-map-controls {
+  border-radius: 12px;
+}
+
+.scene-caption {
+  max-width: min(520px,calc(100% - 28px));
+  border-radius: 11px;
+  border-color: rgba(22,52,64,.12);
+  background: rgba(246,251,252,.94);
+  color: var(--evo-ink);
+  box-shadow: 0 8px 24px rgba(26,68,86,.12);
+}
+
+.inspector-card {
+  background: #f7fafb;
+}
+
+.inspector-tabs {
+  gap: 2px;
+  padding: 6px 7px 0;
+  border-bottom: 1px solid var(--evo-line);
+  background: #eef4f6;
+}
+
+.tab {
+  height: 36px;
+  border-radius: 8px 8px 0 0;
+  color: #617c87;
+  background: transparent;
+}
+
+.tab.active {
+  color: var(--evo-teal-800);
+  background: #fff;
+}
+
+.tab.active::after {
+  left: 12%;
+  right: 12%;
+  bottom: 0;
+  background: var(--evo-teal-700);
+  box-shadow: none;
+}
+
+.tab-panel {
+  padding: 12px;
+  background: #fff;
+}
+
+.panel-heading {
+  margin-bottom: 14px;
+}
+
+.panel-heading::after {
+  background: linear-gradient(90deg,var(--evo-teal-700),transparent);
+}
+
+.panel-heading .eyebrow {
+  color: #78919b;
+}
+
+.panel-heading h2 {
+  color: var(--evo-ink);
+}
+
+.fields-grid {
+  gap: 5px;
+}
+
+.field-card {
+  min-height: 58px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(22,52,64,.09);
+  background: #fbfdfe;
+  box-shadow: none;
+}
+
+.field-card:hover {
+  transform: none;
+  border-color: rgba(17,107,131,.20);
+  background: #f7fbfc;
+}
+
+.field-label {
+  color: #78919b;
+}
+
+.field-value {
+  color: var(--evo-ink);
+  font-family: "Arial Narrow","Aptos Narrow",Inter,system-ui,sans-serif;
+}
+
+.timeline-list {
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.timeline-item {
+  border-radius: 8px;
+  border-color: transparent;
+}
+
+.transport {
+  grid-area: transport;
+  min-height: 58px;
+  padding: 7px 12px;
+  border-radius: var(--evo-shell-radius);
+  background:
+    linear-gradient(90deg,rgba(17,107,131,.09),transparent 48%),
+    var(--evo-navy-900);
+  border: 1px solid rgba(155,211,228,.11);
+  box-shadow: 0 10px 28px rgba(4,27,39,.13);
+}
+
+.transport-btn,
+.toggle-btn,
+.play-btn {
+  border-color: rgba(154,211,228,.14);
+  background: rgba(255,255,255,.035);
+  color: #dbeef4;
+}
+
+.play-btn {
+  background: var(--evo-teal-700);
+  border-color: rgba(103,200,226,.30);
+}
+
+.scrubber-labels,
+.speed-control {
+  color: #a9c5cf;
+}
+
+.scrubber {
+  accent-color: #35a5c2;
+}
+
+html[data-theme="dark"] body {
+  background: #051722;
+}
+
+html[data-theme="dark"] .workspace-card,
+html[data-theme="dark"] .inspector-card {
+  border-color: rgba(127,190,210,.10);
+}
+
+html[data-theme="dark"] .workspace-card,
+html[data-theme="dark"] .scene-head,
+html[data-theme="dark"] .inspector-card,
+html[data-theme="dark"] .tab-panel {
+  background: #0b2431;
+}
+
+html[data-theme="dark"] .scene-head,
+html[data-theme="dark"] .inspector-tabs {
+  border-color: rgba(140,194,211,.10);
+}
+
+html[data-theme="dark"] .flight-route strong,
+html[data-theme="dark"] .panel-heading h2,
+html[data-theme="dark"] .field-value {
+  color: #edf8fb;
+}
+
+html[data-theme="dark"] .scene-status,
+html[data-theme="dark"] .field-card,
+html[data-theme="dark"] .tab.active {
+  background: #102d3a;
+}
+
+html[data-theme="dark"] .inspector-tabs {
+  background: #0a202c;
+}
+
+html[data-theme="dark"] .scene-wrap {
+  background: #132a34;
+}
+
+html[data-theme="dark"] .field-card {
+  border-color: rgba(131,190,209,.09);
+}
+
+@media (max-width: 1120px) {
+  :root { --evo-rail-width: 70px; }
+
+  .evo-rail-item {
+    min-height: 52px;
+  }
+
+  .evo-rail-item > span:last-child,
+  .evo-rail-edition {
+    font-size: 0;
+  }
+
+  .evo-rail-item > span:last-child::first-letter {
+    font-size: 0;
+  }
+
+  .content {
+    grid-template-columns: minmax(0,1fr) minmax(315px,335px);
+  }
+}
+
+@media (max-width: 900px) {
+  .app {
+    padding: 8px;
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "topbar"
+      "content"
+      "transport";
+  }
+
+  .evo-rail {
+    display: none;
+  }
+
+  .content {
+    grid-template-columns: 1fr;
+  }
+
+  .topbar,
+  .transport,
+  .workspace-card,
+  .inspector-card {
+    border-radius: 14px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .evo-rail-item {
+    transition: none;
+  }
+}
+
+
+/* Pilot Shell V1 — compatibility with established visual contracts. */
+.workspace-card {
+  background-image:
+    linear-gradient(180deg,rgba(255,255,255,.72),rgba(231,240,244,.90));
+}
+
+.inspector-card {
+  background-image:
+    linear-gradient(180deg,rgba(255,255,255,.96),rgba(240,246,248,.94));
+}
+
+html[data-theme="dark"] .workspace-card {
+  background:
+    linear-gradient(180deg,rgba(16,52,67,.98),rgba(8,31,43,.98));
+}
+
+html[data-theme="dark"] .inspector-card {
+  background:
+    linear-gradient(180deg,rgba(15,47,61,.98),rgba(7,28,39,.98));
+}
+
+html[data-palette="velox"] .workspace-card {
+  background:
+    linear-gradient(160deg,rgba(20,50,48,.98),rgba(6,27,31,.99));
+}
+
+html[data-palette="velox"] .inspector-card {
+  background:
+    linear-gradient(180deg,rgba(18,46,44,.98),rgba(7,29,32,.99));
+}
+
+@media (max-width: 900px) {
+  .scene-caption {
+    left: 14px;
+    right: 14px;
+    width: auto;
+    max-width: none;
+  }
+}
