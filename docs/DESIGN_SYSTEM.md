@@ -310,3 +310,21 @@ Regras:
 
 Esta camada não muda o DOM semântico dos campos nem sua ordem de origem. O renderer continua sendo a fonte de verdade.
 
+## 11. Temporal Deck V6
+
+A barra inferior é tratada como **Temporal Deck**, isto é, o registro temporal persistente do voo.
+
+Diretrizes:
+
+- superfície escura constante, inclusive no tema claro;
+- três zonas: navegação / scrubber / suporte;
+- centro temporal sempre maior que os grupos laterais;
+- controles com raio de 4–5 px, sem aparência de cápsula;
+- kicker temporal com 9 px;
+- marcos DEP/TRF/TER com 9 px no desktop;
+- horários com 11 px e números tabulares;
+- velocidade, som, FPV e STRIP são ferramentas de suporte e não devem competir com o scrubber;
+- em telas estreitas as zonas podem empilhar, preservando a ordem e a operabilidade.
+
+A V6 não cria um segundo controle temporal. Toda ação continua encaminhada aos handlers já existentes.
+
