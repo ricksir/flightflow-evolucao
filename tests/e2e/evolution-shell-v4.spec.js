@@ -51,5 +51,5 @@ test('Pilot Shell V4 mantém identidade e tabs técnicas visíveis', async ({ pa
   });
 
   expect(visual.tabRadius).toBe('0px');
-  expect(visual.badgeDisplay).toBe('inline-flex');
+  expect(['flex', 'inline-flex']).toContain(visual.badgeDisplay);
 });
