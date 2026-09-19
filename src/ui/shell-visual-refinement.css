@@ -5098,3 +5098,26 @@ html[data-palette="velox"] {
     border-radius: 4px !important;
   }
 }
+
+
+/* V10 exact real-map control precedence against legacy #realMapControls rules. */
+@media (min-width: 901px) {
+  #realMapControls.real-map-controls > .real-map-control-group,
+  #realMapControls.real-map-controls > .real-map-layer-switches {
+    height: 32px !important;
+    min-height: 32px !important;
+    max-height: 32px !important;
+    border-radius: 5px !important;
+  }
+
+  #realMapControls.real-map-controls .real-map-control-group button,
+  #realMapControls.real-map-controls .real-map-layer-switches label {
+    height: 32px !important;
+    min-height: 32px !important;
+    max-height: 32px !important;
+  }
+
+  #realMapControls.real-map-controls .real-map-control-group button {
+    border-radius: 4px !important;
+  }
+}
