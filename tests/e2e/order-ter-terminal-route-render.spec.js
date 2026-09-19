@@ -299,6 +299,55 @@ test('Ordem TER mantém um único fechamento UMGUL → SBCT estável em Próximo
   await page.locator('#nextBtn').evaluate(button => button.click());
   const atTer = await expectTerminal(page, setup.terIndex, true);
 
+  // Regressão de aceitação: o Play interno da Rota Processada deve concluir
+  // o trecho derivado UMGUL → SBCT quando a Ordem TER já está ativa.
+  await page.evaluate(() => {
+    const api = window.FlightFlowRouteProcessedV7412;
+    const model = api.getModel();
+    model.syncTimeline = false;
+    model.routeProgress = 0.99;
+    const range = document.querySelector('#ffrpRange');
+    range.value = '990';
+    range.dispatchEvent(new Event('input', { bubbles: true }));
+  });
+  await page.locator('#ffrpPlay').click();
+  await expect.poll(
+    () => page.locator('#ffrpPlay').textContent(),
+    { timeout: 5_000 }
+  ).toBe('▶');
+
+  const playEnd = await page.evaluate(() => {
+    const api = window.FlightFlowRouteProcessedV7412;
+    const model = api.getModel();
+    const svg = document.querySelector('#ffrpMap');
+    const planeStem = svg?.querySelector('.ffrp-plane .stem');
+    const destination = svg?.querySelector('.wp.destination circle');
+    const n = (node, attr) => Number(node?.getAttribute(attr));
+    const range = document.querySelector('#ffrpRange');
+    return {
+      routeProgress: Number(model.routeProgress),
+      rangeValue: Number(range?.value),
+      rangeMax: Number(range?.max),
+      planeX: n(planeStem, 'x1'),
+      planeY: n(planeStem, 'y1'),
+      destinationX: n(destination, 'cx'),
+      destinationY: n(destination, 'cy'),
+      footer: document.querySelector('#ffrpTime')?.textContent || '',
+    };
+  });
+
+  expect(playEnd.routeProgress).toBeCloseTo(1, 6);
+  expect(playEnd.rangeValue).toBe(playEnd.rangeMax);
+  expect(playEnd.rangeMax).toBe(1000);
+  expect(Math.abs(playEnd.planeX - playEnd.destinationX)).toBeLessThan(0.01);
+  expect(Math.abs(playEnd.planeY - playEnd.destinationY)).toBeLessThan(0.01);
+  expect(playEnd.footer).toContain('100%');
+
+  await page.evaluate(() => {
+    const model = window.FlightFlowRouteProcessedV7412.getModel();
+    model.syncTimeline = true;
+  });
+
   const darkActive = await setVisualMode('dark');
   await setVisualMode('dark', 'velox');
   await expect.poll(async () => (await readTerminalState(page)).statusBoxShadow).not.toBe(darkActive.statusBoxShadow);
