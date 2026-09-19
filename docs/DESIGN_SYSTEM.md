@@ -417,3 +417,28 @@ Diretrizes:
 - nenhum seletor V11 pode alterar conteúdo, ordem operacional ou semântica de estado.
 
 A V11 é apresentação pura.
+
+
+## 15.1. Correções de Aceitação Pós-V11
+
+Esta seção substitui, **somente para o tema claro padrão**, as regras anteriores que mantinham Command Bar, Mission Rail e Temporal Deck escuros.
+
+Diretrizes do tema claro:
+
+- superfícies estruturais usam cinzas azulados claros e bordas discretas;
+- texto principal deve manter contraste de pelo menos 4,5:1 contra a superfície local;
+- controles de suporte não devem criar blocos pretos sobre a carta clara;
+- overlays da carta usam superfície clara translúcida;
+- cores ATS com significado operacional não são reinterpretadas;
+- Dashboard moderno/Velox e tema escuro não são convertidos para esta paleta clara.
+
+Diretrizes de densidade:
+
+- rail amplo: 80 px;
+- gap estrutural desktop: 4 px;
+- padding externo reduzido para 4 px;
+- gutters decorativos devem ser menores que na V8 quando não carregam informação;
+- os raios externos certificados de 16 px são preservados;
+- Flight Situation Strip mantém altura mínima de 58 px.
+
+A compactação deve aumentar área útil sem reduzir legibilidade nem ocultar controles.
