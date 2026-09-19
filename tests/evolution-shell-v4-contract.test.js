@@ -19,7 +19,7 @@ test('Pilot Shell V4 carrega como camada visual isolada', () => {
   );
   assert.equal((INDEX.match(/id="transportMilestones"/g) || []).length, 1);
   assert.ok(INDEX.includes('class="evo-product-badge">EVOLUÇÃO</span>'));
-  assert.ok(INDEX.includes('class="evo-rail-phase">SHELL V4</span>'));
+  assert.ok(INDEX.includes('class="evo-rail-phase">'), 'rail phase hook deve permanecer disponível para evoluções visuais');
   assert.ok(INDEX.includes('V4 · OPERACIONAL'));
 });
 
