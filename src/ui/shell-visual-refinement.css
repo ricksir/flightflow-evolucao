@@ -3959,3 +3959,10 @@ html[data-palette="velox"] .tab-panel[data-panel="data"] .fields-grid .field-car
   }
 }
 
+/* Operational Board V5 — stationary cells
+   Células do strip board não flutuam nem herdam translateY de cards genéricos. */
+.tab-panel[data-panel="data"] .fields-grid .field-card,
+.tab-panel[data-panel="data"] .fields-grid .field-card:hover {
+  transform: none !important;
+  transition: background .12s ease, border-color .12s ease, color .12s ease, box-shadow .12s ease !important;
+}
