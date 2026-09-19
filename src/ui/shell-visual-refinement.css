@@ -5075,3 +5075,11 @@ html[data-palette="velox"] {
     border-radius: 4px !important;
   }
 }
+
+
+@media (min-width: 901px) {
+  .workspace-card .real-map-area-legend {
+    min-height: 32px !important;
+    font-variant-numeric: tabular-nums;
+  }
+}
