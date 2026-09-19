@@ -5269,6 +5269,15 @@ html[data-palette="velox"] {
   --evo-accept-light-accent: #1683a1;
 }
 
+@media (min-width: 1181px) {
+  html[data-font-layout="normal"] .topbar {
+    min-height: 56px;
+    height: 56px;
+    max-height: 56px;
+    flex-wrap: nowrap;
+  }
+}
+
 @media (min-width: 901px) {
   :root {
     --evo-frame-rail-width: 80px;
