@@ -1,72 +1,89 @@
-# Roadmap técnico
+# Roadmap técnico — FlightFlow Evolução
 
-> Estado revisado em 15/09/2026. Este roadmap substitui o plano inicial de modularização contínua.
+> Estado revisado em **19/09/2026**, após a certificação pós-merge da **V11 — Flight Situation Strip**.
+
+## Estado atual
+
+A rodada principal de evolução visual está tecnicamente concluída. O último SHA funcional certificado é:
+
+`a27ffee33577d88536a3828f9f3cca97b47fc898`
+
+Certificação pós-merge:
+
+- workflow **#59**: sucesso;
+- **675/675** testes Node;
+- **79/79** testes Playwright;
+- zero `failed`, `flaky`, `retry`, `timeout`, `uncaught`, `SPATIAL_EQ_DIAG`, `not ok` e `AssertionError`;
+- housekeeping **#16**: sucesso;
+- nenhuma branch temporária da V11 permaneceu aberta.
 
 ## Concluído
 
 ### Base e proteção
 
-- [x] auditoria estática;
-- [x] inventário de funções;
+- [x] auditoria estática e inventário de funções;
 - [x] quality gates no GitHub Actions;
-- [x] regressões Node;
-- [x] regressões E2E/Playwright;
+- [x] regressões Node e Playwright;
 - [x] contratos temporais e espaciais críticos;
-- [x] documentação de Release Readiness.
-
-### Release estável
-
-- [x] validação operacional da v0.2.0;
-- [x] gates verdes no SHA candidato;
-- [x] publicação da tag e release `v0.2.0`;
-- [x] changelog de release.
-
-### Modularização
-
-- [x] parser, dados, storage e IA externalizados;
-- [x] controladores de timeline e navegação protegidos;
-- [x] utilitários geográficos e de UI extraídos quando seguro;
-- [x] contratos por fronteira adicionados;
-- [x] fresh remap final executado no PR #211;
-- [x] critério de parada aplicado: 0 candidatos estritamente puros;
+- [x] proteção da equivalência Próximo/Anterior/timeline/scrubber/teclado/autoplay;
+- [x] proteção de DEP, checkpoints e retrocesso fiel;
 - [x] modularização contínua encerrada.
 
-## Prioridades atuais
+### Evolução visual V1–V11
 
-### 1. Estabilidade funcional
+- [x] Pilot Shell V1/V2;
+- [x] Operational Map V3;
+- [x] Pilot Shell V4;
+- [x] Operational Board V5;
+- [x] Temporal Deck V6;
+- [x] Operational Command Bar V7;
+- [x] Workspace Composition V8;
+- [x] Mission Rail V9;
+- [x] Living Operational Chart V10;
+- [x] Flight Situation Strip V11.
 
-- corrigir apenas bugs reproduzíveis;
-- manter equivalência entre Próximo, Anterior, timeline, scrubber, teclado e autoplay;
-- preservar DEP e fidelidade espacial;
-- criar regressão automatizada para cada correção crítica.
+## Rodada de fechamento
 
-### 2. Evolução do produto
+### 1. Documentação
 
-- priorizar melhorias solicitadas pelo uso real do FlightFlow;
-- evitar refatoração sem benefício funcional mensurável;
-- documentar mudanças de comportamento no changelog.
+- [x] sincronizar README, Roadmap, estado técnico, changelog e Release Readiness com a V11;
+- [x] manter a release publicada `v0.2.0` distinta da linha de desenvolvimento atual;
+- [x] registrar a automação V11 como concluída sem declarar aceitação humana inexistente.
 
-### 3. Segurança e publicação
+### 2. Aceitação manual — pendente
 
-- revisar continuamente novos conteúdos antes de adicioná-los ao repositório público;
-- manter segredos e dados locais fora do Git;
-- remover dados pessoais desnecessários caso sejam identificados.
+Executar `docs/MANUAL-ACCEPTANCE.md` com histórico representativo e registrar o resultado.
 
-### 4. Próxima release
+Obrigatório antes de nova release:
 
-Quando houver conjunto funcional suficiente para nova versão:
+- [ ] validar visualmente 1600×900;
+- [ ] validar 1100×820;
+- [ ] validar fluxo abaixo de 900 px;
+- [ ] validar temas claro, escuro e Dashboard moderno;
+- [ ] validar TAM3774 e o fechamento terminal pré-TER/TER;
+- [ ] validar Próximo/Anterior/timeline/scrubber/teclado/autoplay;
+- [ ] validar Rota Processada, STRIP e FPV;
+- [ ] registrar divergências com screenshot/vídeo quando existirem.
 
-- executar o checklist de `docs/RELEASE-READINESS.md`;
-- validar todos os gates no mesmo SHA;
-- registrar aceitação operacional aplicável;
-- atualizar `CHANGELOG.md`;
-- publicar tag/release somente após validação final.
+### 3. Próxima release — somente após aceitação
+
+- [ ] escolher o número da próxima versão;
+- [ ] executar `docs/RELEASE-READINESS.md` no SHA candidato;
+- [ ] garantir todos os gates verdes no mesmo SHA;
+- [ ] registrar a aceitação manual;
+- [ ] atualizar `CHANGELOG.md`;
+- [ ] criar tag/release.
+
+## Próximas evoluções opcionais
+
+Somente após a rodada de aceitação manual, novas versões visuais podem tratar janelas e ferramentas secundárias, como Rota Processada, STRIP, FPV, configurações, modais e estados vazios/erro.
+
+Não iniciar V12 automaticamente apenas para manter uma sequência numérica.
 
 ## Fora de escopo automático
 
-Não são tarefas automáticas:
-
 - novo fresh remap;
-- extração adicional apenas para reduzir `index.html`;
 - reescrita completa do frontend;
-- reorganização de código sem objetivo funcional.
+- alteração de `buildTimeline()` ou `goTo()` sem necessidade funcional concreta e testes dedicados;
+- refatoração apenas para reduzir `index.html`;
+- publicação de release sem aprovação manual.
