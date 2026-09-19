@@ -31,6 +31,8 @@ test('Living Operational Chart V10 consolida moldura e overlays técnicos', () =
   assert.ok(source.includes('.real-map-status {'));
   assert.ok(source.includes('border-radius: 6px'));
   assert.ok(source.includes('.scene-legend {'));
+  assert.ok(source.includes('.real-map-area-legend'));
+  assert.ok(source.includes('min-height: 32px'));
   assert.ok(source.includes('min-height: 36px'));
   assert.ok(source.includes('font-variant-numeric: tabular-nums'));
 });
