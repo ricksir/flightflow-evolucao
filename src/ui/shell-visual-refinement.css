@@ -5122,3 +5122,133 @@ html[data-palette="velox"] {
     border-radius: 4px !important;
   }
 }
+
+
+/* ==========================================================================
+   FlightFlow Evolução — Flight Situation Strip V11
+   Faixa operacional do voo acima da carta. Apresentação pura.
+   ========================================================================== */
+
+:root {
+  --evo-situation-line: rgba(126,190,207,.20);
+  --evo-situation-line-strong: rgba(126,190,207,.30);
+  --evo-situation-muted: #73909b;
+  --evo-situation-accent: #43bfdc;
+  --evo-situation-surface: rgba(255,255,255,.018);
+}
+
+@media (min-width: 901px) {
+  .scene-head {
+    display: grid;
+    grid-template-columns: minmax(0,1fr) auto;
+    align-items: center;
+    gap: 12px;
+    min-height: 58px;
+    padding: 8px 12px;
+  }
+
+  .flight-id-block {
+    min-width: 0;
+    padding-right: 12px;
+  }
+
+  .flight-route {
+    gap: 8px;
+    align-items: baseline;
+    flex-wrap: wrap;
+  }
+
+  .flight-route strong {
+    font-size: clamp(1.15rem,1.42vw,1.36rem);
+    letter-spacing: -.012em;
+  }
+
+  .route-airports {
+    padding-left: 8px;
+    border-left: 1px solid var(--evo-situation-line);
+    color: var(--evo-situation-muted);
+    font-family: ui-monospace,SFMono-Regular,Consolas,monospace;
+    font-size: 10px;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: .035em;
+  }
+
+  .scene-status {
+    position: relative;
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: max-content;
+    align-items: center;
+    gap: 4px;
+    margin-left: auto;
+    padding: 0 0 0 12px;
+    border: 0;
+    border-left: 1px solid var(--evo-situation-line-strong);
+    border-radius: 0;
+    background: transparent;
+  }
+
+  .status-badge,
+  .stage-badge,
+  .frame-counter,
+  .scene-protocol-toggle {
+    min-height: 26px;
+    height: 26px;
+    padding: 4px 8px !important;
+    border-radius: 4px;
+    font-size: 10px;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: .035em;
+  }
+
+  .frame-counter {
+    min-width: 48px;
+    justify-content: center;
+  }
+
+  .scene-protocol-toggle {
+    border-color: var(--evo-situation-line);
+    background: var(--evo-situation-surface);
+  }
+}
+
+html[data-theme="light"] {
+  --evo-situation-line: rgba(35,94,115,.14);
+  --evo-situation-line-strong: rgba(35,94,115,.22);
+  --evo-situation-muted: #617f8a;
+  --evo-situation-surface: rgba(31,93,113,.035);
+}
+
+html[data-theme="dark"] {
+  --evo-situation-muted: #8eabb6;
+}
+
+html[data-palette="velox"] {
+  --evo-situation-accent: #49e7ad;
+}
+
+@media (min-width: 901px) and (max-width: 1180px) {
+  .scene-head {
+    grid-template-columns: minmax(0,1fr);
+    row-gap: 6px;
+  }
+
+  .scene-status {
+    margin-left: 0;
+    padding-left: 0;
+    border-left: 0;
+    justify-self: start;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scene-head,
+  .scene-status,
+  .status-badge,
+  .stage-badge,
+  .frame-counter,
+  .scene-protocol-toggle {
+    transition: none !important;
+  }
+}
