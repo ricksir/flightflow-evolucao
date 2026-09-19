@@ -5,7 +5,7 @@ test('Living Operational Chart V10 torna a carta central técnica e compacta', a
   await page.goto('/index.html', { waitUntil: 'load' });
   await page.locator('.scene-wrap').waitFor({ state: 'attached' });
   await page.locator('.real-map-control-group').first().waitFor({ state: 'attached' });
-  await page.locator('.real-map-area-legend').waitFor({ state: 'attached' });
+  await page.locator('.real-map-layer-switches').waitFor({ state: 'attached' });
 
   const metrics = await page.evaluate(() => {
     const workspace = document.querySelector('.workspace-card');
@@ -13,7 +13,7 @@ test('Living Operational Chart V10 torna a carta central técnica e compacta', a
     const control = document.querySelector('.real-map-control-group');
     const button = document.querySelector('.real-map-control-group button');
     const caption = document.querySelector('.scene-caption');
-    const legend = document.querySelector('.real-map-area-legend');
+    const layers = document.querySelector('.real-map-layer-switches');
 
     const ws = workspace.getBoundingClientRect();
     const sc = scene.getBoundingClientRect();
@@ -25,8 +25,8 @@ test('Living Operational Chart V10 torna a carta central técnica e compacta', a
       controlRadius: control ? getComputedStyle(control).borderRadius : null,
       buttonHeight: button ? button.getBoundingClientRect().height : null,
       captionRadius: caption ? getComputedStyle(caption).borderRadius : null,
-      legendHeight: legend ? legend.getBoundingClientRect().height : null,
-      legendNumeric: getComputedStyle(legend).fontVariantNumeric,
+      layersHeight: layers ? layers.getBoundingClientRect().height : null,
+      layersRadius: layers ? getComputedStyle(layers).borderRadius : null,
     };
   });
 
@@ -36,8 +36,8 @@ test('Living Operational Chart V10 torna a carta central técnica e compacta', a
   expect(metrics.controlRadius).toBe('5px');
   expect(metrics.buttonHeight).toBe(32);
   expect(metrics.captionRadius).toBe('6px');
-  expect(metrics.legendHeight).toBeGreaterThanOrEqual(32);
-  expect(metrics.legendNumeric).toContain('tabular-nums');
+  expect(metrics.layersHeight).toBeGreaterThanOrEqual(32);
+  expect(metrics.layersRadius).toBe('5px');
 });
 
 test('Living Operational Chart V10 mantém superfície cartográfica clara no tema light', async ({ page }) => {
