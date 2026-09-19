@@ -3990,7 +3990,7 @@ html[data-palette="velox"] .tab-panel[data-panel="data"] .fields-grid .field-car
   gap: 10px;
   padding: 8px 10px;
   border: 1px solid var(--evo-temporal-line-strong);
-  border-radius: 8px;
+  border-radius: 16px;
   background:
     linear-gradient(180deg,var(--evo-temporal-surface-2),var(--evo-temporal-surface)) !important;
   color: var(--evo-temporal-text);
