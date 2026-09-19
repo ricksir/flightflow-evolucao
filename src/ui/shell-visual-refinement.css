@@ -5083,3 +5083,18 @@ html[data-palette="velox"] {
     font-variant-numeric: tabular-nums;
   }
 }
+
+
+/* V10 live controls may be mounted outside workspace-card; target their real classes. */
+@media (min-width: 901px) {
+  .real-map-control-group,
+  .real-map-layer-switches,
+  .real-map-area-legend {
+    border-radius: 5px !important;
+  }
+
+  .real-map-control-group button {
+    height: 32px !important;
+    border-radius: 4px !important;
+  }
+}
