@@ -5252,3 +5252,347 @@ html[data-palette="velox"] {
     transition: none !important;
   }
 }
+
+
+/* ==========================================================================
+   FlightFlow Evolução — Post-V11 Acceptance Corrections
+   Achados de validação real: tema claro coeso + maior ocupação útil do viewport.
+   Não altera estado, navegação, rota, timeline ou geometria.
+   ========================================================================== */
+
+:root {
+  --evo-accept-light-surface: #f5fafc;
+  --evo-accept-light-surface-2: #eaf3f6;
+  --evo-accept-light-border: #c8dbe2;
+  --evo-accept-light-ink: #173744;
+  --evo-accept-light-muted: #5f7883;
+  --evo-accept-light-accent: #1683a1;
+}
+
+@media (min-width: 901px) {
+  :root {
+    --evo-frame-rail-width: 80px;
+    --evo-frame-rail-gutter: 4px;
+    --evo-frame-gap: 4px;
+    --evo-frame-radius: 12px;
+  }
+
+  .app {
+    padding: 4px 4px 4px 0;
+    gap: var(--evo-frame-gap);
+  }
+
+  .evo-rail {
+    min-height: calc(100vh - 8px);
+    margin-left: var(--evo-frame-rail-gutter);
+    padding-inline: 5px;
+    gap: 8px;
+    border-radius: 0 var(--evo-frame-radius) var(--evo-frame-radius) 0;
+  }
+
+  .evo-rail-nav {
+    gap: 2px;
+  }
+
+  .evo-rail-section {
+    margin-top: 5px;
+    padding-bottom: 3px;
+  }
+
+  .evo-rail-section-secondary {
+    margin-top: 7px;
+  }
+
+  .evo-rail-item {
+    min-height: 46px;
+    padding-block: 4px;
+  }
+
+  .content {
+    gap: var(--evo-frame-gap);
+  }
+
+  .topbar {
+    min-height: 56px;
+    padding: 5px 8px;
+    border-radius: var(--evo-frame-radius) !important;
+  }
+
+  .topbar .brand {
+    min-width: 210px;
+    padding-right: 9px;
+  }
+
+  .topbar .file-actions {
+    min-height: 38px;
+    padding: 3px 8px;
+  }
+
+  .workspace-card,
+  .inspector-card {
+    border-radius: var(--evo-frame-radius);
+  }
+
+  .scene-head {
+    min-height: 52px;
+    padding: 6px 10px;
+  }
+
+  .scene-wrap {
+    margin-right: 4px;
+  }
+
+  .transport {
+    padding: 5px 7px;
+    gap: 6px;
+    border-radius: var(--evo-frame-radius) !important;
+  }
+
+  .transport-left,
+  .transport-right {
+    padding: 3px;
+  }
+
+  .scrubber-wrap {
+    padding: 24px 8px 3px;
+  }
+}
+
+@media (min-width: 901px) and (max-width: 1180px) {
+  :root {
+    --evo-frame-rail-width: 78px;
+    --evo-frame-rail-gutter: 3px;
+    --evo-frame-gap: 4px;
+  }
+
+  .app {
+    padding-right: 4px;
+    padding-bottom: 4px;
+  }
+}
+
+html[data-theme="light"]:not([data-palette="velox"]) {
+  --evo-chart-overlay: rgba(248,252,253,.95);
+  --evo-chart-overlay-line: rgba(35,94,115,.18);
+}
+
+html[data-theme="light"]:not([data-palette="velox"]) .topbar {
+  border-color: var(--evo-accept-light-border) !important;
+  background-color: var(--evo-accept-light-surface) !important;
+  background-image: linear-gradient(180deg,#fbfdfe,#edf5f8) !important;
+  color: var(--evo-accept-light-ink) !important;
+  box-shadow: 0 5px 15px rgba(33,78,96,.08), inset 0 1px rgba(255,255,255,.8) !important;
+}
+
+html[data-theme="light"]:not([data-palette="velox"]) .topbar::before {
+  background: linear-gradient(90deg,transparent,rgba(22,131,161,.26),transparent);
+}
+
+html[data-theme="light"]:not([data-palette="velox"]) .topbar .brand {
+  border-right-color: #d5e3e8;
+}
+
+html[data-theme="light"]:not([data-palette="velox"]) .topbar .brand-mark {
+  border-color: #bad8e2;
+  background: linear-gradient(145deg,#e7f5f9,#d7ebf1);
+}
+
+html[data-theme="light"]:not([data-palette="velox"]) .topbar .brand-mark svg path {
+  fill: #146b85;
+}
+
+html[data-theme="light"]:not([data-palette="velox"]) .topbar .brand-title,
+html[data-theme="light"]:not([data-palette="velox"]) .topbar .brand-product {
+  color: #102f3d;
+}
+
+html[data-theme="light"]:not([data-palette="velox"]) .topbar .brand-subtitle {
+  color: #58737e;
+}
+
+html[data-theme="light"]:not([data-palette="velox"]) .topbar .brand-credit,
+html[data-theme="light"]:not([data-palette="velox"]) .topbar .selected-file {
+  color: #6c838d;
+}
+
+html[data-theme="light"]:not([data-palette="velox"]) .topbar .evo-product-badge {
+  border-color: #a9d2df;
+  background: #e2f2f6;
+  color: #12657d;
+}
+
+html[data-theme="light"]:not([data-palette="velox"]) .topbar .file-actions {
+  border-right-color: #d5e3e8;
+}
+
+html[data-theme="light"]:not([data-palette="velox"]) .topbar .file-actions .btn-secondary,
+html[data-theme="light"]:not([data-palette="velox"]) .topbar .file-actions .btn-ghost,
+html[data-theme="light"]:not([data-palette="velox"]) .topbar .header-actions .icon-btn {
+  border-color: #cadce3;
+  background: rgba(255,255,255,.58);
+  color: #345765;
+}
+
+html[data-theme="light"]:not([data-palette="velox"]) .topbar .file-actions .btn-secondary:hover:not(:disabled),
+html[data-theme="light"]:not([data-palette="velox"]) .topbar .file-actions .btn-ghost:hover:not(:disabled),
+html[data-theme="light"]:not([data-palette="velox"]) .topbar .header-actions .icon-btn:hover:not(:disabled) {
+  border-color: #9fc9d6;
+  background: #e6f3f7;
+  color: #153f4e;
+}
+
+html[data-theme="light"]:not([data-palette="velox"]) .topbar .ops-live {
+  border-color: rgba(31,139,101,.20);
+  background: #e7f6f0;
+}
+
+html[data-theme="light"]:not([data-palette="velox"]) .topbar .ops-live b {
+  color: #176c50;
+}
+
+@media (min-width: 901px) {
+  html[data-theme="light"]:not([data-palette="velox"]) .evo-rail {
+    border-color: #bfd6df;
+    background-color: #e7f1f4;
+    background-image: linear-gradient(180deg,#edf6f8,#dfecef);
+    color: var(--evo-accept-light-ink);
+    box-shadow: 5px 0 16px rgba(35,82,100,.07), inset -1px 0 rgba(255,255,255,.7);
+  }
+
+  html[data-theme="light"]:not([data-palette="velox"]) .evo-rail::after {
+    background: linear-gradient(180deg,transparent,#bdd5de,transparent);
+  }
+
+  html[data-theme="light"]:not([data-palette="velox"]) .evo-rail-brand,
+  html[data-theme="light"]:not([data-palette="velox"]) .evo-rail-foot {
+    border-color: #cbdde4;
+  }
+
+  html[data-theme="light"]:not([data-palette="velox"]) .evo-rail-name {
+    color: #193b49;
+  }
+
+  html[data-theme="light"]:not([data-palette="velox"]) .evo-rail-edition,
+  html[data-theme="light"]:not([data-palette="velox"]) .evo-rail-phase,
+  html[data-theme="light"]:not([data-palette="velox"]) .evo-rail-version,
+  html[data-theme="light"]:not([data-palette="velox"]) .evo-rail-section {
+    color: #607d88;
+  }
+
+  html[data-theme="light"]:not([data-palette="velox"]) .evo-rail-item {
+    color: #4b6975;
+  }
+
+  html[data-theme="light"]:not([data-palette="velox"]) .evo-rail-icon {
+    border-color: #c3d9e1;
+    background: rgba(255,255,255,.52);
+    color: #416978;
+  }
+
+  html[data-theme="light"]:not([data-palette="velox"]) .evo-rail-item:hover,
+  html[data-theme="light"]:not([data-palette="velox"]) .evo-rail-item:focus-visible {
+    border-color: #a8d0dc;
+    background: #e2f2f6;
+    color: #173f4e;
+  }
+
+  html[data-theme="light"]:not([data-palette="velox"]) .evo-rail-item.active {
+    border-color: #9fcbd8;
+    background: linear-gradient(90deg,#d7eef4,#e9f6f8);
+    color: #123b4a;
+  }
+
+  html[data-theme="light"]:not([data-palette="velox"]) .evo-rail-item.active .evo-rail-icon {
+    border-color: #8fc2d1;
+    background: #d6edf3;
+    color: #125d73;
+  }
+}
+
+html[data-theme="light"]:not([data-palette="velox"]) .transport {
+  border-color: var(--evo-accept-light-border) !important;
+  background-color: #eaf3f6 !important;
+  background-image: linear-gradient(180deg,#f2f8fa,#e4eff3) !important;
+  color: var(--evo-accept-light-ink) !important;
+  box-shadow: 0 5px 15px rgba(33,78,96,.08), inset 0 1px rgba(255,255,255,.78) !important;
+}
+
+html[data-theme="light"]:not([data-palette="velox"]) .transport-left,
+html[data-theme="light"]:not([data-palette="velox"]) .transport-right,
+html[data-theme="light"]:not([data-palette="velox"]) .scrubber-wrap {
+  border-color: #cadde4;
+  background: rgba(255,255,255,.56);
+}
+
+html[data-theme="light"]:not([data-palette="velox"]) .transport-btn,
+html[data-theme="light"]:not([data-palette="velox"]) .transport .toggle-btn {
+  border-color: #c7dbe3;
+  background: #f7fbfc;
+  color: #315563;
+}
+
+html[data-theme="light"]:not([data-palette="velox"]) .transport-btn:hover:not(:disabled),
+html[data-theme="light"]:not([data-palette="velox"]) .transport .toggle-btn:hover:not(:disabled) {
+  border-color: #9fcad7;
+  background: #e4f2f6;
+  color: #143f4e;
+}
+
+html[data-theme="light"]:not([data-palette="velox"]) .scrubber-labels,
+html[data-theme="light"]:not([data-palette="velox"]) .speed-control,
+html[data-theme="light"]:not([data-palette="velox"]) .evo-transport-kicker {
+  color: #56727e;
+}
+
+html[data-theme="light"]:not([data-palette="velox"]) #currentTimeLabel,
+html[data-theme="light"]:not([data-palette="velox"]) #endTimeLabel,
+html[data-theme="light"]:not([data-palette="velox"]) #eventLabel {
+  color: #234755;
+}
+
+html[data-theme="light"]:not([data-palette="velox"]) .speed-control select {
+  border-color: #bfd4dc;
+  background: #ffffff;
+  color: #244b5a;
+}
+
+html[data-theme="light"]:not([data-palette="velox"]) .evo-transport-marker b {
+  border: 1px solid #bfd8e1;
+  background: #edf6f8;
+  color: #285364;
+}
+
+html[data-theme="light"]:not([data-palette="velox"]) .workspace-card .scene-caption,
+html[data-theme="light"]:not([data-palette="velox"]) .workspace-card .real-map-status {
+  border-color: rgba(35,94,115,.18) !important;
+  background: rgba(248,252,253,.95) !important;
+  color: #173744 !important;
+  box-shadow: 0 4px 12px rgba(34,75,91,.10) !important;
+}
+
+html[data-theme="light"]:not([data-palette="velox"]) .workspace-card .scene-caption p {
+  color: #526f7a !important;
+}
+
+html[data-theme="light"]:not([data-palette="velox"]) .workspace-card .real-map-control-group,
+html[data-theme="light"]:not([data-palette="velox"]) .workspace-card .real-map-layer-switches,
+html[data-theme="light"]:not([data-palette="velox"]) .real-map-control-group,
+html[data-theme="light"]:not([data-palette="velox"]) .real-map-layer-switches {
+  border-color: rgba(35,94,115,.17);
+  background: rgba(248,252,253,.94);
+  color: #294f5d;
+  box-shadow: 0 4px 12px rgba(34,75,91,.09);
+}
+
+html[data-theme="light"]:not([data-palette="velox"]) .real-map-control-group button,
+html[data-theme="light"]:not([data-palette="velox"]) .real-map-layer-switches label {
+  color: #294f5d;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .topbar,
+  .evo-rail,
+  .transport {
+    transition: none !important;
+  }
+}
