@@ -3833,7 +3833,8 @@ html[data-palette="velox"] .evo-product-badge {
   border-radius: 0;
   background: transparent;
   box-shadow: none;
-  transform: none;
+  animation: none !important;
+  transform: none !important;
 }
 
 .tab-panel[data-panel="data"] .fields-grid .field-card:hover {
@@ -3990,7 +3991,7 @@ html[data-palette="velox"] .tab-panel[data-panel="data"] .fields-grid .field-car
   gap: 10px;
   padding: 8px 10px;
   border: 1px solid var(--evo-temporal-line-strong);
-  border-radius: 16px;
+  border-radius: 16px !important;
   background:
     linear-gradient(180deg,var(--evo-temporal-surface-2),var(--evo-temporal-surface)) !important;
   color: var(--evo-temporal-text);
