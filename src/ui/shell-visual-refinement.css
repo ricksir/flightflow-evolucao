@@ -5283,7 +5283,9 @@ html[data-palette="velox"] {
   }
 
   .evo-rail {
-    min-height: calc(100vh - 8px);
+    min-height: 0;
+    height: 100%;
+    align-self: stretch;
     margin-left: var(--evo-frame-rail-gutter);
     padding-inline: 5px;
     gap: 8px;
