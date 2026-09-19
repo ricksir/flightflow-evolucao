@@ -9,27 +9,28 @@ Linha independente de evolução visual e de experiência do FlightFlow. Parte d
 - mudanças visuais deste repositório não retornam automaticamente ao ATS;
 - o núcleo temporal/espacial continua protegido pelos mesmos contratos até decisão explícita.
 
-O primeiro piloto visual está sendo desenvolvido na linha **Pilot Shell V1**, inspirada na direção aprovada de sidebar escura, mapa dominante, inspector técnico e transporte integrado.
+A evolução visual foi consolidada até a **V11 — Flight Situation Strip**, mantendo a direção aprovada de Mission Rail escuro, Command Bar técnica, mapa dominante, Quadro Operacional à direita e Temporal Deck integrado.
 
 ## Estado do projeto
 
 - **Release estável:** `v0.2.0`
-- **Versão atual para validação:** `main` / `0.2.1-dev` — contém as mudanças ainda não publicadas da rodada de dashboard, Rota Processada e Ordem TER
+- **Versão atual para validação:** `main` / `0.2.1-dev` — contém a evolução visual V1–V11 e as mudanças ainda não publicadas de produto
 - **Execução:** aplicação web sem etapa obrigatória de build
 - **Branch de referência:** `main`
 - **Quality gates:** auditoria estática, inventário de funções, testes Node, disponibilidade do navegador e Playwright
 - **Design System:** documentado em `docs/DESIGN_SYSTEM.md`
 - **Estado técnico certificado:** documentado em `docs/AI_CURRENT_STATE.md`
-- **Aceitação manual da versão atual:** `docs/MANUAL-ACCEPTANCE.md`
+- **Último SHA funcional V11 certificado:** `a27ffee33577d88536a3828f9f3cca97b47fc898` — workflow pós-merge #59, **675/675 Node + 79/79 Playwright**
+- **Aceitação manual da versão atual:** `docs/MANUAL-ACCEPTANCE.md` — **pendente de execução/aprovação humana**
 - **Modularização contínua:** encerrada após o PR #211; novas extrações só devem ocorrer quando houver necessidade funcional concreta
 
-> **Importante para testar as mudanças mais recentes:** a release `v0.2.0` não contém as alterações dos PRs #225–#235. Para validar o dashboard atual, a Rota Processada e o fechamento terminal por Ordem TER, use a branch `main`.
+> **Importante para testar as mudanças mais recentes:** a release `v0.2.0` não contém a linha visual consolidada V1–V11. Para validar o estado atual do FlightFlow Evolução, use a branch `main`.
 
 O projeto permanece em manutenção evolutiva. A rodada de modularização do ciclo v0.3.0 reduziu o acoplamento do núcleo e consolidou módulos já extraídos em `src/`, sem alterar os contratos temporais e espaciais protegidos.
 
 ## Baixar e executar a versão atual
 
-Para testar o que está hoje em `main` — inclusive **Dashboard moderno**, refinamentos da **Rota Processada** e semântica pré-TER/TER — baixe a branch `main`, não o ZIP da release `v0.2.0`.
+Para testar o que está hoje em `main` — inclusive **Mission Rail V9**, **Living Operational Chart V10**, **Flight Situation Strip V11**, Dashboard moderno, Rota Processada e semântica pré-TER/TER — baixe a branch `main`, não o ZIP da release `v0.2.0`.
 
 No GitHub, use **Code → Download ZIP** estando na branch `main`, ou clone o repositório normalmente. Depois, na pasta extraída:
 
@@ -50,11 +51,11 @@ Como alternativa, a aplicação também pode ser aberta diretamente pelo arquivo
 
 Depois de abrir a aplicação:
 
-1. confirme que o cabeçalho identifica o produto como **FlightFlow ATS**;
-2. abra **Configurações → Aparência** e confirme a opção **Dashboard moderno**;
-3. carregue o histórico desejado;
-4. utilize timeline, mapa, Rota Processada, STRIP, FPV e demais ferramentas normalmente;
-5. para a rodada de aceitação completa, siga `docs/MANUAL-ACCEPTANCE.md`.
+1. confirme que o cabeçalho identifica o produto como **FlightFlow ATS · EVOLUÇÃO**;
+2. confira Mission Rail, Command Bar, Flight Situation Strip, Carta Operacional, Quadro Operacional e Temporal Deck;
+3. abra **Configurações → Aparência** e valide claro, escuro e **Dashboard moderno**;
+4. carregue um histórico representativo e utilize timeline, mapa, Rota Processada, STRIP, FPV e demais ferramentas normalmente;
+5. execute a rodada completa de aceitação em `docs/MANUAL-ACCEPTANCE.md` antes de qualquer nova release.
 
 Alguns recursos cartográficos e consultas externas dependem de conectividade, mas o projeto também mantém dados e recursos locais.
 

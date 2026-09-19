@@ -1,17 +1,17 @@
 # Documentação
 
-Este diretório reúne documentação operacional, arquitetural, de testes e o histórico técnico do FlightFlow ATS.
+Este diretório reúne documentação operacional, arquitetural, de testes e o histórico técnico do **FlightFlow Evolução**.
 
 ## Documentos de referência atual
 
 | Documento | Finalidade |
 |---|---|
-| `AI_CURRENT_STATE.md` | checkpoint técnico para continuidade entre sessões/agentes |
+| `AI_CURRENT_STATE.md` | checkpoint técnico da V11 para continuidade entre sessões/agentes |
 | `DESIGN_SYSTEM.md` | tokens, tipografia, layout, responsividade e regras visuais do produto |
 | `ARCHITECTURE.md` | arquitetura vigente e princípios de manutenção |
 | `REGRESSION-CHECKLIST.md` | invariantes e regressões críticas |
 | `RELEASE-READINESS.md` | gates e checklist para futuras releases |
-| `MANUAL-ACCEPTANCE.md` | roteiro manual para validar o `main` atual antes de nova release |
+| `MANUAL-ACCEPTANCE.md` | roteiro manual obrigatório para validar a V11 antes de nova release |
 | `ROADMAP.md` | prioridades atuais e itens fora de escopo automático |
 | `TEST-PLAN-TIMELINE-ROUTE.md` | plano de teste específico de timeline/rota |
 
@@ -26,7 +26,7 @@ Este diretório reúne documentação operacional, arquitetural, de testes e o h
 
 ## Regra de leitura
 
-Para saber **o que fazer agora**, comece por `AI_CURRENT_STATE.md`.
+Para saber **o que fazer agora**, comece por `AI_CURRENT_STATE.md`. A V11 está automatizadamente certificada; a próxima etapa é a aceitação humana descrita em `MANUAL-ACCEPTANCE.md`.
 
 Para entender **como o sistema está organizado**, use `ARCHITECTURE.md`.
 

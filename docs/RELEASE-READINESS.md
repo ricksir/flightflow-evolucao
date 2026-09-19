@@ -1,8 +1,36 @@
-# Release Readiness — FlightFlow ATS
+# Release Readiness — FlightFlow Evolução
 
-> **Status:** a release `v0.2.0` já foi publicada. Este documento permanece como checklist reutilizável para futuras versões estáveis.
+> **Status:** a release `v0.2.0` já foi publicada. A linha atual `main` / `0.2.1-dev` contém a evolução visual até a **V11** e ainda depende de **aceitação manual registrada** antes de qualquer nova release.
 
 Este documento define quando o FlightFlow ATS pode ser considerado pronto para uma versão estável.
+
+
+
+## Candidato técnico atual — V11
+
+Último SHA funcional certificado:
+
+`a27ffee33577d88536a3828f9f3cca97b47fc898`
+
+Evidência automatizada pós-merge:
+
+- workflow **#59**: sucesso;
+- **675/675 Node**;
+- **79/79 Playwright**;
+- zero `failed`, `flaky`, `retry`, `timeout`, `uncaught`, `SPATIAL_EQ_DIAG`, `not ok` e `AssertionError`;
+- housekeeping **#16**: sucesso.
+
+Essa evidência encerra a validação automatizada da V11, mas **não equivale a aceitação manual**. O roteiro humano obrigatório está em `docs/MANUAL-ACCEPTANCE.md`.
+
+A rodada V1–V11 consolidou, sem substituir o núcleo temporal/espacial:
+
+- Operational Board V5;
+- Temporal Deck V6;
+- Operational Command Bar V7;
+- Workspace Composition V8;
+- Mission Rail V9;
+- Living Operational Chart V10;
+- Flight Situation Strip V11.
 
 ## Estado de referência
 
@@ -71,7 +99,7 @@ Esses casos estão em `tests/real-plan-route-regressions.test.js` e testes relac
 
 ## Aceitação manual antes da versão estável
 
-A automação não substitui a validação do produto com históricos representativos. Antes de criar a versão estável, executar e registrar:
+A automação não substitui a validação do produto com históricos representativos. Para o candidato V11, executar integralmente `docs/MANUAL-ACCEPTANCE.md` e registrar o SHA testado, navegador, resoluções e históricos utilizados. Antes de criar a versão estável, executar e registrar:
 
 - [ ] carregar pelo menos um histórico real representativo sem erro fatal;
 - [ ] validar DEP e evolução temporal;

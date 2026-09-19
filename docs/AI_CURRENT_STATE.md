@@ -1,411 +1,191 @@
-# FlightFlow ATS — AI Current State
+# FlightFlow Evolução — AI Current State
 
-> Checkpoint operacional para continuidade entre conversas/agentes.
+> Checkpoint técnico para continuidade entre conversas/agentes.
 >
-> Última verificação: **18/09/2026**, após o merge do PR **#235**, certificação pós-merge do workflow **#601** e housekeeping **#21**.
+> Atualizado em **19/09/2026**, após a certificação pós-merge da **V11 — Flight Situation Strip**.
 >
-> **A modularização contínua continua encerrada. A fase atual é PRODUTO, VALIDAÇÃO OPERACIONAL e preparação de release.**
+> **Fase atual: FECHAMENTO, ACEITAÇÃO MANUAL e preparação de release.**
 
 ## 1. Fonte de verdade
 
-- Repositório: `ricksir/flightflow-ats`.
-- Visibilidade: **público**.
+- Repositório de evolução: `ricksir/flightflow-evolucao`.
 - Branch principal: `main`.
-- SHA funcional certificado:
-  `3d93e3ba6031613faa4b2cab9f5f18af0408886a`
-  — `fix: strengthen dashboard acceptance and terminal route semantics (#235)`.
-- Commits exclusivamente documentais podem ficar acima desse SHA em `main`; para continuidade funcional, usar o SHA certificado acima como referência e conferir o topo real de `main` antes de qualquer nova alteração.
-- Release estável publicada: **FlightFlow ATS v0.2.0**.
-- Tag `v0.2.0`: `e089820456c08eb42df968faa9da59b062a32b6f`.
-- As mudanças dos PRs #225–#232 estão em **Unreleased** até nova decisão de release.
-- O PR **#233** foi fechado sem merge por ter ficado divergente e conter uma linha incompleta/sem ligação efetiva ao `index.html`; foi substituído pelo #232.
-- Após a certificação do #232 e o housekeeping #19: nenhum PR funcional aberto deve ser considerado pendente; conferir sempre o estado real antes de nova alteração.
-
-Este arquivo é um checkpoint. Ao retomar, conferir primeiro o SHA real de `main`, PRs abertos e workflows recentes.
+- Repositório estável/fechado anterior: `ricksir/flightflow-ats` — **não alterar nesta linha de trabalho**.
+- Baseline de origem da evolução: `b2bb9acc03096beeebbd36098b8008ef81639df8`.
+- Último SHA funcional V11 certificado:
+  `a27ffee33577d88536a3828f9f3cca97b47fc898`.
+- O topo real de `main` pode conter commits exclusivamente documentais posteriores; sempre conferir o SHA atual antes de escrever.
+- Release estável publicada herdada: `v0.2.0`.
+- Linha atual de desenvolvimento: `0.2.1-dev`.
+- A próxima release **não deve ser publicada** antes da aceitação manual registrada.
 
 ## 2. Certificação atual
 
-### PR #235 — aceitação reforçada de dashboard, terminal e Rota Processada
+### V11 — Flight Situation Strip
 
-- Head funcional certificado antes do merge: `e2e827b5949ba71e8ca24c7dc34518f9d88c6fef`.
-- Workflow PR **#600**: sucesso.
-- Node: **638/638 passed**.
-- Playwright: **55/55 passed**.
-- Log bruto: **0 failed / 0 flaky / 0 retry / 0 timeout / 0 uncaught / 0 SPATIAL_EQ_DIAG / 0 not ok**.
+PR #15:
 
-### Pós-merge do PR #235
+- head certificado: `e8802b56eee24a6b6f3fc3776170a4339678ef8f`;
+- workflow de PR **#58**: sucesso;
+- **675/675 Node**;
+- **79/79 Playwright**;
+- zero `failed`, `flaky`, `retry`, `timeout`, `uncaught`, `SPATIAL_EQ_DIAG`, `not ok` e `AssertionError`.
 
-- SHA funcional certificado em `main`: `3d93e3ba6031613faa4b2cab9f5f18af0408886a`.
-- Workflow **#601**: sucesso.
-- Node: **638/638 passed**.
-- Playwright: **55/55 passed**.
-- Log bruto: **0 failed / 0 flaky / 0 retry / 0 timeout / 0 uncaught / 0 SPATIAL_EQ_DIAG / 0 not ok**.
-- Housekeeping **#21**: sucesso; branch funcional temporária removida.
-- Nenhum PR funcional permaneceu aberto após a certificação.
+Pós-merge:
 
-### PR #232 — aceitação visual, identidade e rota terminal
+- SHA funcional em `main`: `a27ffee33577d88536a3828f9f3cca97b47fc898`;
+- workflow **#59**: sucesso;
+- **675/675 Node**;
+- **79/79 Playwright**;
+- todos os contadores críticos em zero;
+- housekeeping **#16**: sucesso;
+- branch `feat/flight-situation-strip-v11` removida;
+- nenhum PR funcional permaneceu aberto ao final da certificação.
 
-- Head certificado: `0bfa9201efe89d644a117d6fe69983bb823fecfb`.
-- Workflow PR **#591**: sucesso.
-- Node: **637/637 passed**.
-- Playwright: **53/53 passed**.
-- Log bruto: **0 failed / 0 flaky / 0 retry / 0 SPATIAL_EQ_DIAG / 0 not ok / 0 AssertionError**.
+### V10 — Living Operational Chart
 
-### Pós-merge
+O PR #13 foi mergeado externamente enquanto o CI ainda estava vermelho. A correção foi tratada em hotfix separado:
 
-- SHA funcional certificado em `main`: `69be39c5da551ebad7f49bf6f74fbb7094b509a0`.
-- Workflow **#592**: sucesso.
-- Node: **637/637 passed**.
-- Playwright: **53/53 passed**.
-- Log bruto: **0 failed / 0 flaky / 0 retry / 0 SPATIAL_EQ_DIAG / 0 not ok / 0 AssertionError**.
-- Housekeeping **#19**: sucesso; remoção de branches temporárias seguras.
+- PR #14;
+- head `86a334a4b8d2f7f0386cf6510c1849aa5deaff4d`;
+- workflow #56: sucesso;
+- **672/672 Node + 77/77 Playwright**;
+- merge do hotfix: `f779b5204d8123146683fef17f62fff97dad08fb`;
+- pós-merge workflow #57: sucesso;
+- housekeeping #15: sucesso.
 
-Gates obrigatórios antes e depois de merge:
+Regra: **sempre revalidar PR e `main` imediatamente antes de qualquer escrita ou merge**, porque automações externas podem avançar o repositório.
 
-1. `npm run audit`;
-2. inventário de funções;
-3. `npm test`;
-4. disponibilidade Chromium;
-5. `npm run test:ui`;
-6. leitura do log bruto do SHA efetivamente validado.
+## 3. Evolução visual consolidada
 
-Nunca fazer merge apenas pelo badge verde.
+A sequência visual principal está concluída:
 
-## 3. Rodada de produto e aceitação concluída até 16/09/2026
+1. Pilot Shell V1;
+2. Pilot Shell V2;
+3. Operational Map V3;
+4. Pilot Shell V4;
+5. Operational Board V5;
+6. Temporal Deck V6;
+7. Operational Command Bar V7;
+8. Workspace Composition V8;
+9. Mission Rail V9;
+10. Living Operational Chart V10;
+11. Flight Situation Strip V11.
 
-### PR #225 — Rota Processada: foco operacional e redução de densidade
+Direção visual consolidada:
 
-Merge:
-`e54ca332ce37e6f7bb82cc1aecfe7f96a685d5a0`.
+- Mission Rail escuro;
+- Command Bar escura;
+- mapa central dominante;
+- Quadro Operacional à direita;
+- Temporal Deck escuro na base;
+- Flight Situation Strip acima da carta;
+- tema claro preservando a superfície cartográfica clara;
+- Dashboard moderno/Velox alterando chrome e acento, não a semântica ATS.
 
-Certificação pós-merge **#555**:
+## 4. Fronteiras protegidas
 
-- **619/619 Node**;
-- **47/47 Playwright**;
-- zero failed/flaky/retry/SPATIAL_EQ_DIAG.
+### Núcleo temporal e espacial
 
-Entregas:
+Preservar:
 
-- legenda operacional recolhível;
-- faixa explicativa separada do palco do mapa;
-- tipografia operacional ampliada;
-- Modo foco;
-- redução de labels permanentes;
-- prioridade visual para origem, último ponto, ponto atual, transferências e seleção;
-- detalhes secundários por hover/click;
-- seleção por mouse e teclado;
-- mesma política aplicada à camada Leaflet e ao fallback SVG;
-- mapa preservado como protagonista.
-
-Nenhuma mudança em `goTo()` ou no contrato temporal protegido.
-
-### PR #226 — Ordem TER: fechamento terminal derivado no ADES
-
-Merge:
-`453aa2f5bb0c132689621944973741cd8e65ca46`.
-
-Certificação pós-merge **#559**:
-
-- **622/622 Node**;
-- **47/47 Playwright**;
-- zero failed/flaky/retry/SPATIAL_EQ_DIAG.
-
-Comportamento vigente:
-
-- `movementPoints()` continua reservado ao histórico + continuação declarada;
-- a existência de **Ordem TER** habilita um perfil espacial de fechamento separado;
-- no evento TER, a posição-alvo chega a 100% no ADES;
-- o trecho terminal é exibido como **derivado / não histórico**;
-- representação: linha amarela tracejada;
-- nenhum ETIM, `etimKey`, CFL, STAR ou fixo intermediário é inventado;
-- antes da Ordem TER, a posição continua limitada pelas evidências temporais reais;
-- sem Ordem TER, o ADES não é inserido como fechamento sintético;
-- Próximo até TER chega ao ADES;
-- Anterior a partir do TER retorna ao estado pré-TER;
-- o ADES derivado não vira checkpoint ETIM.
-
-Também foi incorporado o ARP oficial de **SBCT** à base offline mínima:
-
-- `253154S 0491034W`;
-- fonte registrada no código: AISWEB AIP AD 2 SBCT.
-
-`pseudoDestinationTail()` permanece desativado.
-
-### PR #227 — FlightFlow ATS Design System
-
-Merge:
-`bb46d863236f5e1edd3d3ce81aa660e16e79623d`.
-
-Foi criada uma camada visual consistente em:
-
-`src/ui/shell-visual-refinement.css`
-
-e a documentação:
-
-`docs/DESIGN_SYSTEM.md`.
-
-Referências de design adaptadas:
-
-- Arounda / Velox — dashboard de tela única;
-- Behance / Velox — UI/UX e componentes de aviação.
-
-Princípios aplicados sem copiar a identidade Velox:
-
-- azul/ciano FlightFlow preservado;
-- amarelo operacional preservado;
-- dark/light coerentes;
-- zonas funcionais estáveis;
-- mapa dominante;
-- inspector com largura controlada;
-- tipografia/spacing/radius por tokens;
-- sombras em níveis;
-- glow somente para foco/atividade;
-- estados hover/focus/active/disabled;
-- layout vertical responsivo abaixo de 900 px;
-- integração visual de Rota Processada, FPV e STRIP sem mudar semântica interna.
-
-Contratos novos de navegador validam:
-
-- dominância do mapa em desktop;
-- legibilidade mínima de controles;
-- tema escuro;
-- foco explícito por teclado;
-- fluxo vertical abaixo de 900 px.
-
-### PR #229 — alinhamento do trecho terminal com o ADES
-
-Merge:
-`4f871f3202b2b9f4b2b9df0604582d44cbef79eb`.
-
-Entregas relevantes:
-
-- a rota legada deixa de competir visualmente com a Rota Processada quando `ffrpProcessed=true`;
-- o ARP oficial de SBCT passa a prevalecer no fechamento terminal, evitando divergência com coordenada customizada/stale;
-- underlay e linha terminal usam os mesmos endpoints;
-- nenhuma alteração em `goTo()` ou no motor temporal.
-
-### PR #230 — eliminação do pisca da Ordem TER
-
-Merge funcional certificado:
-`1d69d7b6711a80cd4021e922a57c4fb8bd58c8cb`.
-
-Correção:
-
-- `renderMap()` monta o próximo SVG fora do DOM observado e troca os filhos de forma atômica com `replaceChildren(...)`;
-- a sincronização da Rota Processada após Próximo/Anterior, scrubber e setas usa microtask do mesmo evento, depois do estado nativo ser atualizado e antes do próximo frame;
-- desaparece a janela em que o índice já estava em TER sem a linha terminal, bem como a janela inversa no retrocesso;
-- `goTo()` permanece inalterado;
-- o motor temporal e a semântica histórica permanecem inalterados.
-
-Regressão específica:
-
-- pré-TER → TER → evento seguinte → TER → pré-TER → TER;
-- exatamente um fechamento `UMGUL → SBCT` quando ativo;
-- nenhum fechamento antes do TER;
-- endpoint coincidente com o marcador ADES;
-- nenhum frame intermediário ausente, duplicado ou desalinhado;
-- nenhum ETIM, CFL, STAR ou fixo intermediário inventado.
-
-Certificação:
-
-- PR workflow **#578**: **635/635 Node + 52/52 Playwright**;
-- pós-merge workflow **#579**: **635/635 Node + 52/52 Playwright**;
-- zero failed/flaky/retry/`SPATIAL_EQ_DIAG` em ambos.
-
-### PR #232 — fechamento da aceitação manual de dashboard, identidade e rota terminal
-
-Merge funcional certificado:
-`69be39c5da551ebad7f49bf6f74fbb7094b509a0`.
-
-Entregas:
-
-- identidade inicial e runtime unificadas em **FlightFlow ATS**;
-- versão de desenvolvimento coerente com `package.json`: **0.2.1-dev**;
-- remoção da identificação inicial legada `TIOP Cindacta1` do título/header/Sobre;
-- terceiro preset de aparência **Velox / referência** disponível nas Configurações, mantendo os modos claro e escuro do FlightFlow;
-- persistência do preset `velox` corrigida no carregamento/aplicação de configuração;
-- Rota Processada com sidebar reduzida para preservar dominância do mapa;
-- no fallback vetorial/offline do mapa principal, a camada processada passa a desenhar a rota histórica, a continuação declarada e o trecho terminal previsto/ativo;
-- no Leaflet, o trecho terminal possui classes próprias para inspeção e testes;
-- antes da Ordem TER, `UMGUL → SBCT` permanece referência espacial derivada e tracejada, sem movimentar antecipadamente a aeronave;
-- no TER, a mesma geometria torna-se fechamento ativo;
-- nenhum ETIM, CFL, STAR ou fixo intermediário é inventado;
-- `goTo()`, o motor temporal e as garantias do PR #230 permanecem inalterados.
-
-Certificação:
-
-- PR workflow **#591**: **637/637 Node + 53/53 Playwright**;
-- pós-merge workflow **#592**: **637/637 Node + 53/53 Playwright**;
-- zero `failed`, `flaky`, `retry`, `SPATIAL_EQ_DIAG`, `not ok` e `AssertionError` no log bruto de ambos;
-- housekeeping **#19** concluído com sucesso;
-- PR **#233** fechado sem merge por ter ficado divergente e não representar uma linha segura de continuidade.
-
-### PR #235 — reforço perceptível do dashboard e semântica explícita do fechamento terminal
-
-Merge funcional certificado:
-`3d93e3ba6031613faa4b2cab9f5f18af0408886a`.
-
-Entregas:
-
-- a opção de aparência de referência passa a ser apresentada como **Dashboard moderno**;
-- o preset moderno ganha contraste estrutural perceptível: shell, topbar, workspace, inspector, cards, tabs, timeline e transportes com hierarquia mais clara, preservando cores ATS;
-- a Rota Processada passa a usar mapa ainda mais dominante e sidebar mais compacta;
-- a faixa explicativa da Rota Processada fica em uma linha própria, fora da área gráfica, evitando cobrir a rota;
-- o fechamento visual `UMGUL → SBCT` recebe semântica explícita `preview` antes da Ordem TER e `active` no TER;
-- o mesmo segmento registra por contrato ausência de ETIM, CFL e STAR;
-- o endpoint continua coincidente com o ADES;
-- a aeronave não é antecipada ao ADES antes do TER;
-- o renderer principal e a camada vetorial secundária usam a mesma semântica;
-- `goTo()`, `replaceChildren()` atômico e `queueMicrotask()` do bridge da timeline foram preservados.
-
-Testes adicionados/reforçados:
-
-- identidade institucional sem reintrodução de `TIOP Cindacta1`;
-- aparência moderna realmente distinta;
-- mapa dominante e sidebar compacta na Rota Processada;
-- pré-TER/TER/retrocesso com estado terminal explícito e geometria estável;
-- ausência de ETIM/CFL/STAR no fechamento derivado.
-
-Certificação:
-
-- PR workflow **#600**: **638/638 Node + 55/55 Playwright**;
-- pós-merge workflow **#601**: **638/638 Node + 55/55 Playwright**;
-- zero failed/flaky/retry/timeout/uncaught/`SPATIAL_EQ_DIAG`/`not ok`;
-- housekeeping **#21** concluído com sucesso.
-
-## 4. Histórico real TAM3774 — contrato atual
-
-Referência:
-
-- callsign: `TAM3774`;
-- ADEP: `SBBR`;
-- ADES: `SBCT`;
-- rota declarada: `KUKOL UZ5 UMGUL`;
-- quadro processado no histórico de Brasília: **18 pontos**, terminando em `IMTBI`.
-
-Sequência histórica protegida:
-
-`SBBR → UMSUB → KUKOL → SIRUL → VUDOT → EDMIN → 1853S04832W → UDIGI → MEVIK → ASTOB → VUPOG → UPONA → 2127S04856W → ISISA → ENPEG → PALCA → ANSOK → IMTBI`.
-
-Continuação espacial publicada, sem ETIM no histórico:
-
-`VULRU → UBNID → GIKLU → USVIG → UMGUL`.
-
-Regras:
-
-1. nenhum dos 18 pontos processados pode ser removido, pulado ou reordenado;
-2. `VULRU/UBNID/GIKLU/USVIG/UMGUL` continuam sem ETIM inventado;
-3. sem Ordem TER, não existe movimento sintético até SBCT;
-4. na Ordem TER, o FlightFlow pode encerrar visualmente o plano em SBCT por um trecho direto **explicitamente derivado/não histórico**;
-5. esse fechamento não cria STAR, ETIM, CFL ou fixos intermediários;
-6. retroceder da Ordem TER restaura o estado espacial anterior;
-7. `pseudoDestinationTail()` continua `null`.
-
-Regra de produto:
-
-> **Geometria publicada pode ser mostrada; movimento temporal usa evidência real. O fechamento de Ordem TER é uma exceção espacial explícita, derivada e identificada como não histórica.**
-
-## 5. Regras inegociáveis
-
-Fidelidade temporal e espacial continua sendo prioridade absoluta.
-
-Nunca introduzir regressões em:
-
-- não pular fixos;
-- aeronave exatamente sobre os fixos/checkpoints;
-- ordem correta dos fixos;
-- horários corretos;
 - DEP como referência temporal;
-- Próximo e Anterior equivalentes;
-- timeline equivalente;
-- scrubber equivalente;
-- teclado equivalente;
-- autoplay equivalente;
-- retrocesso fiel;
-- transição da Ordem TER sem frame intermediário com fechamento ausente, duplicado ou desalinhado;
-- distinção entre histórico, rota declarada sem ETIM e fechamento terminal derivado;
-- sequência crítica `PADIL → IRISO → LIBEC → EGDOD → IBGAM → PMS → ILVES → MASVA`;
-- `ILVES 01:34` antes de `MASVA 01:36`.
+- nenhum fixo intermediário pulado;
+- aeronave exatamente sobre o checkpoint correspondente;
+- avanço e retrocesso pela mesma geometria em sentidos opostos;
+- equivalência entre Próximo, Anterior, timeline, scrubber, teclado e autoplay;
+- troca de histórico sem resíduos da sessão anterior.
 
-### `goTo()`
+Sequência crítica:
+
+`PADIL → IRISO → LIBEC → EGDOD → IBGAM → PMS → ILVES → MASVA`
+
+Com:
+
+- `ILVES 01:34` antes de `MASVA 01:36`;
+- retrocesso fiel em ordem inversa.
+
+### buildTimeline()
+
+`src/timeline/timeline-builder-controller.js` permanece congelado por contrato de bytes/linhas/SHA/dependências. Não alterar sem decisão explícita e validação dedicada.
+
+### goTo()
 
 Não alterar `goTo()` sem:
 
 1. necessidade funcional concreta;
-2. testes dedicados;
-3. comparação explícita de Próximo/Anterior/timeline/scrubber/teclado/autoplay;
+2. teste dedicado;
+3. comparação explícita de todos os caminhos de navegação;
 4. certificação completa antes e depois do merge.
 
-## 6. Modularização
+Preservar também `replaceChildren()` + `queueMicrotask()` nas transições protegidas.
 
-A rodada contínua de modularização está encerrada.
+## 5. TAM3774 e terminal
 
-Não:
+Cenário protegido:
 
-- iniciar fresh remap automaticamente;
-- extrair funções apenas porque ainda existem no IIFE;
-- abrir sequências de PRs de refatoração sem objetivo funcional;
-- usar contagem de funções como meta de produto.
+- ADEP: SBBR;
+- ADES: SBCT;
+- rota declarada: KUKOL UZ5 UMGUL;
+- histórico processado preservado até IMTBI;
+- continuação publicada sem ETIM: VULRU → UBNID → GIKLU → USVIG → UMGUL;
+- fechamento terminal: UMGUL → SBCT;
+- ARP oficial SBCT: 253154S 0491034W.
 
-Foco permitido:
+Semântica:
 
-1. bug observado;
-2. fidelidade com histórico real;
-3. produto/UX/UI;
-4. desempenho e acessibilidade;
-5. NAVDB/AISWEB com fonte verificável;
-6. testes e contratos;
-7. preparação de release.
+- antes de TER: terminal pode aparecer como preview, mas a aeronave não deve avançar antecipadamente ao ADES;
+- no TER: fechamento pode ficar ativo e terminar no ADES;
+- não inventar ETIM, CFL, STAR, fixos intermediários ou horários;
+- retrocesso do TER deve restaurar exatamente o estado anterior.
 
-## 7. Design System
+ETIM é alias visual/operacional. A abreviação normativa usada na MCA 100-27/2025 é ETO — Hora Estimada de Sobrevoo.
 
-Fonte de verdade:
+## 6. Estado da rodada de fechamento
 
-`docs/DESIGN_SYSTEM.md`.
+### Automatizado — concluído
 
-Ao criar ou alterar interface:
+- V11 mergeada;
+- quality gates verdes;
+- log bruto auditado;
+- housekeeping concluído;
+- documentação sendo sincronizada nesta rodada.
 
-- reutilizar tokens `--ffds-*`;
-- não reduzir fonte para resolver overflow;
-- não criar cores sem significado;
-- preservar semântica ATS;
-- testar claro/escuro;
-- testar desktop e breakpoints;
-- incluir focus-visible;
-- respeitar `prefers-reduced-motion`;
-- adicionar teste se a mudança for estrutural.
+### Humano — pendente
 
-O Design System é uma camada visual. Não deve passar a controlar navegação ou estado de domínio.
+A automação **não substitui** a aceitação visual/operacional.
 
-## 8. Próximas fronteiras
+Executar `docs/MANUAL-ACCEPTANCE.md` antes de declarar nova versão estável.
 
-A reconstrução A/B/C está concluída. Próximas atividades devem ser decididas por evidência de uso.
+Até essa aprovação:
 
-Prioridades possíveis:
+- não marcar a rodada como aceita manualmente;
+- não criar tag/release;
+- não iniciar V12 automaticamente apenas por sequência.
 
-1. aceitação visual manual com históricos reais e vídeos do operador;
-2. validar Rota Processada/Ordem TER em diferentes ADES além de SBCT;
-3. validar responsividade em máquinas/monitores operacionais reais;
-4. preparar uma próxima release quando houver decisão de versionamento;
-5. registrar novos bugs de produto antes de qualquer refatoração adicional.
+## 7. Próximos passos
 
-Não há nova rodada automática de reconstrução ou modularização pendente neste checkpoint.
+1. concluir esta rodada documental;
+2. baixar/abrir a `main` atual;
+3. executar a aceitação manual em histórico representativo;
+4. registrar qualquer divergência com evidência;
+5. corrigir apenas bugs reproduzíveis;
+6. quando a aceitação estiver concluída, escolher versão e executar Release Readiness;
+7. publicar release somente com gates e aceitação no mesmo candidato lógico.
 
-## 9. Política de continuidade
+## 8. Protocolo de continuidade
 
-Antes de qualquer nova mudança:
+Antes de nova mudança:
 
-1. conferir `main`;
+1. conferir SHA real de `main`;
 2. conferir PRs abertos;
 3. conferir workflows recentes;
-4. conferir `docs/AI_CURRENT_STATE.md`;
-5. reproduzir o problema ou objetivo;
+4. conferir este arquivo;
+5. reproduzir o objetivo/problema;
 6. criar branch pequena;
 7. criar/ajustar contrato;
-8. rodar todos os gates;
+8. executar todos os gates;
 9. ler log bruto;
-10. merge;
+10. merge somente se verde;
 11. repetir gates no novo `main`;
 12. confirmar housekeeping.
-
-O histórico detalhado das rodadas anteriores permanece no Git e não deve substituir este checkpoint.
