@@ -204,3 +204,23 @@ A nona rodada transforma a sidebar em **Mission Rail**, mantendo exatamente as �
 
 A V9 não cria JavaScript, não recalcula item ativo e não altera destinos, listeners, estado, mapa, timeline ou geometria.
 
+
+
+## Living Operational Chart V10
+
+A décima rodada consolida a área central como **Carta Operacional Viva**, sem alterar qualquer cálculo cartográfico.
+
+- o mapa permanece como maior superfície útil da aplicação;
+- a moldura do mapa passa a usar geometria técnica curta, com raio de 9 px e borda fina;
+- controles cartográficos existentes são compactados para 32 px e raio interno de 4–5 px;
+- caption e status deixam de parecer cartões flutuantes grandes e passam a funcionar como overlays técnicos de baixa interferência;
+- coordenadas usam números tabulares para leitura estável;
+- a legenda vira uma faixa técnica integrada à base do workspace;
+- tema claro mantém a superfície cartográfica clara;
+- a paleta Velox altera apenas o acento visual, sem modificar semântica de rota.
+
+### Fronteira arquitetural
+
+A V10 é CSS/documentação/testes. Não altera HTML, JavaScript, SVG, Leaflet, parser, goTo(), state.index, timeline, scrubber, autoplay, teclado, geometria, checkpoints, terminalClosureState(), buildTimeline() ou a projeção DEP/TRF/TER.
+
+As regras cartográficas da V3 continuam soberanas: histórico processado vermelho sólido, continuação publicada sem ETIM azul tracejado, terminal previsto âmbar tracejado e terminal ativo âmbar sólido.
