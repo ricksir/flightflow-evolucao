@@ -224,3 +224,22 @@ A décima rodada consolida a área central como **Carta Operacional Viva**, sem 
 A V10 é CSS/documentação/testes. Não altera HTML, JavaScript, SVG, Leaflet, parser, goTo(), state.index, timeline, scrubber, autoplay, teclado, geometria, checkpoints, terminalClosureState(), buildTimeline() ou a projeção DEP/TRF/TER.
 
 As regras cartográficas da V3 continuam soberanas: histórico processado vermelho sólido, continuação publicada sem ETIM azul tracejado, terminal previsto âmbar tracejado e terminal ativo âmbar sólido.
+
+
+## Flight Situation Strip V11
+
+A décima primeira rodada transforma a faixa acima do mapa em uma **Flight Situation Strip**: uma leitura linear e compacta do estado do voo.
+
+- identidade/rota permanecem à esquerda;
+- ADEP/ADES e metadata associada usam tipografia monoespaçada e números tabulares;
+- estado, etapa, contador e protocolo ficam agrupados à direita em células técnicas de 26 px;
+- o agrupamento deixa de parecer um cartão e passa a usar separação linear de 1 px;
+- raio interno dos controles é reduzido para 4 px;
+- em 901–1180 px a faixa quebra em duas linhas sem ocultar informação;
+- tema claro, escuro e Velox mantêm a mesma estrutura.
+
+### Fronteira arquitetural
+
+A V11 é CSS/documentação/testes. Não altera texto, IDs, atributos, handlers, parser, mapa, timeline, scrubber, goTo(), state.index, buildTimeline(), geometria, fechamento terminal ou a projeção DEP/TRF/TER.
+
+A faixa apenas reapresenta os elementos já existentes no DOM; nenhum estado é recalculado.
