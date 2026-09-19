@@ -129,3 +129,22 @@ A V5 é CSS/documentação/testes. Não adiciona máquina de estados, não toca 
 
 O conteúdo e a ordem dos campos continuam sendo produzidos pelo renderer já existente; a V5 apenas reorganiza sua apresentação.
 
+## Temporal Deck V6
+
+A sexta rodada transforma a barra inferior em um **registro temporal operacional** mais próximo do layout aprovado.
+
+- a timeline inferior passa a permanecer escura também no tema claro;
+- o scrubber ocupa a área central dominante;
+- os grupos de navegação e suporte ficam compactos e visualmente secundários;
+- os horários inicial/final e o evento atual ganham hierarquia própria;
+- o rótulo **LINHA DO TEMPO OPERACIONAL** passa ao mínimo legível de 9 px;
+- os marcos DEP/TRF/TER deixam de usar microtexto de aproximadamente 6 px e passam a 9 px no desktop;
+- o botão de reprodução continua destacado sem competir com o mapa;
+- a paleta Velox altera somente o acento, preservando a mesma estrutura temporal.
+
+### Fronteira arquitetural
+
+A V6 é CSS/documentação/testes. Não modifica o HTML da barra, listeners, `scrubTransport()`, `restartTransport()`, `previousTransport()`, `nextTransport()`, `togglePlayback()`, `scheduleNext()`, `goTo()`, `state.index` ou `buildTimeline()`.
+
+O `input#scrubber` original continua sendo a única autoridade de navegação por arraste. Os marcos V4 continuam apenas projetados visualmente sobre ele.
+

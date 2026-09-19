@@ -3967,3 +3967,293 @@ html[data-palette="velox"] .tab-panel[data-panel="data"] .fields-grid .field-car
   transform: none !important;
   transition: background .12s ease, border-color .12s ease, color .12s ease, box-shadow .12s ease !important;
 }
+
+/* ==========================================================================
+   FlightFlow Evolução — Temporal Deck V6
+   Timeline inferior como registro temporal escuro e persistente.
+   ========================================================================== */
+
+:root {
+  --evo-temporal-surface: #071722;
+  --evo-temporal-surface-2: #0a202d;
+  --evo-temporal-line: rgba(135,190,208,.16);
+  --evo-temporal-line-strong: rgba(135,190,208,.24);
+  --evo-temporal-text: #e8f5f8;
+  --evo-temporal-muted: #8eabb5;
+  --evo-temporal-accent: #43bfdc;
+}
+
+.transport {
+  position: relative;
+  min-height: 0;
+  height: 100%;
+  grid-template-columns: auto minmax(360px,1fr) auto;
+  gap: 10px;
+  padding: 8px 10px;
+  border: 1px solid var(--evo-temporal-line-strong);
+  border-radius: 16px !important;
+  background:
+    linear-gradient(180deg,var(--evo-temporal-surface-2),var(--evo-temporal-surface)) !important;
+  color: var(--evo-temporal-text);
+  box-shadow:
+    0 10px 28px rgba(0,0,0,.22),
+    inset 0 1px rgba(255,255,255,.025) !important;
+  overflow: visible;
+}
+
+.transport::before {
+  content: "";
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  top: 0;
+  height: 1px;
+  background: linear-gradient(90deg,transparent,rgba(67,191,220,.46),transparent);
+  pointer-events: none;
+}
+
+.transport-left,
+.transport-right {
+  min-height: 0;
+  align-self: stretch;
+  align-items: center;
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid var(--evo-temporal-line);
+  border-radius: 5px;
+  background: rgba(255,255,255,.018);
+}
+
+.transport-left {
+  border-right: 1px solid var(--evo-temporal-line);
+}
+
+.transport-right {
+  border-left: 1px solid var(--evo-temporal-line);
+}
+
+.transport-btn,
+.transport .toggle-btn {
+  min-width: 32px;
+  min-height: 32px;
+  height: 32px;
+  padding: 0 8px;
+  border-radius: 4px;
+  border-color: rgba(138,197,216,.14);
+  background: rgba(255,255,255,.025);
+  color: #b9d0d8;
+  box-shadow: none;
+}
+
+.transport-btn:hover:not(:disabled),
+.transport .toggle-btn:hover:not(:disabled) {
+  border-color: rgba(67,191,220,.34);
+  background: rgba(67,191,220,.07);
+  color: #eefcff;
+  box-shadow: none;
+}
+
+.transport .play-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 5px;
+  border: 1px solid rgba(89,206,232,.34);
+  background: linear-gradient(180deg,#249fbc,#147e9a);
+  color: white;
+  box-shadow: 0 5px 16px rgba(16,128,155,.22);
+}
+
+.scrubber-wrap {
+  position: relative;
+  min-width: 0;
+  align-self: stretch;
+  padding: 27px 10px 4px;
+  border: 1px solid var(--evo-temporal-line);
+  border-radius: 5px;
+  background: rgba(0,0,0,.10);
+}
+
+.evo-transport-kicker {
+  left: 10px;
+  top: 7px;
+  color: var(--evo-temporal-muted);
+  font: 850 9px/1 Inter,system-ui,sans-serif;
+  letter-spacing: .10em;
+}
+
+.evo-transport-milestones {
+  left: 10px;
+  right: 10px;
+  top: 20px;
+  height: 13px;
+}
+
+.evo-transport-marker {
+  height: 13px;
+}
+
+.evo-transport-marker b {
+  top: -2px;
+  padding: 2px 4px;
+  border-radius: 3px;
+  background: var(--evo-temporal-surface);
+  font: 900 9px/1 Inter,system-ui,sans-serif;
+  letter-spacing: .035em;
+}
+
+.scrubber {
+  width: 100%;
+  min-height: 16px;
+  height: 16px;
+  accent-color: var(--evo-temporal-accent);
+}
+
+.scrubber-labels {
+  display: grid;
+  grid-template-columns: minmax(72px,auto) minmax(110px,1fr) minmax(72px,auto);
+  align-items: center;
+  gap: 8px;
+  margin-top: 1px;
+  color: var(--evo-temporal-muted);
+  font-size: 10px;
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums;
+}
+
+#currentTimeLabel,
+#endTimeLabel {
+  color: #d9ebf0;
+  font-size: 11px;
+  font-weight: 820;
+  letter-spacing: .025em;
+}
+
+#currentTimeLabel {
+  text-align: left;
+}
+
+#endTimeLabel {
+  text-align: right;
+}
+
+#eventLabel {
+  color: #a9c4cc;
+  font-size: 10px;
+  font-weight: 760;
+  text-align: center;
+}
+
+.speed-control {
+  gap: 5px;
+  color: var(--evo-temporal-muted);
+  font-size: 9px;
+  font-weight: 760;
+  letter-spacing: .04em;
+}
+
+.speed-control select {
+  min-height: 30px;
+  height: 30px;
+  border-radius: 4px;
+  border-color: rgba(138,197,216,.14);
+  background: #0b2634;
+  color: #e8f5f8;
+  font-size: 11px;
+}
+
+html[data-theme="light"] .transport {
+  border-color: var(--evo-temporal-line-strong);
+  background:
+    linear-gradient(180deg,var(--evo-temporal-surface-2),var(--evo-temporal-surface)) !important;
+  color: var(--evo-temporal-text);
+  box-shadow:
+    0 10px 28px rgba(25,63,78,.18),
+    inset 0 1px rgba(255,255,255,.025) !important;
+}
+
+html[data-theme="light"] .transport-left,
+html[data-theme="light"] .transport-right,
+html[data-theme="light"] .scrubber-wrap {
+  border-color: var(--evo-temporal-line);
+  background: rgba(255,255,255,.018);
+}
+
+html[data-theme="light"] .transport-btn,
+html[data-theme="light"] .transport .toggle-btn {
+  border-color: rgba(138,197,216,.14);
+  background: rgba(255,255,255,.025);
+  color: #b9d0d8;
+}
+
+html[data-theme="light"] .scrubber-labels,
+html[data-theme="light"] .speed-control,
+html[data-theme="light"] .evo-transport-kicker {
+  color: var(--evo-temporal-muted);
+}
+
+html[data-theme="light"] #currentTimeLabel,
+html[data-theme="light"] #endTimeLabel {
+  color: #d9ebf0;
+}
+
+html[data-palette="velox"] {
+  --evo-temporal-accent: #49e7ad;
+}
+
+html[data-palette="velox"] .transport::before {
+  background: linear-gradient(90deg,transparent,rgba(73,231,173,.46),transparent);
+}
+
+html[data-palette="velox"] .transport .play-btn {
+  border-color: rgba(73,231,173,.34);
+  background: linear-gradient(180deg,#2ab98a,#16805f);
+}
+
+@media (max-width: 900px) {
+  .transport {
+    height: auto;
+    grid-template-columns: 1fr;
+    gap: 6px;
+    padding: 7px;
+  }
+
+  .transport-left,
+  .transport-right {
+    justify-content: center;
+    padding: 3px;
+  }
+
+  .scrubber-wrap {
+    min-height: 58px;
+  }
+}
+
+@media (max-width: 620px) {
+  .scrubber-labels {
+    grid-template-columns: auto 1fr auto;
+    gap: 5px;
+  }
+
+  .evo-transport-marker b {
+    width: auto;
+    height: auto;
+    padding: 2px 3px;
+    border-radius: 3px;
+    background: var(--evo-temporal-surface);
+    font-size: 8px;
+  }
+
+  .transport-right {
+    flex-wrap: wrap;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .transport-btn,
+  .transport .toggle-btn,
+  .transport .play-btn,
+  .scrubber {
+    transition: none !important;
+  }
+}
+
