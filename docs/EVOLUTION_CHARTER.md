@@ -243,3 +243,49 @@ A décima primeira rodada transforma a faixa acima do mapa em uma **Flight Situa
 A V11 é CSS/documentação/testes. Não altera texto, IDs, atributos, handlers, parser, mapa, timeline, scrubber, goTo(), state.index, buildTimeline(), geometria, fechamento terminal ou a projeção DEP/TRF/TER.
 
 A faixa apenas reapresenta os elementos já existentes no DOM; nenhum estado é recalculado.
+
+
+## Correções de Aceitação Pós-V11
+
+A primeira validação humana da V11 identificou problemas que não apareciam nos gates automatizados anteriores. Esta rodada corrige esses achados sem abrir uma V12.
+
+### Rota Processada / Ordem TER
+
+O controle **Play** interno da Rota Processada passa a distinguir dois limites:
+
+- antes da Ordem TER, permanece limitado ao último ETIM histórico real;
+- quando a Ordem TER está ativa, o limite de reprodução passa a 100% do perfil espacial e termina no ADES derivado;
+- após TER, o estado permanece encerrado no ADES;
+- sem Ordem TER, nenhum movimento terminal é inventado.
+
+O fechamento continua sem fabricar ETIM, CFL, STAR, fixos intermediários ou horários.
+
+### Tema claro
+
+A decisão anterior de manter Mission Rail, Command Bar e Temporal Deck permanentemente escuros é **supersedida apenas no tema claro padrão**, após avaliação visual em uso real.
+
+No tema claro:
+
+- Command Bar, Mission Rail e Temporal Deck usam superfícies claras de baixo contraste com a carta;
+- textos e controles mantêm contraste mínimo de leitura;
+- overlays cartográficos deixam de usar fundo quase preto;
+- a semântica de cores ATS continua preservada.
+
+O tema escuro e o preset Velox/Dashboard moderno mantêm sua gramática própria.
+
+### Ocupação do viewport
+
+A composição desktop reduz gutters, gaps e paddings estruturais para devolver área útil ao mapa, quadro e timeline, preservando os contratos de largura mínima do rail e a responsividade abaixo de 900 px.
+
+Também foi removido um texto literal `\n` que estava sendo renderizado antes do shell e consumia altura útil no canto superior esquerdo.
+
+### Fronteira arquitetural
+
+A rodada altera apenas:
+
+- limite do Play interno da Rota Processada, usando o estado terminal já existente;
+- HTML para remover o texto literal espúrio;
+- CSS de apresentação;
+- testes e documentação.
+
+Não cria nova máquina de estados e não altera `goTo()`, `buildTimeline()`, parser, ordem de fixos, DEP, scrubber principal ou geometria do fechamento terminal.

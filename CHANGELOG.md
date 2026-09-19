@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- corrigido o **Play da Rota Processada** no fechamento por Ordem TER: quando TER está ativo, a reprodução agora percorre o trecho derivado até o ADES, leva a barra a 100% e posiciona a aeronave exatamente no destino; antes de TER continua limitada ao último ETIM real;
+- harmonizado o **tema claro** após validação visual real: Command Bar, Mission Rail, Temporal Deck e overlays cartográficos deixam de permanecer quase pretos e passam a usar superfícies claras com contraste de texto protegido;
+- reduzidas áreas mortas do shell desktop com gutters, gaps e paddings menores, preservando os contratos de largura, responsividade e a Flight Situation Strip;
+- removido o texto literal `\\n` que aparecia no canto superior esquerdo antes do shell;
+- adicionadas regressões de aceitação para TAM3774/TER, demonstração TAM3542, contraste do tema claro, ocupação de viewport e ausência de overflow;
+
 - concluída a rodada visual principal do **FlightFlow Evolução V1–V11**, culminando na **Flight Situation Strip V11**;
 - consolidados **Operational Board V5**, **Temporal Deck V6**, **Operational Command Bar V7**, **Workspace Composition V8**, **Mission Rail V9**, **Living Operational Chart V10** e **Flight Situation Strip V11** sem alterar os contratos temporais/espaciais protegidos;
 - V11 certificada no SHA funcional `a27ffee33577d88536a3828f9f3cca97b47fc898`, com workflow pós-merge **#59**, **675/675 Node + 79/79 Playwright** e todos os contadores críticos em zero;
