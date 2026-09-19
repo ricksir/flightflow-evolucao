@@ -380,3 +380,22 @@ O rail é a navegação persistente da missão.
 - foco de teclado deve ser visível;
 - a V9 preserva os links de âncora já existentes e não cria lógica de navegação paralela.
 
+
+
+## 14. Living Operational Chart V10
+
+O workspace central é tratado como **Carta Operacional Viva**.
+
+Diretrizes:
+
+- mapa permanece dominante e não recebe margens adicionais;
+- moldura cartográfica: raio de 9 px e linha técnica fina;
+- controles existentes: altura de 32 px, raio de 4–5 px;
+- caption e telemetria: overlays compactos com raio de 6 px;
+- coordenadas usam font-variant-numeric: tabular-nums;
+- legenda inferior: faixa integrada com altura mínima de 36 px;
+- tema claro preserva superfície cartográfica clara;
+- Velox pode substituir apenas a cor de acento;
+- nenhuma regra V10 pode redefinir cores/estados das trajetórias estabelecidos na Operational Map V3.
+
+A V10 é apresentação pura e não participa do cálculo de rota, do tempo ou do fechamento terminal.
