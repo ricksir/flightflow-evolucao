@@ -4635,7 +4635,7 @@ html[data-palette="velox"] .topbar .file-actions .btn-primary {
   }
 
   .scene-wrap {
-    margin-left: 8px;
+    margin-left: 0;
     margin-right: 8px;
   }
 
