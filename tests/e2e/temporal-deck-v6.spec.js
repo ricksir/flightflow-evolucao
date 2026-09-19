@@ -36,7 +36,7 @@ test('Temporal Deck V6 torna a timeline inferior dominante sem alterar o scrubbe
 
   expect(result.surface).toBe('#071722');
   expect(result.backgroundImage).toContain('linear-gradient');
-  expect(result.transportRadius).toBe('8px');
+  expect(result.transportRadius).toBe('16px');
   expect(result.kickerSize).toBeGreaterThanOrEqual(9);
   expect(result.currentSize).toBeGreaterThanOrEqual(11);
   expect(result.markerSize).toBeGreaterThanOrEqual(9);
