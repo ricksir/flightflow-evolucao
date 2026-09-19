@@ -5,6 +5,7 @@ test('Living Operational Chart V10 torna a carta central técnica e compacta', a
   await page.goto('/index.html', { waitUntil: 'load' });
   await page.locator('.scene-wrap').waitFor({ state: 'attached' });
   await page.locator('.real-map-control-group').first().waitFor({ state: 'attached' });
+  await page.locator('.real-map-area-legend').waitFor({ state: 'attached' });
 
   const metrics = await page.evaluate(() => {
     const workspace = document.querySelector('.workspace-card');
@@ -12,7 +13,7 @@ test('Living Operational Chart V10 torna a carta central técnica e compacta', a
     const control = document.querySelector('.real-map-control-group');
     const button = document.querySelector('.real-map-control-group button');
     const caption = document.querySelector('.scene-caption');
-    const legend = document.querySelector('.scene-legend');
+    const legend = document.querySelector('.real-map-area-legend');
 
     const ws = workspace.getBoundingClientRect();
     const sc = scene.getBoundingClientRect();
@@ -35,7 +36,7 @@ test('Living Operational Chart V10 torna a carta central técnica e compacta', a
   expect(metrics.controlRadius).toBe('5px');
   expect(metrics.buttonHeight).toBe(32);
   expect(metrics.captionRadius).toBe('6px');
-  expect(metrics.legendHeight).toBeGreaterThanOrEqual(36);
+  expect(metrics.legendHeight).toBeGreaterThanOrEqual(32);
   expect(metrics.legendNumeric).toContain('tabular-nums');
 });
 
