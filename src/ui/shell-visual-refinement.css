@@ -3833,7 +3833,8 @@ html[data-palette="velox"] .evo-product-badge {
   border-radius: 0;
   background: transparent;
   box-shadow: none;
-  transform: none;
+  animation: none !important;
+  transform: none !important;
 }
 
 .tab-panel[data-panel="data"] .fields-grid .field-card:hover {
