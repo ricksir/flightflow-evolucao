@@ -12,7 +12,9 @@ function v3Source() {
   const marker = 'FlightFlow Evolução — Operational Map V3';
   const start = ROUTE.indexOf(marker);
   assert.ok(start >= 0, 'Operational Map V3 deve existir na camada visual');
-  return ROUTE.slice(start);
+  const end = ROUTE.indexOf('\n\n\n    `;', start);
+  assert.ok(end > start, 'fim conhecido do bloco visual V3 deve permanecer localizável');
+  return ROUTE.slice(start, end);
 }
 
 test('Operational Map V3 formaliza as quatro classes visuais da rota', () => {
