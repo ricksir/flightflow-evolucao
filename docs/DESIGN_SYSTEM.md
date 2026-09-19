@@ -399,3 +399,21 @@ Diretrizes:
 - nenhuma regra V10 pode redefinir cores/estados das trajetórias estabelecidos na Operational Map V3.
 
 A V10 é apresentação pura e não participa do cálculo de rota, do tempo ou do fechamento terminal.
+
+
+## 15. Flight Situation Strip V11
+
+A faixa de situação do voo deve funcionar como leitura operacional imediata, não como conjunto de cartões.
+
+Diretrizes:
+
+- layout desktop: rota/identidade à esquerda e estado operacional à direita;
+- altura mínima: 58 px;
+- metadata ADEP/ADES: 10 px, monoespaçada e tabular;
+- células de estado: 26 px de altura;
+- raio interno: 4 px;
+- separação entre rota e estado por linha de 1 px;
+- em 901–1180 px o bloco de estado pode ocupar uma segunda linha;
+- nenhum seletor V11 pode alterar conteúdo, ordem operacional ou semântica de estado.
+
+A V11 é apresentação pura.
