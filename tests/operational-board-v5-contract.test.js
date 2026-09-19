@@ -29,6 +29,8 @@ test('Operational Board V5 transforma o painel de dados em grade técnica contí
   assert.ok(source.includes('font-size: 10px'));
   assert.ok(source.includes('font-size: 12.5px'));
   assert.ok(source.includes('font-variant-numeric: tabular-nums'));
+  assert.ok(source.includes('animation: none !important'));
+  assert.ok(source.includes('transform: none !important'));
   assert.ok(source.includes('.field-card.changed::before'));
   assert.ok(source.includes('background: var(--evo-ter)'));
 });
