@@ -3,6 +3,8 @@ const { test, expect } = require('@playwright/test');
 test('Living Operational Chart V10 torna a carta central técnica e compacta', async ({ page }) => {
   await page.setViewportSize({ width: 1600, height: 900 });
   await page.goto('/index.html', { waitUntil: 'load' });
+  await page.locator('.scene-wrap').waitFor({ state: 'attached' });
+  await page.locator('.real-map-control-group').waitFor({ state: 'attached' });
 
   const metrics = await page.evaluate(() => {
     const workspace = document.querySelector('.workspace-card');
@@ -25,7 +27,7 @@ test('Living Operational Chart V10 torna a carta central técnica e compacta', a
       captionRadius: caption ? getComputedStyle(caption).borderRadius : null,
       statusRadius: status ? getComputedStyle(status).borderRadius : null,
       legendHeight: legend ? legend.getBoundingClientRect().height : null,
-      coordNumeric: getComputedStyle(document.querySelector('.real-map-coordinates')).fontVariantNumeric,
+      legendNumeric: getComputedStyle(legend).fontVariantNumeric,
     };
   });
 
@@ -37,7 +39,7 @@ test('Living Operational Chart V10 torna a carta central técnica e compacta', a
   expect(metrics.captionRadius).toBe('6px');
   expect(metrics.statusRadius).toBe('6px');
   expect(metrics.legendHeight).toBeGreaterThanOrEqual(36);
-  expect(metrics.coordNumeric).toContain('tabular-nums');
+  expect(metrics.legendNumeric).toContain('tabular-nums');
 });
 
 test('Living Operational Chart V10 mantém superfície cartográfica clara no tema light', async ({ page }) => {
