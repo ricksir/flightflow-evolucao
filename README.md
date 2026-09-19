@@ -1,6 +1,15 @@
-# FlightFlow ATS
+# FlightFlow Evolução
 
-Aplicação web para análise e visualização de históricos ATS, ciclo de vida de planos de voo, rota processada, fixos, eventos e coordenação entre órgãos.
+Linha independente de evolução visual e de experiência do FlightFlow. Parte do baseline funcional certificado do FlightFlow ATS, mas recebe redesigns e experimentos somente neste repositório.
+
+## Separação do projeto
+
+- `flightflow-ats`: referência funcional estável e encerrada para esta rodada de redesign;
+- `flightflow-evolucao`: laboratório oficial de evolução visual/UX;
+- mudanças visuais deste repositório não retornam automaticamente ao ATS;
+- o núcleo temporal/espacial continua protegido pelos mesmos contratos até decisão explícita.
+
+O primeiro piloto visual está sendo desenvolvido na linha **Pilot Shell V1**, inspirada na direção aprovada de sidebar escura, mapa dominante, inspector técnico e transporte integrado.
 
 ## Estado do projeto
 
