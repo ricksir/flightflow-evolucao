@@ -1,0 +1,65 @@
+const { test, expect } = require('@playwright/test');
+
+test('Living Operational Chart V10 torna a carta central técnica e compacta', async ({ page }) => {
+  await page.setViewportSize({ width: 1600, height: 900 });
+  await page.goto('/index.html', { waitUntil: 'load' });
+
+  const metrics = await page.evaluate(() => {
+    const workspace = document.querySelector('.workspace-card');
+    const scene = document.querySelector('.scene-wrap');
+    const control = document.querySelector('.real-map-control-group');
+    const button = document.querySelector('.real-map-control-group button');
+    const caption = document.querySelector('.scene-caption');
+    const status = document.querySelector('.real-map-status');
+    const legend = document.querySelector('.scene-legend');
+
+    const ws = workspace.getBoundingClientRect();
+    const sc = scene.getBoundingClientRect();
+
+    return {
+      sceneRadius: getComputedStyle(scene).borderRadius,
+      sceneBorder: getComputedStyle(scene).borderTopStyle,
+      sceneInsetLeft: sc.left - ws.left,
+      controlRadius: control ? getComputedStyle(control).borderRadius : null,
+      buttonHeight: button ? button.getBoundingClientRect().height : null,
+      captionRadius: caption ? getComputedStyle(caption).borderRadius : null,
+      statusRadius: status ? getComputedStyle(status).borderRadius : null,
+      legendHeight: legend ? legend.getBoundingClientRect().height : null,
+      coordNumeric: getComputedStyle(document.querySelector('.real-map-coordinates')).fontVariantNumeric,
+    };
+  });
+
+  expect(metrics.sceneRadius).toBe('9px');
+  expect(metrics.sceneBorder).toBe('solid');
+  expect(metrics.sceneInsetLeft).toBeLessThanOrEqual(2);
+  expect(metrics.controlRadius).toBe('5px');
+  expect(metrics.buttonHeight).toBe(32);
+  expect(metrics.captionRadius).toBe('6px');
+  expect(metrics.statusRadius).toBe('6px');
+  expect(metrics.legendHeight).toBeGreaterThanOrEqual(36);
+  expect(metrics.coordNumeric).toContain('tabular-nums');
+});
+
+test('Living Operational Chart V10 mantém superfície cartográfica clara no tema light', async ({ page }) => {
+  await page.setViewportSize({ width: 1600, height: 900 });
+  await page.goto('/index.html', { waitUntil: 'load' });
+  await page.evaluate(() => document.documentElement.setAttribute('data-theme', 'light'));
+
+  const metrics = await page.evaluate(() => {
+    const root = document.documentElement;
+    const scene = document.querySelector('.scene-wrap');
+    return {
+      surface: getComputedStyle(scene).backgroundColor,
+      accentDefault: getComputedStyle(root).getPropertyValue('--evo-chart-accent').trim(),
+    };
+  });
+
+  expect(metrics.surface).toBe('rgb(244, 248, 248)');
+  expect(metrics.accentDefault).toBe('#43bfdc');
+
+  await page.evaluate(() => document.documentElement.setAttribute('data-palette', 'velox'));
+  const veloxAccent = await page.evaluate(() =>
+    getComputedStyle(document.documentElement).getPropertyValue('--evo-chart-accent').trim()
+  );
+  expect(veloxAccent).toBe('#49e7ad');
+});
