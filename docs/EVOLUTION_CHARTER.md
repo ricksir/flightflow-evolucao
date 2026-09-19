@@ -109,3 +109,23 @@ A quarta rodada aproxima o shell real do layout visual aprovado:
 `buildTimeline()` permanece congelado e inalterado.
 
 Os marcos V4 são aplicados por `src/ui/evolution-shell-v4.js` como uma camada visual pós-renderização. O módulo lê somente o DOM já produzido pela timeline e não chama `goTo()`, não altera `state.index`, não move aeronave e não participa da semântica `preview/active` do fechamento terminal.
+
+## Operational Board V5
+
+A quinta rodada concentra a evolução no painel direito, mantendo o shell V4 e toda a lógica operacional existente.
+
+- o painel de dados passa a se apresentar visualmente como **QUADRO OPERACIONAL**;
+- os campos deixam de parecer cartões independentes e passam a formar uma grade técnica contínua;
+- labels operacionais recuperam tamanho mínimo legível de 10 px;
+- valores usam alinhamento numérico estável e maior contraste;
+- alterações continuam sinalizadas em âmbar, sem alterar o valor ou a origem do dado;
+- ferramentas de organização permanecem disponíveis, porém visualmente secundárias;
+- ações de mensagem/base normativa formam um rodapé integrado ao quadro;
+- temas claro, escuro e Velox usam a mesma estrutura.
+
+### Fronteira arquitetural
+
+A V5 é CSS/documentação/testes. Não adiciona máquina de estados, não toca em `goTo()`, `state.index`, `buildTimeline()`, parser, geometria, `terminalClosureState()`, `replaceChildren()` ou `queueMicrotask()`.
+
+O conteúdo e a ordem dos campos continuam sendo produzidos pelo renderer já existente; a V5 apenas reorganiza sua apresentação.
+
