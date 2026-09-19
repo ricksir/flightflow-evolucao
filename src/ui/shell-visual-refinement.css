@@ -3360,3 +3360,372 @@ html[data-palette="velox"] .timeline-item.active {
     transition: none !important;
   }
 }
+
+
+/* ==========================================================================
+   FlightFlow Evolução — Pilot Shell V4
+   Aproximação do shell aprovado: identidade, rail, tabs e marcos operacionais.
+   ========================================================================== */
+
+:root {
+  --evo-dep: #1686a8;
+  --evo-trf: #7750a8;
+  --evo-ter: #d58a00;
+}
+
+/* Identidade do produto: mantém o nome-base e explicita a linha Evolução. */
+.brand-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.evo-product-badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 19px;
+  padding: 3px 6px;
+  border: 1px solid rgba(98,203,231,.24);
+  border-radius: 6px;
+  background: rgba(43,157,188,.10);
+  color: #9be7f7;
+  font: 900 .43rem/1 Inter,system-ui,sans-serif;
+  letter-spacing: .10em;
+}
+
+.topbar {
+  min-height: 58px;
+  padding-block: 7px;
+}
+
+.file-actions {
+  gap: 6px;
+}
+
+.file-actions .btn {
+  min-height: 32px;
+  padding-inline: 10px;
+}
+
+.ops-live {
+  min-height: 32px;
+  padding-inline: 8px;
+}
+
+/* Rail: navegação organizada por contexto. */
+.evo-rail {
+  gap: 14px;
+}
+
+.evo-rail-brand {
+  gap: 3px;
+}
+
+.evo-rail-phase {
+  color: #5f8e9e;
+  font: 850 .42rem/1 Inter,system-ui,sans-serif;
+  letter-spacing: .10em;
+}
+
+.evo-rail-nav {
+  gap: 5px;
+}
+
+.evo-rail-section {
+  margin: 7px 2px 1px;
+  padding: 0 3px 5px;
+  border-bottom: 1px solid rgba(159,210,225,.08);
+  color: #668d9b;
+  font: 850 .40rem/1 Inter,system-ui,sans-serif;
+  letter-spacing: .11em;
+  text-align: center;
+}
+
+.evo-rail-section-secondary {
+  margin-top: 13px;
+}
+
+.evo-rail-item {
+  min-height: 54px;
+}
+
+.evo-rail-item[href="#knowledgeBaseBtn"] .evo-rail-icon {
+  font-family: Georgia,"Times New Roman",serif;
+  font-size: 1.08rem;
+}
+
+/* Tabs: aspecto técnico e contínuo, sem excesso de cápsulas. */
+.inspector-tabs {
+  min-height: 42px;
+  display: flex;
+  align-items: end;
+  gap: 0;
+  padding: 4px 7px 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.inspector-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.tab {
+  flex: 0 0 auto;
+  min-width: max-content;
+  height: 37px;
+  padding-inline: 10px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: #6e858f;
+}
+
+.tab + .tab {
+  border-left: 1px solid rgba(22,52,64,.07);
+}
+
+.tab.active {
+  background: transparent;
+  color: var(--evo-teal-800);
+  box-shadow: none;
+}
+
+.tab.active::after {
+  left: 8px;
+  right: 8px;
+  height: 2px;
+  border-radius: 2px 2px 0 0;
+}
+
+/* Timeline lateral: marcos operacionais claros. */
+.timeline-item.milestone {
+  position: relative;
+}
+
+.timeline-item.milestone::before {
+  content: "";
+  position: absolute;
+  left: 63px;
+  top: 17px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 2px rgba(22,52,64,.10);
+  z-index: 2;
+}
+
+.timeline-item.milestone-dep::before {
+  background: var(--evo-dep);
+}
+
+.timeline-item.milestone-trf::before {
+  background: var(--evo-trf);
+}
+
+.timeline-item.milestone-ter::before {
+  background: var(--evo-ter);
+}
+
+.timeline-milestone {
+  display: inline-flex;
+  align-items: center;
+  min-height: 18px;
+  padding: 2px 6px;
+  border-radius: 5px;
+  font: 900 .44rem/1 Inter,system-ui,sans-serif;
+  letter-spacing: .065em;
+}
+
+.timeline-milestone-dep {
+  color: #0e6c88;
+  border: 1px solid rgba(22,134,168,.22);
+  background: rgba(22,134,168,.09);
+}
+
+.timeline-milestone-trf {
+  color: #62418c;
+  border: 1px solid rgba(119,80,168,.22);
+  background: rgba(119,80,168,.08);
+}
+
+.timeline-milestone-ter {
+  color: #8b5b00;
+  border: 1px solid rgba(213,138,0,.25);
+  background: rgba(213,138,0,.10);
+}
+
+.timeline-item.active.milestone-dep {
+  box-shadow: inset 3px 0 var(--evo-dep);
+}
+
+.timeline-item.active.milestone-trf {
+  box-shadow: inset 3px 0 var(--evo-trf);
+}
+
+.timeline-item.active.milestone-ter {
+  box-shadow: inset 3px 0 var(--evo-ter);
+}
+
+/* Cabeçalho: o evento TER ativo ganha leitura explícita, sem estado paralelo. */
+body:has(#timelineList .timeline-item.active.milestone-ter) .scene-status {
+  border-color: rgba(213,138,0,.28);
+  box-shadow: inset 3px 0 rgba(213,138,0,.72);
+}
+
+body:has(#timelineList .timeline-item.active.milestone-ter) .scene-status::after {
+  content: "ORDEM TER";
+  position: absolute;
+  top: 3px;
+  right: 7px;
+  color: #9a6700;
+  font: 900 .42rem/1 Inter,system-ui,sans-serif;
+  letter-spacing: .085em;
+}
+
+/* Timeline inferior: marcos sobre o scrubber, sem alterar o input/range. */
+.scrubber-wrap {
+  padding-top: 25px;
+}
+
+.evo-transport-kicker {
+  top: 0;
+}
+
+.evo-transport-milestones {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 10px;
+  height: 14px;
+  pointer-events: none;
+}
+
+.evo-transport-milestones[hidden] {
+  display: none;
+}
+
+.evo-transport-marker {
+  position: absolute;
+  left: var(--evo-marker-pos);
+  top: 0;
+  width: 1px;
+  height: 12px;
+  transform: translateX(-50%);
+}
+
+.evo-transport-marker::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 1px;
+  height: 6px;
+  background: currentColor;
+  opacity: .75;
+}
+
+.evo-transport-marker b {
+  position: absolute;
+  left: 50%;
+  top: -1px;
+  transform: translate(-50%,-100%);
+  padding: 2px 4px;
+  border: 1px solid currentColor;
+  border-radius: 4px;
+  background: var(--evo-navy-900);
+  color: currentColor;
+  font: 900 .39rem/1 Inter,system-ui,sans-serif;
+  letter-spacing: .04em;
+  white-space: nowrap;
+}
+
+.evo-transport-marker-dep {
+  color: #54c7e6;
+}
+
+.evo-transport-marker-trf {
+  color: #b59ae0;
+}
+
+.evo-transport-marker-ter {
+  color: #e4aa42;
+}
+
+/* Tema escuro/modern preserva a mesma semântica. */
+html[data-theme="dark"] .evo-product-badge {
+  color: #a9ecfa;
+  border-color: rgba(95,207,236,.24);
+  background: rgba(59,181,214,.08);
+}
+
+html[data-theme="dark"] .tab + .tab {
+  border-left-color: rgba(151,203,220,.07);
+}
+
+html[data-theme="dark"] .timeline-item.milestone::before {
+  border-color: #0b2431;
+  box-shadow: 0 0 0 2px rgba(142,199,216,.10);
+}
+
+html[data-theme="dark"] .timeline-milestone-dep {
+  color: #91def1;
+}
+
+html[data-theme="dark"] .timeline-milestone-trf {
+  color: #c7afe9;
+}
+
+html[data-theme="dark"] .timeline-milestone-ter {
+  color: #f0bd61;
+}
+
+html[data-theme="dark"] body:has(#timelineList .timeline-item.active.milestone-ter) .scene-status::after {
+  color: #f0bd61;
+}
+
+html[data-palette="velox"] .evo-product-badge {
+  color: #8cf0ca;
+  border-color: rgba(73,231,173,.24);
+  background: rgba(73,231,173,.07);
+}
+
+/* Responsividade. */
+@media (max-width: 1120px) {
+  .evo-rail-section,
+  .evo-rail-phase {
+    display: none;
+  }
+
+  .tab {
+    padding-inline: 8px;
+  }
+}
+
+@media (max-width: 900px) {
+  .scrubber-wrap {
+    padding-top: 25px;
+  }
+}
+
+@media (max-width: 620px) {
+  .evo-product-badge {
+    display: none;
+  }
+
+  .evo-transport-marker b {
+    font-size: 0;
+    width: 5px;
+    height: 5px;
+    padding: 0;
+    border-radius: 50%;
+    background: currentColor;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .evo-transport-marker,
+  .timeline-milestone {
+    transition: none !important;
+  }
+}

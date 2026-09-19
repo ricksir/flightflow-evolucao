@@ -91,3 +91,21 @@ A terceira rodada estabelece uma gramática cartográfica explícita:
 A cartografia reduz peso de grid, leaders e metadata para preservar a rota como protagonista. A legenda passa a explicar separadamente preview e active do fechamento terminal.
 
 A V3 é visual. A mesma geometria terminal e o mesmo estado `preview/active` continuam sendo calculados pelo núcleo já protegido.
+
+
+## Pilot Shell V4
+
+A quarta rodada aproxima o shell real do layout visual aprovado:
+
+- identidade **FlightFlow ATS · EVOLUÇÃO** explícita no topo;
+- rail lateral organizado por Operação e Suporte;
+- Quadro Operacional com tabs contínuas, menos parecidas com botões;
+- marcos **DEP / TRF / TER** destacados na lista de eventos;
+- os mesmos marcos aparecem sobre o scrubber da timeline inferior;
+- o evento TER ativo recebe destaque âmbar também no estado operacional do cabeçalho.
+
+### Fronteira arquitetural
+
+`buildTimeline()` permanece congelado e inalterado.
+
+Os marcos V4 são aplicados por `src/ui/evolution-shell-v4.js` como uma camada visual pós-renderização. O módulo lê somente o DOM já produzido pela timeline e não chama `goTo()`, não altera `state.index`, não move aeronave e não participa da semântica `preview/active` do fechamento terminal.
