@@ -4257,3 +4257,315 @@ html[data-palette="velox"] .transport .play-btn {
   }
 }
 
+/* ==========================================================================
+   FlightFlow Evolução — Operational Command Bar V7
+   Cabeçalho como command bar técnica, preservando os controles e IDs existentes.
+   ========================================================================== */
+
+:root {
+  --evo-command-surface: #071722;
+  --evo-command-surface-2: #0a202d;
+  --evo-command-line: rgba(135,190,208,.15);
+  --evo-command-line-strong: rgba(135,190,208,.23);
+  --evo-command-text: #e8f5f8;
+  --evo-command-muted: #8eabb5;
+  --evo-command-accent: #43bfdc;
+}
+
+.topbar {
+  min-height: 64px;
+  padding: 7px 10px;
+  gap: 0;
+  border: 1px solid var(--evo-command-line-strong);
+  border-radius: 16px !important;
+  background:
+    linear-gradient(180deg,var(--evo-command-surface-2),var(--evo-command-surface)) !important;
+  color: var(--evo-command-text);
+  box-shadow:
+    0 10px 28px rgba(0,0,0,.20),
+    inset 0 1px rgba(255,255,255,.025) !important;
+}
+
+.topbar::before {
+  content: "";
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  top: 0;
+  height: 1px;
+  background: linear-gradient(90deg,transparent,rgba(67,191,220,.44),transparent);
+  pointer-events: none;
+}
+
+.topbar::after {
+  display: none !important;
+}
+
+.topbar .brand {
+  flex: 0 0 auto;
+  min-width: 224px;
+  padding: 0 12px 0 3px;
+  gap: 9px;
+  border-right: 1px solid var(--evo-command-line);
+}
+
+.topbar .brand-mark {
+  width: 38px;
+  height: 38px;
+  border-radius: 8px;
+  border-color: rgba(93,198,224,.22);
+  background: linear-gradient(145deg,#113247,#0a2534);
+  box-shadow: inset 0 1px rgba(255,255,255,.035);
+}
+
+.topbar .brand-title,
+.topbar .brand-product {
+  color: #f0fbfd;
+}
+
+.topbar .brand-subtitle {
+  margin-top: 3px;
+  color: #9ab5bf;
+  font-size: 10px;
+  line-height: 1.2;
+}
+
+.topbar .brand-credit {
+  margin-top: 2px;
+  color: #708e99;
+  font-size: 9px;
+  line-height: 1.15;
+  opacity: 1;
+}
+
+.topbar .evo-product-badge {
+  border-radius: 3px;
+}
+
+.topbar .file-actions {
+  position: relative;
+  flex: 1 1 430px;
+  min-width: 340px;
+  min-height: 44px;
+  padding: 5px 10px;
+  gap: 6px;
+  border: 0;
+  border-right: 1px solid var(--evo-command-line);
+  border-radius: 0;
+  background: transparent;
+}
+
+.topbar .file-actions .btn {
+  min-height: 32px;
+  height: 32px;
+  padding-inline: 10px;
+  border-radius: 4px;
+  box-shadow: none;
+}
+
+.topbar .file-actions .btn-secondary,
+.topbar .file-actions .btn-ghost {
+  border-color: rgba(138,197,216,.14);
+  background: rgba(255,255,255,.025);
+  color: #bad0d8;
+}
+
+.topbar .file-actions .btn-primary {
+  border-color: rgba(89,206,232,.30);
+  background: linear-gradient(180deg,#249fbc,#147e9a);
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(16,128,155,.18);
+}
+
+.topbar .file-actions .btn:hover:not(:disabled) {
+  border-color: rgba(67,191,220,.34);
+  background-color: rgba(67,191,220,.07);
+}
+
+.topbar .selected-file {
+  min-width: 110px;
+  padding-left: 4px;
+  color: var(--evo-command-muted);
+  font: 700 10px/1.25 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  letter-spacing: .015em;
+}
+
+.topbar .ops-live {
+  flex: 0 0 auto;
+  min-height: 34px;
+  margin: 0 9px;
+  padding: 5px 8px;
+  border: 1px solid rgba(73,196,159,.18);
+  border-radius: 4px;
+  background: rgba(32,151,118,.075);
+  box-shadow: none;
+}
+
+.topbar .ops-live-dot {
+  box-shadow: 0 0 0 3px rgba(69,201,160,.08);
+}
+
+.topbar .ops-live b {
+  color: #9de8ce;
+  font-size: 9px;
+  line-height: 1.1;
+  letter-spacing: .10em;
+}
+
+.topbar .ops-live small {
+  display: none;
+}
+
+.topbar .header-actions {
+  flex: 0 0 auto;
+  gap: 2px;
+  margin-left: 0;
+  padding: 5px 0 5px 9px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+
+.topbar .header-actions .icon-btn {
+  width: 32px;
+  height: 32px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  background: transparent;
+  color: #9fb9c2;
+  box-shadow: none;
+}
+
+.topbar .header-actions .icon-btn:hover:not(:disabled) {
+  border-color: rgba(67,191,220,.26);
+  background: rgba(67,191,220,.07);
+  color: #effcff;
+  box-shadow: none;
+}
+
+html[data-theme="light"] .topbar {
+  border-color: var(--evo-command-line-strong);
+  background:
+    linear-gradient(180deg,var(--evo-command-surface-2),var(--evo-command-surface)) !important;
+  color: var(--evo-command-text);
+  box-shadow:
+    0 10px 28px rgba(25,63,78,.18),
+    inset 0 1px rgba(255,255,255,.025) !important;
+}
+
+html[data-theme="light"] .topbar .brand {
+  border-right-color: var(--evo-command-line);
+}
+
+html[data-theme="light"] .topbar .brand-title,
+html[data-theme="light"] .topbar .brand-product {
+  color: #f0fbfd;
+}
+
+html[data-theme="light"] .topbar .brand-subtitle {
+  color: #9ab5bf;
+}
+
+html[data-theme="light"] .topbar .brand-credit,
+html[data-theme="light"] .topbar .selected-file {
+  color: var(--evo-command-muted);
+}
+
+html[data-theme="light"] .topbar .file-actions {
+  border-right-color: var(--evo-command-line);
+  background: transparent;
+}
+
+html[data-theme="light"] .topbar .file-actions .btn-secondary,
+html[data-theme="light"] .topbar .file-actions .btn-ghost,
+html[data-theme="light"] .topbar .header-actions .icon-btn {
+  border-color: rgba(138,197,216,.14);
+  background: rgba(255,255,255,.025);
+  color: #bad0d8;
+}
+
+html[data-theme="light"] .topbar .header-actions {
+  border-color: transparent;
+  background: transparent;
+}
+
+html[data-palette="velox"] {
+  --evo-command-accent: #49e7ad;
+}
+
+html[data-palette="velox"] .topbar::before {
+  background: linear-gradient(90deg,transparent,rgba(73,231,173,.44),transparent);
+}
+
+html[data-palette="velox"] .topbar .brand-mark {
+  border-color: rgba(73,231,173,.22);
+  background: linear-gradient(145deg,#12382c,#0a281f);
+}
+
+html[data-palette="velox"] .topbar .file-actions .btn-primary {
+  border-color: rgba(73,231,173,.30);
+  background: linear-gradient(180deg,#2ab98a,#16805f);
+}
+
+@media (max-width: 1080px) {
+  .topbar {
+    row-gap: 6px;
+  }
+
+  .topbar .brand {
+    border-right: 0;
+  }
+
+  .topbar .file-actions {
+    order: 3;
+    flex-basis: 100%;
+    width: 100%;
+    min-width: 0;
+    padding: 7px 0 0;
+    border-right: 0;
+    border-top: 1px solid var(--evo-command-line);
+  }
+}
+
+@media (max-width: 620px) {
+  .topbar {
+    padding: 8px 9px;
+  }
+
+  .topbar .brand {
+    min-width: 0;
+    padding-right: 7px;
+  }
+
+  .topbar .brand-subtitle,
+  .topbar .brand-credit {
+    display: none;
+  }
+
+  .topbar .header-actions {
+    padding-left: 4px;
+  }
+
+  .topbar .header-actions .icon-btn {
+    width: 30px;
+    height: 30px;
+  }
+
+  .topbar .file-actions {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .topbar .selected-file {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .topbar .file-actions .btn,
+  .topbar .header-actions .icon-btn,
+  .topbar .ops-live-dot {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+

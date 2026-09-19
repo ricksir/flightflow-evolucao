@@ -328,3 +328,23 @@ Diretrizes:
 
 A V6 não cria um segundo controle temporal. Toda ação continua encaminhada aos handlers já existentes.
 
+## 12. Operational Command Bar V7
+
+O Header passa a ser tratado como **Command Bar** persistente e escura.
+
+Diretrizes:
+
+- superfície externa: navy escuro constante;
+- raio externo: 16 px, preservando o contrato estrutural do shell;
+- quatro zonas visuais: identidade / fonte do plano / ATS / comandos;
+- separação por linhas de 1 px, evitando contêineres em forma de cápsula;
+- botões internos com raio de 4 px;
+- metadata de arquivo com 10 px e stack monoespaçada;
+- `ATS LIVE` com raio de 4 px e uso estritamente semântico;
+- ações globais sem fundo permanente, ganhando realce apenas em hover/focus;
+- tema claro não clareia o Header;
+- em até 1080 px a zona de arquivo quebra para a segunda linha;
+- em até 620 px metadata secundária da marca pode ser ocultada, mas todos os controles permanecem operáveis.
+
+A Command Bar não cria controles novos e não reimplementa nenhuma ação existente.
+
