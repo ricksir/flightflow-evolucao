@@ -4569,3 +4569,100 @@ html[data-palette="velox"] .topbar .file-actions .btn-primary {
   }
 }
 
+/* ==========================================================================
+   FlightFlow Evolução — Workspace Composition V8
+   Consolida a composição desktop: rail / mapa dominante / quadro operacional.
+   Camada exclusivamente estrutural/visual; não altera estado ou navegação.
+   ========================================================================== */
+
+:root {
+  --evo-frame-rail-width: 84px;
+  --evo-frame-panel-width: 380px;
+  --evo-frame-gap: 8px;
+  --evo-frame-radius: 16px;
+}
+
+@media (min-width: 901px) {
+  .app {
+    padding: 8px 8px 8px 0;
+    gap: var(--evo-frame-gap);
+    grid-template-columns: var(--evo-frame-rail-width) minmax(0,1fr);
+    grid-template-rows: auto minmax(0,1fr) auto;
+    grid-template-areas:
+      "rail topbar"
+      "rail content"
+      "rail transport";
+  }
+
+  .evo-rail {
+    min-height: calc(100vh - 16px);
+    margin-left: 8px;
+    padding-inline: 7px;
+    border-radius: 0 var(--evo-frame-radius) var(--evo-frame-radius) 0;
+  }
+
+  .content {
+    min-width: 0;
+    min-height: 0;
+    gap: var(--evo-frame-gap);
+    padding: 0;
+    align-items: stretch;
+    grid-template-columns: minmax(0,1fr) minmax(350px,var(--evo-frame-panel-width));
+  }
+
+  .workspace-card,
+  .inspector-card {
+    min-width: 0;
+    min-height: 0;
+    height: 100%;
+    border-radius: var(--evo-frame-radius);
+  }
+
+  .workspace-card {
+    width: 100%;
+  }
+
+  .inspector-card {
+    width: 100%;
+    max-width: var(--evo-frame-panel-width);
+    justify-self: end;
+  }
+
+  .scene-head {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+
+  .scene-wrap {
+    margin-left: 8px;
+    margin-right: 8px;
+  }
+
+  .scene-caption {
+    left: 12px;
+    right: 12px;
+  }
+}
+
+@media (min-width: 901px) and (max-width: 1180px) {
+  :root {
+    --evo-frame-rail-width: 82px;
+    --evo-frame-panel-width: 340px;
+  }
+
+  .evo-rail {
+    margin-left: 6px;
+  }
+
+  .app {
+    padding-right: 6px;
+    padding-bottom: 6px;
+  }
+}
+
+@media (min-width: 1500px) {
+  :root {
+    --evo-frame-panel-width: 390px;
+  }
+}
+
