@@ -23,10 +23,11 @@ test('Workspace Composition V8 fixa a gramática rail mapa quadro no desktop', (
   const source = CSS.slice(start);
 
   assert.ok(source.includes('--evo-frame-rail-width: 84px'));
+  assert.ok(source.includes('--evo-frame-rail-gutter: 8px'));
   assert.ok(source.includes('--evo-frame-panel-width: 380px'));
   assert.ok(source.includes('--evo-frame-gap: 8px'));
   assert.ok(source.includes('@media (min-width: 901px)'));
-  assert.ok(source.includes('grid-template-columns: var(--evo-frame-rail-width) minmax(0,1fr)'));
+  assert.ok(source.includes('grid-template-columns: calc(var(--evo-frame-rail-width) + var(--evo-frame-rail-gutter)) minmax(0,1fr)'));
   assert.ok(source.includes('grid-template-columns: minmax(0,1fr) minmax(350px,var(--evo-frame-panel-width))'));
   assert.ok(source.includes('max-width: var(--evo-frame-panel-width)'));
   assert.ok(source.includes('border-radius: var(--evo-frame-radius)'));
@@ -35,6 +36,7 @@ test('Workspace Composition V8 fixa a gramática rail mapa quadro no desktop', (
 test('Workspace Composition V8 reduz o quadro em desktop intermediário sem tocar no mobile', () => {
   const source = CSS.slice(CSS.indexOf('FlightFlow Evolução — Workspace Composition V8'));
   assert.ok(source.includes('@media (min-width: 901px) and (max-width: 1180px)'));
+  assert.ok(source.includes('--evo-frame-rail-gutter: 6px'));
   assert.ok(source.includes('--evo-frame-panel-width: 340px'));
   assert.equal(source.includes('@media (max-width: 900px)'), false);
 });
