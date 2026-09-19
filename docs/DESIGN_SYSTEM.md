@@ -206,7 +206,7 @@ Semântica espacial permanece:
 - histórico processado: vermelho sólido;
 - continuação publicada/declarada sem ETIM: azul técnico tracejado;
 - fechamento terminal previsto antes da Ordem TER: âmbar tracejado;
-- fechamento terminal ativo a partir da Ordem TER: âmbar sólido;
+- fechamento terminal derivado por Ordem TER (estado ativo): âmbar sólido;
 - ADES: marcador próprio, distinto de fixo histórico;
 - transferências: semântica própria já existente.
 
