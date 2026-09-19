@@ -291,3 +291,22 @@ A camada visual Evolução pode destacar eventos já reconhecidos pelo históric
 Os marcos aparecem na lista de eventos e no scrubber, mas são estritamente informativos. Eles não substituem `messageType`, não alteram o índice da timeline e não podem implementar navegação própria.
 
 O destaque TER no cabeçalho existe somente quando o item TER correspondente está ativo na timeline. A autoridade operacional continua sendo o estado já calculado pelo núcleo/Rota Processada.
+
+## 10. Operational Board V5
+
+O inspector da aba **Dados do plano** assume visualmente o papel de strip board principal do shell.
+
+Regras:
+
+- cabeçalho visual: **QUADRO OPERACIONAL**;
+- grade de duas colunas em desktop e uma coluna em telas estreitas;
+- células sem raio e sem elevação individual;
+- separação por linhas finas, em vez de cartões flutuantes;
+- label operacional com 10 px, reservado a metadata;
+- valor operacional entre 12,5 e 13 px;
+- números usam `font-variant-numeric: tabular-nums`;
+- campo alterado recebe barra âmbar própria, sem substituir o estado ativo nem reescrever dados;
+- botões de organização e ações inferiores são suporte visual, não protagonistas.
+
+Esta camada não muda o DOM semântico dos campos nem sua ordem de origem. O renderer continua sendo a fonte de verdade.
+
