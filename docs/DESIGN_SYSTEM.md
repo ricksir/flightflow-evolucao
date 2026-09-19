@@ -348,3 +348,21 @@ Diretrizes:
 
 A Command Bar não cria controles novos e não reimplementa nenhuma ação existente.
 
+## 12. Workspace Composition V8
+
+A composição principal deve transmitir uma **carta operacional viva**.
+
+No desktop:
+
+- rail: 84 px;
+- gap estrutural: 8 px;
+- quadro direito: 380 px;
+- em telas ≥1500 px, quadro direito: 390 px;
+- entre 901–1180 px, quadro direito: 340 px;
+- mapa: `minmax(0,1fr)`, ocupando todo o restante;
+- workspace e quadro operacional devem alinhar topo e base;
+- cartões estruturais usam raio de 16 px;
+- o mapa não deve perder espaço para margens decorativas excessivas.
+
+A V8 não cria nova navegação nem altera comportamento em telas ≤900 px.
+
