@@ -26,7 +26,7 @@ test('Temporal Deck V6 estabelece superfície escura e hierarquia temporal legí
 
   assert.ok(source.includes('--evo-temporal-surface: #071722'));
   assert.ok(source.includes('grid-template-columns: auto minmax(360px,1fr) auto'));
-  assert.ok(source.includes('border-radius: 8px'));
+  assert.ok(source.includes('border-radius: 16px'));
   assert.ok(source.includes('font: 850 9px/1'));
   assert.ok(source.includes('font: 900 9px/1'));
   assert.ok(source.includes('font-size: 11px'));
