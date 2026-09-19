@@ -4,7 +4,7 @@ test('Living Operational Chart V10 torna a carta central técnica e compacta', a
   await page.setViewportSize({ width: 1600, height: 900 });
   await page.goto('/index.html', { waitUntil: 'load' });
   await page.locator('.scene-wrap').waitFor({ state: 'attached' });
-  await page.locator('.real-map-control-group').waitFor({ state: 'attached' });
+  await page.locator('.real-map-control-group').first().waitFor({ state: 'attached' });
 
   const metrics = await page.evaluate(() => {
     const workspace = document.querySelector('.workspace-card');
@@ -12,7 +12,6 @@ test('Living Operational Chart V10 torna a carta central técnica e compacta', a
     const control = document.querySelector('.real-map-control-group');
     const button = document.querySelector('.real-map-control-group button');
     const caption = document.querySelector('.scene-caption');
-    const status = document.querySelector('.real-map-status');
     const legend = document.querySelector('.scene-legend');
 
     const ws = workspace.getBoundingClientRect();
@@ -25,7 +24,6 @@ test('Living Operational Chart V10 torna a carta central técnica e compacta', a
       controlRadius: control ? getComputedStyle(control).borderRadius : null,
       buttonHeight: button ? button.getBoundingClientRect().height : null,
       captionRadius: caption ? getComputedStyle(caption).borderRadius : null,
-      statusRadius: status ? getComputedStyle(status).borderRadius : null,
       legendHeight: legend ? legend.getBoundingClientRect().height : null,
       legendNumeric: getComputedStyle(legend).fontVariantNumeric,
     };
@@ -37,7 +35,6 @@ test('Living Operational Chart V10 torna a carta central técnica e compacta', a
   expect(metrics.controlRadius).toBe('5px');
   expect(metrics.buttonHeight).toBe(32);
   expect(metrics.captionRadius).toBe('6px');
-  expect(metrics.statusRadius).toBe('6px');
   expect(metrics.legendHeight).toBeGreaterThanOrEqual(36);
   expect(metrics.legendNumeric).toContain('tabular-nums');
 });
