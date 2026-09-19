@@ -5035,7 +5035,8 @@ html[data-palette="velox"] {
 /* V10 CI correction: preserve the intended chart surface against older theme selectors. */
 @media (min-width: 901px) {
   html[data-theme="light"] .workspace-card .scene-wrap {
-    background: var(--evo-chart-surface);
+    background-color: var(--evo-chart-surface) !important;
+    background-image: none !important;
   }
 }
 
