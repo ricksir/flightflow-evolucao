@@ -59,3 +59,19 @@ O piloto deve:
 5. funcionar em tema claro e escuro;
 6. respeitar foco de teclado e `prefers-reduced-motion`;
 7. preservar todos os gates automatizados do baseline.
+
+
+## Pilot Shell V2
+
+A segunda rodada refina a hierarquia do piloto sem criar uma segunda lógica de aplicação:
+
+- cabeçalho do voo tratado como faixa operacional;
+- estado do voo agrupado e identificado;
+- ferramentas do mapa compactadas em um dock técnico;
+- Quadro Atual aproximado de um strip board, com menos caixas;
+- alterações continuam sinalizadas por âmbar;
+- lista de eventos usa trilho cronológico mais direto;
+- transporte dá protagonismo ao scrubber e ao horário/evento;
+- claro, escuro e Dashboard moderno compartilham a mesma gramática visual.
+
+A V2 continua sem alterar motor temporal, parser, geometria ou navegação.

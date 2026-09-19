@@ -4663,13 +4663,13 @@ html[data-theme="dark"] .secure-storage-stat{background:rgba(255,255,255,.025)}
 <section class="workspace-card" id="workspaceCard">
 <div class="scene-head">
 <div class="flight-id-block">
-<div class="eyebrow">PLANO EM EXIBIÇÃO</div>
+<div class="eyebrow evo-flight-kicker">VOO EM ANÁLISE</div>
 <div class="flight-route">
 <strong id="callsignTitle">—</strong>
 <span class="route-airports"><span id="adepTitle">ADEP</span><span class="route-arrow">→</span><span id="adesTitle">ADES</span></span>
 </div>
 </div>
-<div class="scene-status">
+<div class="scene-status" aria-label="Estado operacional do voo"><span class="evo-status-kicker" aria-hidden="true">ESTADO OPERACIONAL</span>
 <span class="status-badge status-empty" id="statusBadge">SEM DADOS</span>
 <span class="stage-badge" id="stageBadge">AGUARDANDO ARQUIVO</span>
 <span class="frame-counter" id="frameCounter">0 / 0</span>
@@ -4685,16 +4685,17 @@ html[data-theme="dark"] .secure-storage-stat{background:rgba(255,255,255,.025)}
   <span>É necessária conexão com a internet para obter a cartografia.</span>
 </div>
 <div id="realMapControls" class="real-map-controls" aria-label="Controles do mapa">
-  <div class="real-map-control-group">
+  <span class="evo-map-tools-title" aria-hidden="true">MAPA</span>
+  <div class="real-map-control-group" data-evo-group="Enquadrar">
     <button type="button" id="realMapFitBtn" title="Enquadrar a rota">Rota</button>
     <button type="button" id="realMapBrazilBtn" title="Mostrar o Brasil">Brasil</button>
   </div>
-  <div class="real-map-control-group real-map-style-group">
+  <div class="real-map-control-group real-map-style-group" data-evo-group="Cartografia">
     <button type="button" id="realMapStreetBtn" class="active" title="Mapa com cidades, estados e rodovias">Mapa</button>
     <button type="button" id="realMapSatelliteBtn" title="Imagem de satélite com nomes">Satélite</button>
     <button type="button" id="realMapHybridBtn" title="Imagem de satélite com nomes de cidades e estados, sem chave">Híbrido</button>
   </div>
-  <div class="real-map-layer-switches">
+  <div class="real-map-layer-switches" data-evo-group="Camadas">
     <label title="Exibir ou ocultar aeródromos que não participam do histórico"><input id="realMapUnusedToggle" type="checkbox"/> Aeródromos</label>
     <label title="Exibir ou ocultar as áreas ACC, APP e TWR relacionadas ao histórico"><input id="realMapAreasToggle" type="checkbox" checked/> Áreas ATS</label>
     <div class="ff-fir-picker" id="realMapFirPicker">
@@ -5136,6 +5137,7 @@ html[data-theme="dark"] .secure-storage-stat{background:rgba(255,255,255,.025)}
 <button class="transport-btn" disabled="" id="nextBtn" title="Próximo passo (→)">▶</button>
 </div>
 <div class="scrubber-wrap">
+<span class="evo-transport-kicker" aria-hidden="true">LINHA DO TEMPO OPERACIONAL</span>
 <input aria-label="Linha do tempo" class="scrubber" disabled="" id="scrubber" max="0" min="0" step="1" type="range" value="0"/>
 <div class="scrubber-labels"><span id="currentTimeLabel">--:--:--</span><span id="eventLabel">Evento 0 de 0</span><span id="endTimeLabel">--:--:--</span></div>
 </div>
