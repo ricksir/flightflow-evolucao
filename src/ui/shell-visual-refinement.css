@@ -2887,3 +2887,476 @@ html[data-palette="velox"] .inspector-card {
     max-width: none;
   }
 }
+
+
+/* ==========================================================================
+   FlightFlow Evolução — Pilot Shell V2
+   Hierarquia operacional: voo > mapa > quadro > tempo.
+   Camada visual; não altera estado, navegação, parser ou geometria.
+   ========================================================================== */
+
+:root {
+  --evo-v2-divider: rgba(22,52,64,.11);
+  --evo-v2-soft: rgba(23,123,152,.055);
+  --evo-v2-panel: rgba(250,253,254,.94);
+  --evo-v2-row-height: 48px;
+}
+
+/* Cabeçalho do voo: menos "card", mais faixa operacional. */
+.scene-head {
+  min-height: 72px;
+  display: grid;
+  grid-template-columns: minmax(230px,1fr) auto;
+  align-items: center;
+  gap: 14px;
+  padding: 9px 14px 10px;
+}
+
+.flight-id-block {
+  display: grid;
+  gap: 4px;
+}
+
+.evo-flight-kicker {
+  font-size: .52rem;
+  font-weight: 850;
+  color: #77909a;
+}
+
+.flight-route {
+  min-height: 31px;
+  align-items: baseline;
+  gap: 14px;
+}
+
+.flight-route strong {
+  font-size: clamp(1.22rem,1.7vw,1.58rem);
+  font-weight: 900;
+  letter-spacing: .035em;
+}
+
+.route-airports {
+  padding-left: 13px;
+  border-left: 1px solid rgba(22,52,64,.13);
+  font-size: .78rem;
+  font-weight: 820;
+}
+
+.scene-status {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3,max-content);
+  align-items: center;
+  gap: 4px;
+  padding: 17px 5px 5px;
+  border-radius: 10px;
+  box-shadow: none;
+}
+
+.evo-status-kicker {
+  position: absolute;
+  top: 4px;
+  left: 8px;
+  color: #7a929c;
+  font: 850 .44rem/1 Inter,system-ui,sans-serif;
+  letter-spacing: .09em;
+}
+
+.scene-protocol-toggle {
+  grid-column: 1 / -1;
+  justify-self: end;
+  margin-top: 1px;
+  min-height: 24px;
+  font-size: .54rem;
+}
+
+/* Mapa: ferramentas viram dock técnico discreto. */
+.real-map-controls {
+  display: grid;
+  grid-template-columns: auto auto auto auto;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 6px;
+  border: 1px solid rgba(22,52,64,.14);
+  border-radius: 10px;
+  background: rgba(247,251,252,.94);
+  box-shadow: 0 8px 22px rgba(24,64,82,.10);
+  backdrop-filter: blur(10px);
+}
+
+.evo-map-tools-title {
+  padding: 0 6px 0 2px;
+  color: #607b86;
+  font: 900 .48rem/1 Inter,system-ui,sans-serif;
+  letter-spacing: .09em;
+}
+
+.real-map-control-group {
+  gap: 3px;
+  padding-left: 5px;
+  border-left: 1px solid rgba(22,52,64,.10);
+}
+
+.real-map-control-group button,
+.ff-fir-button {
+  min-height: 28px;
+  padding: 4px 7px;
+  border-radius: 7px;
+  box-shadow: none;
+}
+
+.real-map-layer-switches {
+  gap: 5px;
+  padding-left: 5px;
+  border-left: 1px solid rgba(22,52,64,.10);
+}
+
+.real-map-layer-switches > label {
+  min-height: 28px;
+  padding: 3px 6px;
+  border-radius: 7px;
+  background: rgba(255,255,255,.50);
+}
+
+/* Quadro operacional: aparência de strip board, não mosaico de cards. */
+.inspector-card {
+  overflow: hidden;
+}
+
+.inspector-tabs {
+  min-height: 43px;
+  align-items: end;
+}
+
+.tab {
+  font-weight: 800;
+}
+
+.tab-panel[data-panel="data"] {
+  padding: 11px 12px 12px;
+}
+
+.tab-panel[data-panel="data"] .panel-heading {
+  min-height: 44px;
+  margin-bottom: 7px;
+  padding-bottom: 7px;
+  border-bottom: 1px solid var(--evo-v2-divider);
+}
+
+.tab-panel[data-panel="data"] .panel-heading::after {
+  display: none;
+}
+
+.tab-panel[data-panel="data"] .panel-heading .eyebrow {
+  font-size: .49rem;
+  letter-spacing: .09em;
+}
+
+#operationTitle {
+  margin-top: 2px;
+  font-family: "Arial Narrow","Aptos Narrow",Inter,system-ui,sans-serif;
+  font-size: 1rem;
+  font-weight: 880;
+  letter-spacing: .015em;
+}
+
+.fields-grid {
+  gap: 0;
+  border-top: 1px solid rgba(22,52,64,.07);
+}
+
+.fields-grid .field-card {
+  position: relative;
+  min-height: var(--evo-v2-row-height);
+  margin: 0;
+  padding: 7px 8px 7px 12px;
+  border: 0;
+  border-bottom: 1px solid rgba(22,52,64,.075);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.fields-grid .field-card::before {
+  content: "";
+  position: absolute;
+  left: 2px;
+  top: 10px;
+  bottom: 10px;
+  width: 2px;
+  border-radius: 2px;
+  background: rgba(23,123,152,.20);
+}
+
+.fields-grid .field-card:hover {
+  background: rgba(23,123,152,.035);
+  border-color: rgba(22,52,64,.075);
+}
+
+.fields-grid .field-card.changed {
+  background: rgba(213,138,0,.045);
+  box-shadow: none;
+}
+
+.fields-grid .field-card.changed::before {
+  width: 3px;
+  background: var(--evo-terminal);
+}
+
+.fields-grid .field-label {
+  margin-bottom: 3px;
+  min-height: auto;
+  color: #788f98;
+  font-size: .50rem;
+  font-weight: 820;
+  letter-spacing: .065em;
+}
+
+.fields-grid .field-value {
+  color: var(--evo-ink);
+  font-size: .72rem;
+  font-weight: 780;
+  line-height: 1.3;
+}
+
+.message-actions {
+  margin-top: 9px;
+  padding-top: 9px;
+  border-top: 1px solid var(--evo-v2-divider);
+}
+
+/* Eventos: trilho com menos caixas e leitura cronológica mais direta. */
+.timeline-list::before {
+  left: 69px;
+}
+
+.timeline-item {
+  min-height: 48px;
+  margin-bottom: 0;
+  padding: 8px 8px;
+  border: 0;
+  border-bottom: 1px solid rgba(22,52,64,.065);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.timeline-item::before {
+  left: 65px;
+  top: 17px;
+}
+
+.timeline-item.active {
+  background: rgba(23,123,152,.05);
+  box-shadow: inset 3px 0 rgba(23,123,152,.42);
+}
+
+.timeline-item.active::before {
+  box-shadow: 0 0 0 3px rgba(53,215,255,.10);
+}
+
+/* Transporte: scrubber é o protagonista, controles ficam subordinados. */
+.transport {
+  grid-template-columns: auto minmax(300px,1fr) auto;
+  gap: 14px;
+  padding: 6px 12px;
+}
+
+.transport-left {
+  padding-right: 11px;
+  border-right: 1px solid rgba(164,211,226,.10);
+}
+
+.transport-right {
+  padding-left: 11px;
+  border-left: 1px solid rgba(164,211,226,.10);
+}
+
+.scrubber-wrap {
+  position: relative;
+  padding-top: 12px;
+}
+
+.evo-transport-kicker {
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: #7fa6b3;
+  font: 850 .43rem/1 Inter,system-ui,sans-serif;
+  letter-spacing: .085em;
+}
+
+.scrubber {
+  height: 5px;
+}
+
+.scrubber-labels {
+  margin-top: 3px;
+}
+
+#currentTimeLabel {
+  color: #f0f8fa;
+  font-weight: 860;
+}
+
+#eventLabel {
+  color: #a6c3cd;
+  font-weight: 760;
+}
+
+/* Tema escuro e Dashboard moderno mantêm a mesma gramática. */
+html[data-theme="dark"] .route-airports {
+  border-left-color: rgba(163,211,226,.13);
+}
+
+html[data-theme="dark"] .scene-status {
+  border-color: rgba(151,205,222,.10);
+}
+
+html[data-theme="dark"] .evo-status-kicker,
+html[data-theme="dark"] .evo-flight-kicker,
+html[data-theme="dark"] .fields-grid .field-label {
+  color: #8fb0bc;
+}
+
+html[data-theme="dark"] .real-map-controls {
+  border-color: rgba(139,196,215,.12);
+  background: rgba(8,36,49,.92);
+}
+
+html[data-theme="dark"] .evo-map-tools-title {
+  color: #93b6c1;
+}
+
+html[data-theme="dark"] .real-map-control-group,
+html[data-theme="dark"] .real-map-layer-switches {
+  border-left-color: rgba(145,199,216,.10);
+}
+
+html[data-theme="dark"] .real-map-layer-switches > label {
+  background: rgba(255,255,255,.025);
+}
+
+html[data-theme="dark"] .fields-grid,
+html[data-theme="dark"] .fields-grid .field-card,
+html[data-theme="dark"] .timeline-item,
+html[data-theme="dark"] .message-actions,
+html[data-theme="dark"] .tab-panel[data-panel="data"] .panel-heading {
+  border-color: rgba(137,192,210,.08);
+}
+
+html[data-theme="dark"] .fields-grid .field-card:hover,
+html[data-theme="dark"] .timeline-item.active {
+  background: rgba(53,215,255,.035);
+}
+
+html[data-palette="velox"] .fields-grid .field-card::before {
+  background: rgba(73,231,173,.28);
+}
+
+html[data-palette="velox"] .timeline-item.active {
+  background: rgba(73,231,173,.045);
+  box-shadow: inset 3px 0 rgba(73,231,173,.42);
+}
+
+/* Compactação sem sacrificar leitura. */
+@media (max-width: 1260px) {
+  .scene-head {
+    grid-template-columns: minmax(210px,1fr) auto;
+  }
+
+  .scene-status {
+    grid-template-columns: repeat(2,max-content);
+  }
+
+  .frame-counter {
+    grid-column: 1 / 2;
+  }
+
+  .scene-protocol-toggle {
+    grid-column: 2 / 3;
+    align-self: center;
+    margin-top: 0;
+  }
+
+  .real-map-controls {
+    grid-template-columns: auto auto auto;
+  }
+
+  .real-map-layer-switches {
+    grid-column: 1 / -1;
+    padding: 4px 0 0;
+    border-left: 0;
+    border-top: 1px solid rgba(22,52,64,.08);
+  }
+}
+
+@media (max-width: 900px) {
+  .scene-head {
+    grid-template-columns: 1fr;
+  }
+
+  .scene-status {
+    width: 100%;
+    margin-left: 0;
+    grid-template-columns: repeat(3,max-content);
+    justify-content: start;
+  }
+
+  .scene-protocol-toggle {
+    grid-column: 1 / -1;
+    justify-self: start;
+  }
+
+  .real-map-controls {
+    grid-template-columns: 1fr;
+    align-items: stretch;
+  }
+
+  .evo-map-tools-title {
+    display: none;
+  }
+
+  .real-map-control-group,
+  .real-map-layer-switches {
+    padding: 4px 0 0;
+    border-left: 0;
+    border-top: 1px solid rgba(22,52,64,.08);
+  }
+
+  .transport {
+    grid-template-columns: 1fr;
+  }
+
+  .transport-left,
+  .transport-right {
+    padding: 0;
+    border: 0;
+  }
+}
+
+@media (max-width: 620px) {
+  .flight-route {
+    gap: 8px;
+  }
+
+  .route-airports {
+    padding-left: 8px;
+  }
+
+  .scene-status {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .stage-badge {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .real-map-controls,
+  .fields-grid .field-card,
+  .timeline-item {
+    transition: none !important;
+  }
+}
