@@ -23,7 +23,7 @@ test('Workspace Composition V8 fixa a gramática rail mapa quadro no desktop', (
   const source = CSS.slice(start);
 
   assert.ok(source.includes('--evo-frame-rail-width: 84px'));
-  assert.ok(source.includes('--evo-frame-rail-inset: 8px'));
+  assert.ok(source.includes('--evo-frame-rail-gutter: 8px'));
   assert.ok(source.includes('--evo-frame-rail-gutter: 8px'));
   assert.ok(source.includes('--evo-frame-panel-width: 380px'));
   assert.ok(source.includes('--evo-frame-gap: 8px'));
