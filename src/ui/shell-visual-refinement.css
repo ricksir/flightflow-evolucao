@@ -4664,3 +4664,216 @@ html[data-palette="velox"] .topbar .file-actions .btn-primary {
   }
 }
 
+/* ==========================================================================
+   FlightFlow Evolução — Mission Rail V9
+   Rail lateral como navegação de missão: técnico, compacto e persistente.
+   ========================================================================== */
+
+:root {
+  --evo-mission-rail-surface: #061722;
+  --evo-mission-rail-surface-2: #082432;
+  --evo-mission-rail-line: rgba(139,201,219,.13);
+  --evo-mission-rail-line-strong: rgba(139,201,219,.22);
+  --evo-mission-rail-text: #dceef3;
+  --evo-mission-rail-muted: #7f9da8;
+  --evo-mission-rail-accent: #43bfdc;
+}
+
+@media (min-width: 901px) {
+  .evo-rail {
+    position: sticky;
+    isolation: isolate;
+    gap: 12px;
+    overflow: hidden;
+    border-color: var(--evo-mission-rail-line-strong);
+    background:
+      linear-gradient(180deg,rgba(255,255,255,.018),transparent 18%),
+      linear-gradient(180deg,var(--evo-mission-rail-surface-2),var(--evo-mission-rail-surface));
+    box-shadow:
+      8px 0 24px rgba(4,24,34,.12),
+      inset -1px 0 rgba(255,255,255,.018);
+  }
+
+  .evo-rail::after {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    top: 12px;
+    right: 0;
+    bottom: 12px;
+    width: 1px;
+    background: linear-gradient(180deg,transparent,var(--evo-mission-rail-line-strong),transparent);
+    pointer-events: none;
+  }
+
+  .evo-rail-brand {
+    gap: 4px;
+    padding: 2px 0 10px;
+    border-bottom-color: var(--evo-mission-rail-line);
+  }
+
+  .evo-rail-mark {
+    width: 36px;
+    height: 36px;
+    border-radius: 7px;
+    background: linear-gradient(145deg,#1888a8,#0c607a);
+    font-size: .95rem;
+    box-shadow:
+      inset 0 1px rgba(255,255,255,.12),
+      0 5px 14px rgba(0,0,0,.15);
+  }
+
+  .evo-rail-name {
+    color: #edf9fc;
+    font-size: .69rem;
+  }
+
+  .evo-rail-edition {
+    color: #9ab6c0;
+    font-size: .47rem;
+  }
+
+  .evo-rail-phase {
+    color: #5f8795;
+    font-size: .39rem;
+    letter-spacing: .085em;
+    white-space: nowrap;
+  }
+
+  .evo-rail-nav {
+    position: relative;
+    gap: 4px;
+  }
+
+  .evo-rail-section {
+    margin: 7px 0 2px;
+    padding: 0 2px 5px;
+    border-bottom-color: rgba(139,201,219,.07);
+    color: #648794;
+    font-size: .40rem;
+    letter-spacing: .10em;
+  }
+
+  .evo-rail-section-secondary {
+    margin-top: 11px;
+  }
+
+  .evo-rail-item {
+    position: relative;
+    min-height: 52px;
+    padding: 6px 3px;
+    gap: 4px;
+    border-radius: 6px;
+    color: var(--evo-mission-rail-muted);
+    font-size: .55rem;
+    font-weight: 760;
+    letter-spacing: .01em;
+    box-shadow: none;
+  }
+
+  .evo-rail-item::before {
+    content: "";
+    position: absolute;
+    left: -1px;
+    top: 9px;
+    bottom: 9px;
+    width: 2px;
+    border-radius: 0 2px 2px 0;
+    background: transparent;
+  }
+
+  .evo-rail-icon {
+    display: grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    border: 1px solid rgba(139,201,219,.10);
+    border-radius: 5px;
+    background: rgba(255,255,255,.015);
+    color: #8eacb7;
+    font-size: .95rem;
+    line-height: 1;
+  }
+
+  .evo-rail-item:hover,
+  .evo-rail-item:focus-visible {
+    border-color: rgba(67,191,220,.16);
+    background: rgba(67,191,220,.045);
+    color: #eefbfe;
+    outline: none;
+  }
+
+  .evo-rail-item:hover .evo-rail-icon,
+  .evo-rail-item:focus-visible .evo-rail-icon {
+    border-color: rgba(67,191,220,.24);
+    color: #c6edf5;
+  }
+
+  .evo-rail-item:focus-visible {
+    box-shadow: 0 0 0 2px rgba(67,191,220,.16);
+  }
+
+  .evo-rail-item.active {
+    border-color: rgba(67,191,220,.20);
+    background: linear-gradient(90deg,rgba(67,191,220,.10),rgba(67,191,220,.035));
+    color: var(--evo-mission-rail-text);
+    box-shadow: none;
+  }
+
+  .evo-rail-item.active::before {
+    background: var(--evo-mission-rail-accent);
+    box-shadow: 0 0 10px rgba(67,191,220,.28);
+  }
+
+  .evo-rail-item.active .evo-rail-icon {
+    border-color: rgba(67,191,220,.28);
+    background: rgba(67,191,220,.08);
+    color: #e4faff;
+  }
+
+  .evo-rail-foot {
+    padding: 9px 2px 1px;
+    border-top-color: var(--evo-mission-rail-line);
+  }
+
+  .evo-rail-version {
+    color: #668995;
+    font-size: .43rem;
+    letter-spacing: .085em;
+  }
+
+  html[data-theme="light"] .evo-rail {
+    border-color: var(--evo-mission-rail-line-strong);
+    background:
+      linear-gradient(180deg,rgba(255,255,255,.018),transparent 18%),
+      linear-gradient(180deg,var(--evo-mission-rail-surface-2),var(--evo-mission-rail-surface));
+    color: var(--evo-mission-rail-text);
+  }
+
+  html[data-palette="velox"] {
+    --evo-mission-rail-accent: #49e7ad;
+  }
+
+  html[data-palette="velox"] .evo-rail-item.active::before {
+    box-shadow: 0 0 10px rgba(73,231,173,.24);
+  }
+}
+
+@media (min-width: 901px) and (max-width: 1120px) {
+  .evo-rail-item {
+    min-height: 48px;
+  }
+
+  .evo-rail-icon {
+    width: 27px;
+    height: 27px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .evo-rail-item,
+  .evo-rail-icon {
+    transition: none !important;
+  }
+}
+

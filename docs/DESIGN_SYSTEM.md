@@ -366,3 +366,17 @@ No desktop:
 
 A V8 não cria nova navegação nem altera comportamento em telas ≤900 px.
 
+## 13. Mission Rail V9
+
+O rail é a navegação persistente da missão.
+
+- superfície sempre escura;
+- ícones em células de 28 px;
+- item: mínimo 52 px no desktop amplo;
+- raio interno: 6 px;
+- active-state: linha de 2 px + acento ciano;
+- labels: aproximadamente 9 px, sem competir com o conteúdo operacional;
+- seções OPERAÇÃO/SUPORTE funcionam como divisores discretos;
+- foco de teclado deve ser visível;
+- a V9 preserva os links de âncora já existentes e não cria lógica de navegação paralela.
+

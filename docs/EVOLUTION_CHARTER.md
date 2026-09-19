@@ -189,3 +189,18 @@ Regras:
 
 A V8 é CSS/documentação/testes. Não altera HTML, parser, `goTo()`, `state.index`, timeline, scrubber, autoplay, teclado, geometria, `terminalClosureState()`, `buildTimeline()` ou a camada visual DEP/TRF/TER.
 
+## Mission Rail V9
+
+A nona rodada transforma a sidebar em **Mission Rail**, mantendo exatamente as âncoras de navegação existentes.
+
+- identidade do rail passa a indicar `MISSION RAIL V9`;
+- a largura definida pela Workspace V8 é preservada;
+- itens assumem geometria técnica de 6 px;
+- cada ícone passa a ocupar uma célula operacional de 28 px;
+- o item ativo usa indicador linear de missão, sem cápsula dominante;
+- hover e foco de teclado permanecem explícitos;
+- a sidebar continua escura mesmo quando o tema geral está claro;
+- a paleta Velox altera somente o acento.
+
+A V9 não cria JavaScript, não recalcula item ativo e não altera destinos, listeners, estado, mapa, timeline ou geometria.
+
