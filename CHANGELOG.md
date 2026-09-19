@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+- concluída a rodada visual principal do **FlightFlow Evolução V1–V11**, culminando na **Flight Situation Strip V11**;
+- consolidados **Operational Board V5**, **Temporal Deck V6**, **Operational Command Bar V7**, **Workspace Composition V8**, **Mission Rail V9**, **Living Operational Chart V10** e **Flight Situation Strip V11** sem alterar os contratos temporais/espaciais protegidos;
+- V11 certificada no SHA funcional `a27ffee33577d88536a3828f9f3cca97b47fc898`, com workflow pós-merge **#59**, **675/675 Node + 79/79 Playwright** e todos os contadores críticos em zero;
+- V10 estabilizada pelo hotfix PR #14 após merge externo prematuro do PR #13; workflow pós-merge **#57** encerrou com **672/672 Node + 77/77 Playwright**;
+- iniciada a rodada de fechamento documental da V11, separando explicitamente **certificação automatizada concluída** de **aceitação manual pendente**;
+- README, Roadmap, estado técnico, Release Readiness e roteiro de aceitação manual alinhados ao repositório `ricksir/flightflow-evolucao`;
+
 - reforçada a aceitação visual do **Dashboard moderno**, tornando o preset de referência perceptivelmente distinto no shell, workspace, inspector, tabs, timeline e transportes, sem substituir cores ATS com significado operacional;
 - refinada novamente a **Rota Processada** para ampliar a dominância do mapa, compactar a sidebar e manter a faixa explicativa fisicamente fora do palco cartográfico;
 - formalizada a semântica do trecho terminal `UMGUL → SBCT`: `preview` antes da Ordem TER e `active` no TER, com endpoint no ADES e ausência explícita de ETIM, CFL e STAR;
