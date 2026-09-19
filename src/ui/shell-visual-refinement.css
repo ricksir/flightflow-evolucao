@@ -5274,7 +5274,7 @@ html[data-palette="velox"] {
     --evo-frame-rail-width: 80px;
     --evo-frame-rail-gutter: 4px;
     --evo-frame-gap: 4px;
-    --evo-frame-radius: 12px;
+    --evo-frame-radius: 16px;
   }
 
   .app {
@@ -5334,7 +5334,7 @@ html[data-palette="velox"] {
   }
 
   .scene-head {
-    min-height: 52px;
+    min-height: 58px;
     padding: 6px 10px;
   }
 
