@@ -1,98 +1,156 @@
-# Aceitação Manual — `main` / FlightFlow ATS 0.2.1-dev
+# Aceitação Manual — FlightFlow Evolução V11 / main
 
-Este roteiro valida, em navegador real, as mudanças que estão no `main` e ainda não fazem parte da release estável `v0.2.0`.
+Este roteiro valida em navegador real a linha visual **V1–V11** e os contratos operacionais preservados no `main`.
 
-## 1. Versão correta
+> **Status atual:** automação certificada. Aceitação humana ainda **pendente**.
+>
+> Último SHA funcional V11 certificado: `a27ffee33577d88536a3828f9f3cca97b47fc898`.
+>
+> Pós-merge workflow #59: **675/675 Node + 79/79 Playwright**, sem contadores críticos.
+
+## 1. Preparação
 
 Antes do teste:
 
-- confirme que o código foi baixado da branch **`main`**;
-- não use o ZIP da release/tag `v0.2.0` para avaliar as mudanças recentes;
-- execute preferencialmente com `npm start`;
-- abra `http://127.0.0.1:4173`;
-- se já havia aberto uma cópia anterior, use **Ctrl+F5** para eliminar cache visual.
+- [ ] usar a branch **main** de `ricksir/flightflow-evolucao`;
+- [ ] não usar o ZIP/tag `v0.2.0` para avaliar a V11;
+- [ ] executar preferencialmente com `npm start`;
+- [ ] abrir `http://127.0.0.1:4173`;
+- [ ] usar **Ctrl+F5** se houver risco de cache;
+- [ ] registrar navegador, resolução e histórico usado.
 
-A versão de desenvolvimento esperada é **0.2.1-dev**.
+A linha de desenvolvimento continua identificada como **0.2.1-dev** até decisão de release.
 
-## 2. Identidade e aparência
+## 2. Matriz visual obrigatória
 
-- [ ] O título/cabeçalho identifica o produto como **FlightFlow ATS**.
-- [ ] Não aparece a identificação legada **`FlightFlow ATS - TIOP Cindacta1`**.
-- [ ] Em **Configurações → Aparência** existem as opções claro, escuro e **Dashboard moderno**.
-- [ ] Ao escolher **Dashboard moderno**, a alteração é visualmente perceptível no shell, topbar, workspace, inspector, tabs, timeline e transporte.
-- [ ] Fechar/recarregar a página preserva a aparência escolhida.
-- [ ] O mapa continua sendo a área visual dominante.
+Executar a validação nas seguintes larguras:
 
-## 3. Rota Processada
+### 1600×900
 
-Com um histórico representativo carregado:
+- [ ] Mission Rail visível, escuro e compacto;
+- [ ] Command Bar escura e legível;
+- [ ] mapa claramente dominante;
+- [ ] Quadro Operacional alinhado ao mapa;
+- [ ] Flight Situation Strip em uma faixa linear acima da carta;
+- [ ] Temporal Deck escuro e legível;
+- [ ] caption/status da carta não encobrem informação essencial.
 
-- [ ] Abrir **Rota Processada** não cobre a rota com a faixa explicativa.
-- [ ] A faixa explicativa aparece fora da área cartográfica.
-- [ ] A sidebar é compacta e não domina a janela.
-- [ ] O mapa ocupa a maior parte da largura disponível.
-- [ ] A legenda permanece recolhível.
-- [ ] O Modo foco reduz ruído visual sem ocultar o ponto atual/origem/destino/transferências relevantes.
-- [ ] Mouse e teclado continuam selecionando pontos sem alterar a ordem da rota.
+### 1100×820
 
-## 4. TAM3774 — histórico protegido
+- [ ] Quadro Operacional reduz para a largura intermediária esperada;
+- [ ] mapa permanece maior que o quadro;
+- [ ] Flight Situation Strip quebra o bloco de estado para segunda linha sem ocultar informação;
+- [ ] controles continuam operáveis e sem sobreposição.
 
-Para o histórico TAM3774, preservar a sequência processada:
+### Abaixo de 900 px
+
+- [ ] layout passa para fluxo vertical;
+- [ ] Mission Rail desktop não compromete a navegação;
+- [ ] mapa e inspector ocupam a largura disponível;
+- [ ] timeline e controles permanecem acessíveis.
+
+## 3. Temas e aparência
+
+Validar em **claro**, **escuro** e **Dashboard moderno/Velox**:
+
+- [ ] a estrutura permanece a mesma;
+- [ ] tema claro mantém a superfície cartográfica clara;
+- [ ] Mission Rail, Command Bar e Temporal Deck mantêm contraste;
+- [ ] Velox altera chrome/acento sem substituir semântica ATS;
+- [ ] foco de teclado permanece visível;
+- [ ] não existe texto ilegível por contraste ou grade de cores.
+
+## 4. Fluxo operacional básico
+
+Com histórico representativo:
+
+- [ ] carregar o arquivo sem erro fatal;
+- [ ] DEP permanece a referência temporal;
+- [ ] Próximo avança exatamente um estado esperado;
+- [ ] Anterior restaura o estado anterior;
+- [ ] clicar na timeline converge para o mesmo estado;
+- [ ] scrubber converge para o mesmo estado;
+- [ ] setas/teclado convergem para o mesmo estado;
+- [ ] autoplay percorre a mesma sequência;
+- [ ] a aeronave aparece sobre os checkpoints correspondentes;
+- [ ] trocar de histórico limpa rota/eventos derivados da sessão anterior.
+
+## 5. Sequência crítica protegida
+
+Confirmar:
+
+- [ ] `PADIL → IRISO → LIBEC → EGDOD → IBGAM → PMS → ILVES → MASVA`;
+- [ ] `ILVES 01:34` antes de `MASVA 01:36`;
+- [ ] nenhum fixo é pulado;
+- [ ] retrocesso percorre a sequência inversa;
+- [ ] timeline, scrubber, teclado e autoplay permanecem equivalentes.
+
+## 6. TAM3774
+
+Rota protegida:
 
 `SBBR → UMSUB → KUKOL → SIRUL → VUDOT → EDMIN → 1853S04832W → UDIGI → MEVIK → ASTOB → VUPOG → UPONA → 2127S04856W → ISISA → ENPEG → PALCA → ANSOK → IMTBI`
 
-A continuação espacial publicada, sem ETIM histórico, deve permanecer:
+Continuação publicada sem ETIM:
 
 `VULRU → UBNID → GIKLU → USVIG → UMGUL`
 
+Fechamento terminal:
+
+`UMGUL → SBCT`
+
 Validar:
 
-- [ ] nenhum dos 18 pontos processados é removido, pulado ou reordenado;
-- [ ] a aeronave passa pelos checkpoints esperados;
-- [ ] DEP permanece a referência temporal;
-- [ ] Próximo, Anterior, timeline, scrubber, teclado e autoplay convergem para o mesmo estado espacial.
+- [ ] antes de TER, o fechamento terminal aparece apenas como preview quando aplicável;
+- [ ] antes de TER, a aeronave não é deslocada prematuramente para SBCT;
+- [ ] no TER, o fechamento pode ficar ativo e terminar no ADES;
+- [ ] não aparece ETIM, CFL, STAR, fixo ou horário fabricado;
+- [ ] retroceder do TER restaura exatamente o estado anterior;
+- [ ] avançar novamente ao TER reproduz a mesma geometria;
+- [ ] a linha final até o destino permanece visível conforme a semântica ativa.
 
-## 5. Trecho terminal UMGUL → SBCT
+## 7. Ferramentas e painéis
 
-Antes da **Ordem TER**:
+- [ ] Rota Processada abre sem cobrir indevidamente a rota;
+- [ ] legenda da Rota Processada permanece utilizável;
+- [ ] STRIP abre, atualiza, minimiza e restaura;
+- [ ] FPV abre, atualiza, minimiza e restaura;
+- [ ] Quadro Operacional mostra dados sem truncamento crítico;
+- [ ] controles de mapa continuam funcionais;
+- [ ] Configurações e aparência continuam abrindo normalmente.
 
-- [ ] o trecho `UMGUL → SBCT` pode aparecer como referência espacial **tracejada/preview**;
-- [ ] a aeronave **não** é antecipada até SBCT;
-- [ ] nenhum ETIM, CFL, STAR ou fixo intermediário é inventado;
-- [ ] o endpoint visual coincide com o marcador do ADES SBCT.
+## 8. Critério de aprovação
 
-No evento **Ordem TER**:
+A aceitação manual só pode ser marcada como concluída quando:
 
-- [ ] o mesmo trecho muda semanticamente para fechamento **active**;
-- [ ] a aeronave chega ao ADES SBCT;
-- [ ] continua sem ETIM/CFL/STAR/fixos intermediários fabricados;
-- [ ] há exatamente um segmento terminal;
-- [ ] não existe pisca/frame intermediário em que a linha desapareça ou duplique.
+- [ ] todas as verificações críticas acima forem executadas;
+- [ ] não existir regressão crítica conhecida;
+- [ ] qualquer divergência encontrada tiver evidência e decisão registrada;
+- [ ] o SHA efetivamente testado estiver identificado.
 
-Ao usar **Anterior** a partir do TER:
+**Resultado da aceitação:** [ ] APROVADO  [ ] REPROVADO  [ ] APROVADO COM RESSALVAS
 
-- [ ] a aeronave retorna ao estado espacial pré-TER;
-- [ ] o fechamento volta ao estado de preview;
-- [ ] avançar novamente ao TER reproduz exatamente a mesma geometria.
+SHA testado: ______________________________
 
-## 6. Regressões críticas adicionais
+Navegador/versão: _________________________
 
-- [ ] `PADIL → IRISO → LIBEC → EGDOD → IBGAM → PMS → ILVES → MASVA` mantém a ordem.
-- [ ] `ILVES 01:34` permanece antes de `MASVA 01:36`.
-- [ ] Retrocesso percorre os mesmos fixos em ordem inversa.
-- [ ] Trocar de histórico limpa rota/eventos derivados da sessão anterior.
-- [ ] STRIP e FPV continuam abrindo, minimizando/restaurando e acompanhando Próximo/Anterior.
+Resoluções verificadas: ___________________
 
-## 7. Como registrar um problema
+Histórico(s) usado(s): ____________________
 
-Ao encontrar qualquer divergência, registrar:
+Observações: ______________________________
+
+## 9. Como registrar um problema
+
+Registrar:
 
 1. histórico/arquivo usado;
 2. evento atual e anterior;
-3. ação que provocou o problema — Próximo, Anterior, timeline, scrubber, teclado ou autoplay;
+3. ação que provocou o problema;
 4. screenshot da tela inteira;
-5. se possível, vídeo curto mostrando a transição;
-6. se o problema ocorre em claro, escuro, Dashboard moderno ou em todos;
-7. navegador e resolução da tela.
+5. vídeo curto, se possível;
+6. tema ativo;
+7. navegador e resolução;
+8. comportamento esperado e observado.
 
 Não corrigir um problema observado alterando o baseline temporal/espacial sem primeiro reproduzi-lo e criar um contrato específico.
