@@ -168,3 +168,24 @@ A V7 é CSS/documentação/testes. Não altera HTML, IDs, listeners, leitura de 
 
 Os controles `fileInput`, `chooseFileBtn`, `readStartBtn`, `demoBtn`, `newFileBtn`, `exportBtn`, `configBtn`, `fullscreenBtn` e `helpBtn` continuam sendo exatamente os mesmos elementos funcionais.
 
+## Workspace Composition V8
+
+A oitava rodada consolida a composição aprovada em três áreas visuais no desktop:
+
+**rail lateral / mapa central dominante / quadro operacional**
+
+Regras:
+
+- rail técnico reduzido para 84 px em desktop amplo;
+- espaçamento estrutural de 8 px entre as áreas;
+- quadro operacional limitado a 380 px, chegando a 390 px apenas em telas amplas;
+- mapa ocupa todo o espaço remanescente e continua sendo o protagonista;
+- workspace e inspector compartilham a mesma altura útil;
+- margens internas do mapa são reduzidas sem alterar SVG, Leaflet, geometria ou rota;
+- entre 901 e 1180 px, o quadro reduz para 340 px;
+- abaixo de 901 px, a V8 não substitui a responsividade já existente.
+
+### Fronteira arquitetural
+
+A V8 é CSS/documentação/testes. Não altera HTML, parser, `goTo()`, `state.index`, timeline, scrubber, autoplay, teclado, geometria, `terminalClosureState()`, `buildTimeline()` ou a camada visual DEP/TRF/TER.
+
