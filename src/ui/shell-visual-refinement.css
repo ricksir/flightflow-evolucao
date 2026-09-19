@@ -5038,3 +5038,40 @@ html[data-palette="velox"] {
     background: var(--evo-chart-surface);
   }
 }
+
+
+/* V10 real-map precedence: override only legacy visual !important declarations. */
+@media (min-width: 901px) {
+  html[data-theme="light"] .workspace-card .scene-wrap {
+    background: var(--evo-chart-surface) !important;
+  }
+
+  .workspace-card .scene-caption {
+    left: 10px !important;
+    right: auto !important;
+    bottom: 10px !important;
+    width: min(560px,54%) !important;
+    max-width: calc(100% - 20px) !important;
+    min-height: 44px !important;
+    max-height: none !important;
+    padding: 8px 10px !important;
+    border-radius: 6px !important;
+    background: var(--evo-chart-overlay) !important;
+    color: #e8f4f7 !important;
+  }
+
+  .workspace-card .scene-caption p {
+    color: #b9ced5 !important;
+  }
+
+  .workspace-card .real-map-control-group,
+  .workspace-card .real-map-layer-switches,
+  .workspace-card .real-map-area-legend {
+    border-radius: 5px !important;
+  }
+
+  .workspace-card .real-map-control-group button {
+    height: 32px !important;
+    border-radius: 4px !important;
+  }
+}
