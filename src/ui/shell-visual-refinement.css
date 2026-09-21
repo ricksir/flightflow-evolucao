@@ -6023,7 +6023,7 @@ html[data-theme="dark"][data-palette="velox"] .btn-primary {
 }
 
 .tab-panel[data-panel="data"] .panel-heading h2 {
-  font-size: var(--evo-legibility-heading);
+  font-size: var(--evo-legibility-heading) !important;
   font-weight: 820;
   line-height: 1.3;
 }
