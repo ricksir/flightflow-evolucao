@@ -30,6 +30,16 @@ test('PR27 mantém controles do mapa claros e legíveis no tema claro', async ({
   });
   await page.evaluate(()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r))));
 
+  await expect.poll(() => page.evaluate(() =>
+    [...document.querySelectorAll('#realMapControls .real-map-control-group button')]
+      .filter(n => n.getBoundingClientRect().width > 0).length
+  ), { timeout: 5_000 }).toBeGreaterThanOrEqual(3);
+
+  await expect.poll(() => page.evaluate(() =>
+    [...document.querySelectorAll('#realMapControls .real-map-layer-switches label')]
+      .filter(n => n.getBoundingClientRect().width > 0).length
+  ), { timeout: 5_000 }).toBeGreaterThanOrEqual(3);
+
   const metrics=await page.evaluate(()=>{
     const nodes=[...document.querySelectorAll(
       '#realMapControls > .real-map-control-group, #realMapControls > .real-map-layer-switches'
