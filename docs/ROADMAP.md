@@ -1,21 +1,23 @@
 # Roadmap técnico — FlightFlow Evolução
 
-> Estado revisado em **19/09/2026**, após a certificação pós-merge da **V11 — Flight Situation Strip**.
+> Estado revisado em **21/09/2026**, após o fechamento técnico da remediação de aceitação nos PRs **#20–#23**.
 
 ## Estado atual
 
-A rodada principal de evolução visual está tecnicamente concluída. O último SHA funcional certificado é:
+A rodada principal de evolução visual e a remediação dos quatro achados da primeira aceitação estão tecnicamente concluídas. O baseline funcional pós-remediação é:
 
-`a27ffee33577d88536a3828f9f3cca97b47fc898`
+`cd4adf92d726ed3a2dea0fe4fa23744b41784b4f`
 
-Certificação pós-merge:
+Certificação pós-merge atual:
 
-- workflow **#59**: sucesso;
-- **675/675** testes Node;
-- **79/79** testes Playwright;
-- zero `failed`, `flaky`, `retry`, `timeout`, `uncaught`, `SPATIAL_EQ_DIAG`, `not ok` e `AssertionError`;
-- housekeeping **#16**: sucesso;
-- nenhuma branch temporária da V11 permaneceu aberta.
+- quality gate **#90**: sucesso;
+- **696/696** testes Node;
+- **97/97** testes Playwright;
+- zero `failed`, `flaky`, `retry`, `TimeoutError`, `AssertionError`, `SPATIAL_EQ_DIAG` e `not ok`;
+- housekeeping **#24**: sucesso;
+- branch `fix/pr23-legibility-card-refinement` removida.
+
+Baseline histórico V11: `a27ffee33577d88536a3828f9f3cca97b47fc898`, workflow #59, **675/675 Node + 79/79 Playwright**.
 
 ## Concluído
 
@@ -42,17 +44,26 @@ Certificação pós-merge:
 - [x] Living Operational Chart V10;
 - [x] Flight Situation Strip V11.
 
+### Remediação da aceitação original
+
+- [x] PR #20 — navegação lateral e feedback de estado;
+- [x] PR #21 — sobreposições e colisões;
+- [x] PR #22 — diferenciação do Dashboard moderno/Velox;
+- [x] PR #23 — legibilidade, tipografia, contraste e refinamento dos cards;
+- [x] quality gate #90 verde no pós-merge do PR23;
+- [x] housekeeping #24 e remoção da branch do PR23.
+
 ## Rodada de fechamento
 
 ### 1. Documentação
 
-- [x] sincronizar README, Roadmap, estado técnico, changelog e Release Readiness com a V11;
+- [x] sincronizar README, Roadmap, estado técnico, changelog, Release Readiness e roteiro de aceitação com o fechamento PR20–PR23;
 - [x] manter a release publicada `v0.2.0` distinta da linha de desenvolvimento atual;
-- [x] registrar a automação V11 como concluída sem declarar aceitação humana inexistente.
+- [x] registrar o fechamento técnico sem declarar revalidação humana inexistente.
 
-### 2. Aceitação manual — pendente
+### 2. Revalidação manual final — pendente
 
-Executar `docs/MANUAL-ACCEPTANCE.md` com histórico representativo e registrar o resultado.
+Reexecutar `docs/MANUAL-ACCEPTANCE.md` no `main` pós-PR23, com histórico representativo, e registrar o resultado. A aceitação anterior encontrou os quatro achados já corrigidos e não equivale à aprovação do estado atual.
 
 Obrigatório antes de nova release:
 

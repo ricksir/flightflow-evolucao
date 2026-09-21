@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- encerrada tecnicamente a rodada de remediação dos quatro achados da aceitação original pelos PRs **#20–#23**; baseline funcional pós-merge `cd4adf92d726ed3a2dea0fe4fa23744b41784b4f`, quality gate **#90** com **696/696 Node + 97/97 Playwright**, zero `failed`/`flaky`/`retry`/`TimeoutError`/`AssertionError`/`not ok`/`SPATIAL_EQ_DIAG`, e housekeeping **#24** com remoção da branch do PR23; a revalidação humana final permanece obrigatória antes de nova release;
+
 - refinada a **legibilidade e hierarquia visual** do Quadro Operacional e componentes associados: rótulos e valores recebem tamanhos mais confortáveis, tabs/timeline/caption/controles do mapa ganham leitura melhor, o chip `ATUALIZADO` perde dominância visual e o mapa permanece como superfície principal, com proteção para claro, escuro, Velox e viewports responsivos;
 
 - reforçada a identidade visual do **Dashboard moderno/Velox**: chrome teal/emerald próprio em Command Bar, Mission Rail, workspace, inspector, tabs e Temporal Deck, com diferença mensurável em relação ao modo escuro e preservação das cores semânticas ATS DEP/TRF/TER;

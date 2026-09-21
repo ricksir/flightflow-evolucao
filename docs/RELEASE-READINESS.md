@@ -1,12 +1,35 @@
 # Release Readiness — FlightFlow Evolução
 
-> **Status:** a release `v0.2.0` já foi publicada. A linha atual `main` / `0.2.1-dev` contém a evolução visual até a **V11** e ainda depende de **aceitação manual registrada** antes de qualquer nova release.
+> **Status:** a release `v0.2.0` já foi publicada. A linha atual `main` / `0.2.1-dev` contém a evolução visual até a **V11** e a remediação pós-aceitação dos PRs **#20–#23**. Uma **revalidação humana final registrada** continua obrigatória antes de qualquer nova release.
 
 Este documento define quando o FlightFlow ATS pode ser considerado pronto para uma versão estável.
 
 
 
-## Candidato técnico atual — V11
+## Candidato técnico atual — pós-aceitação PR20–PR23
+
+Baseline funcional pós-remediação:
+
+`cd4adf92d726ed3a2dea0fe4fa23744b41784b4f`
+
+Evidência automatizada pós-merge:
+
+- quality gate **#90**: sucesso;
+- **696/696 Node**;
+- **97/97 Playwright**;
+- zero `failed`, `flaky`, `retry`, `TimeoutError`, `AssertionError`, `not ok` e `SPATIAL_EQ_DIAG`;
+- housekeeping **#24**: sucesso, com remoção da branch do PR23.
+
+A rodada corrigiu, sem misturar mudanças temporais/espaciais:
+
+- PR #20 — navegação lateral e feedback;
+- PR #21 — colisões e sobreposições;
+- PR #22 — identidade visual do Velox;
+- PR #23 — legibilidade, tipografia, contraste e densidade.
+
+Os quatro achados originais estão tecnicamente encerrados. A revalidação humana do novo `main` ainda é necessária antes de uma release.
+
+## Baseline histórico — V11
 
 Último SHA funcional certificado:
 
@@ -99,7 +122,7 @@ Esses casos estão em `tests/real-plan-route-regressions.test.js` e testes relac
 
 ## Aceitação manual antes da versão estável
 
-A automação não substitui a validação do produto com históricos representativos. Para o candidato V11, executar integralmente `docs/MANUAL-ACCEPTANCE.md` e registrar o SHA testado, navegador, resoluções e históricos utilizados. Antes de criar a versão estável, executar e registrar:
+A automação não substitui a validação do produto com históricos representativos. Para o candidato pós-PR20–PR23, reexecutar integralmente `docs/MANUAL-ACCEPTANCE.md` e registrar o SHA testado, navegador, resoluções e históricos utilizados. A execução anterior identificou os quatro achados já remediados; ela não deve ser reutilizada como aprovação do estado atual. Antes de criar a versão estável, executar e registrar:
 
 - [ ] carregar pelo menos um histórico real representativo sem erro fatal;
 - [ ] validar DEP e evolução temporal;

@@ -9,7 +9,7 @@ Linha independente de evolução visual e de experiência do FlightFlow. Parte d
 - mudanças visuais deste repositório não retornam automaticamente ao ATS;
 - o núcleo temporal/espacial continua protegido pelos mesmos contratos até decisão explícita.
 
-A evolução visual foi consolidada até a **V11 — Flight Situation Strip**, mantendo a direção aprovada de Mission Rail escuro, Command Bar técnica, mapa dominante, Quadro Operacional à direita e Temporal Deck integrado.
+A evolução visual foi consolidada até a **V11 — Flight Situation Strip** e os quatro achados da primeira rodada de aceitação foram remediados nos PRs **#20–#23**, mantendo a direção aprovada de Mission Rail, Command Bar técnica, mapa dominante, Quadro Operacional à direita e Temporal Deck integrado.
 
 ## Estado do projeto
 
@@ -20,8 +20,10 @@ A evolução visual foi consolidada até a **V11 — Flight Situation Strip**, m
 - **Quality gates:** auditoria estática, inventário de funções, testes Node, disponibilidade do navegador e Playwright
 - **Design System:** documentado em `docs/DESIGN_SYSTEM.md`
 - **Estado técnico certificado:** documentado em `docs/AI_CURRENT_STATE.md`
-- **Último SHA funcional V11 certificado:** `a27ffee33577d88536a3828f9f3cca97b47fc898` — workflow pós-merge #59, **675/675 Node + 79/79 Playwright**
-- **Aceitação manual da versão atual:** `docs/MANUAL-ACCEPTANCE.md` — **pendente de execução/aprovação humana**
+- **Baseline funcional pós-remediação da aceitação:** `cd4adf92d726ed3a2dea0fe4fa23744b41784b4f` — quality gate pós-merge #90, **696/696 Node + 97/97 Playwright**
+- **Baseline histórico V11:** `a27ffee33577d88536a3828f9f3cca97b47fc898` — workflow pós-merge #59, **675/675 Node + 79/79 Playwright**
+- **Achados originais da aceitação:** tecnicamente encerrados pelos PRs #20 (navegação), #21 (colisões), #22 (Velox) e #23 (legibilidade)
+- **Aceitação manual da versão atual:** `docs/MANUAL-ACCEPTANCE.md` — **revalidação final pós-PR23 pendente**
 - **Modularização contínua:** encerrada após o PR #211; novas extrações só devem ocorrer quando houver necessidade funcional concreta
 
 > **Importante para testar as mudanças mais recentes:** a release `v0.2.0` não contém a linha visual consolidada V1–V11. Para validar o estado atual do FlightFlow Evolução, use a branch `main`.
