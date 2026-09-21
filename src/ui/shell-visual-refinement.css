@@ -5824,14 +5824,14 @@ html[data-theme="dark"][data-palette="velox"] {
   --velox-chrome-line-soft: rgba(102,242,194,.17);
   --velox-chrome-text: #eafff7;
   --velox-chrome-muted: #a8d8c8;
-  --ffds-accent: #58efba;
+  --ffds-accent: #49e7ad;
   --ffds-accent-strong: #26c992;
   --ffds-accent-soft: rgba(88,239,186,.13);
-  --evo-command-accent: #58efba;
-  --evo-mission-rail-accent: #58efba;
-  --evo-temporal-accent: #58efba;
-  --evo-chart-accent: #58efba;
-  --evo-situation-accent: #58efba;
+  --evo-command-accent: #49e7ad;
+  --evo-mission-rail-accent: #49e7ad;
+  --evo-temporal-accent: #49e7ad;
+  --evo-chart-accent: #49e7ad;
+  --evo-situation-accent: #49e7ad;
 }
 
 html[data-theme="dark"][data-palette="velox"] body {
