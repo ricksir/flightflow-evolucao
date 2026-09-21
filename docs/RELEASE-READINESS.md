@@ -1,33 +1,34 @@
 # Release Readiness — FlightFlow Evolução
 
-> **Status:** a release `v0.2.0` já foi publicada. A linha atual `main` / `0.2.1-dev` contém a evolução visual até a **V11** e a remediação pós-aceitação dos PRs **#20–#23**. Uma **revalidação humana final registrada** continua obrigatória antes de qualquer nova release.
+> **Status:** a release `v0.2.0` já foi publicada. A linha atual `main` / `0.2.1-dev` contém a evolução visual até a **V11** e os refinamentos pós-aceitação até o **PR29**. Uma **revalidação humana final registrada** continua obrigatória antes de qualquer nova release.
 
 Este documento define quando o FlightFlow ATS pode ser considerado pronto para uma versão estável.
 
 
 
-## Candidato técnico atual — pós-aceitação PR20–PR23
+## Candidato técnico atual — pós-PR29
 
-Baseline funcional pós-remediação:
+Baseline funcional certificado:
 
-`cd4adf92d726ed3a2dea0fe4fa23744b41784b4f`
+`8cf3dcf13f22f707ec39e55a24022fb198e1a978`
 
 Evidência automatizada pós-merge:
 
-- quality gate **#90**: sucesso;
-- **696/696 Node**;
-- **97/97 Playwright**;
-- zero `failed`, `flaky`, `retry`, `TimeoutError`, `AssertionError`, `not ok` e `SPATIAL_EQ_DIAG`;
-- housekeeping **#24**: sucesso, com remoção da branch do PR23.
+- quality gate **#111**: sucesso;
+- **698/698 Node**;
+- **106/106 Playwright**;
+- zero `failed`, `flaky`, `retry`, `timeout`, `AssertionError`, `not ok` e `SPATIAL_EQ_DIAG`;
+- housekeeping **#31**: sucesso.
 
-A rodada corrigiu, sem misturar mudanças temporais/espaciais:
+A rodada mais recente corrigiu, sem alterar os contratos temporais/espaciais:
 
-- PR #20 — navegação lateral e feedback;
-- PR #21 — colisões e sobreposições;
-- PR #22 — identidade visual do Velox;
-- PR #23 — legibilidade, tipografia, contraste e densidade.
+- PR #25 — foco visual real do Mapa;
+- PR #26 — reforço de legibilidade do dashboard;
+- PR #27 — controles cartográficos claros no tema claro;
+- PR #28 — unificação visual do Quadro Atual com Alterações e modernização tipográfica;
+- PR #29 — estabilidade determinística do contrato de contraste durante troca de tema.
 
-Os quatro achados originais estão tecnicamente encerrados. A revalidação humana do novo `main` ainda é necessária antes de uma release.
+A revalidação humana do novo `main` ainda é necessária antes de uma release.
 
 ## Baseline histórico — V11
 
@@ -122,7 +123,7 @@ Esses casos estão em `tests/real-plan-route-regressions.test.js` e testes relac
 
 ## Aceitação manual antes da versão estável
 
-A automação não substitui a validação do produto com históricos representativos. Para o candidato pós-PR20–PR23, reexecutar integralmente `docs/MANUAL-ACCEPTANCE.md` e registrar o SHA testado, navegador, resoluções e históricos utilizados. A execução anterior identificou os quatro achados já remediados; ela não deve ser reutilizada como aprovação do estado atual. Antes de criar a versão estável, executar e registrar:
+A automação não substitui a validação do produto com históricos representativos. Para o candidato pós-PR29, reexecutar integralmente `docs/MANUAL-ACCEPTANCE.md` e registrar o SHA testado, navegador, resoluções e históricos utilizados. A execução anterior identificou os quatro achados já remediados; ela não deve ser reutilizada como aprovação do estado atual. Antes de criar a versão estável, executar e registrar:
 
 - [ ] carregar pelo menos um histórico real representativo sem erro fatal;
 - [ ] validar DEP e evolução temporal;
