@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- reforçada a identidade visual do **Dashboard moderno/Velox**: chrome teal/emerald próprio em Command Bar, Mission Rail, workspace, inspector, tabs e Temporal Deck, com diferença mensurável em relação ao modo escuro e preservação das cores semânticas ATS DEP/TRF/TER;
+
 - corrigidas **sobreposições e colisões de layout** na faixa de situação e no Temporal Deck: o controle “Mensagem e fluxo deste passo” passa a respeitar o container em larguras variáveis, os estados ganham quebra segura e os marcos DEP/TRF/TER recebem faixa própria acima do scrubber, com regressões geométricas em desktop, largura intermediária e viewport abaixo de 900 px;
 
 - corrigida a **navegação lateral da Mission Rail**: Operação e Mapa agora direcionam foco e destaque ao conteúdo, Quadro e Eventos ativam explicitamente o painel correspondente, e Base abre a consulta normativa, com estado ativo único e feedback acessível de cada ação;
