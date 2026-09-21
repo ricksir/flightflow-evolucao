@@ -36,11 +36,19 @@ async function loadDemo(page) {
 }
 
 async function setMode(page, theme, palette = '') {
+  await page.addStyleTag({ content: `
+    .tab-panel[data-panel="data"] .fields-grid .field-card,
+    .tab-panel[data-panel="data"] .fields-grid .field-card:hover {
+      transition: none !important;
+    }
+  ` });
+
   await page.evaluate(({ theme, palette }) => {
     document.documentElement.dataset.theme = theme;
     if (palette) document.documentElement.dataset.palette = palette;
     else delete document.documentElement.dataset.palette;
   }, { theme, palette });
+
   await page.evaluate(() => new Promise(resolve =>
     requestAnimationFrame(() => requestAnimationFrame(resolve))));
 }
