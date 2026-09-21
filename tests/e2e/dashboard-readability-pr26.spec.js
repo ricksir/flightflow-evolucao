@@ -62,8 +62,18 @@ test('PR26 exige dashboard realmente legível em 1600x900', async ({page}) => {
 for(const mode of [{theme:'dark',palette:''},{theme:'dark',palette:'velox'}]){
   test('PR26 mantém leitura forte em '+(mode.palette||mode.theme),async({page})=>{
     await loadDemo(page);
+    await page.addStyleTag({content:`
+      .tab-panel[data-panel="data"] .fields-grid .field-card,
+      .tab-panel[data-panel="data"] .fields-grid .field-card:hover {
+        transition: none !important;
+      }
+    `});
     await page.evaluate(mode=>{document.documentElement.dataset.theme=mode.theme;if(mode.palette)document.documentElement.dataset.palette=mode.palette;else delete document.documentElement.dataset.palette;},mode);
     await page.evaluate(()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r))));
+    await expect.poll(()=>page.evaluate(()=>({
+      theme:document.documentElement.dataset.theme||'',
+      palette:document.documentElement.dataset.palette||''
+    }))).toEqual({theme:mode.theme,palette:mode.palette});
     const m=await page.evaluate(()=>{
       const card=document.querySelector('#fieldsGrid .field-card'), value=card.querySelector('.field-value'), label=card.querySelector('.field-label');
       return {bg:getComputedStyle(card).backgroundColor,value:getComputedStyle(value).color,label:getComputedStyle(label).color,valueSize:parseFloat(getComputedStyle(value).fontSize),labelSize:parseFloat(getComputedStyle(label).fontSize)};
