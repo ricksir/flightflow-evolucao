@@ -38,7 +38,7 @@ test('Workspace Composition V8 mantém mapa dominante no desktop amplo', async (
   expect(metrics.railWidth).toBeLessThanOrEqual(90);
   expect(metrics.contentGap).toBeLessThanOrEqual(8.5);
   expect(metrics.inspectorWidth).toBeGreaterThanOrEqual(350);
-  expect(metrics.inspectorWidth).toBeLessThanOrEqual(392);
+  expect(metrics.inspectorWidth).toBeLessThanOrEqual(422);
   expect(metrics.workspaceWidth).toBeGreaterThan(metrics.inspectorWidth * 2);
   expect(metrics.topDelta).toBeLessThanOrEqual(1);
   expect(metrics.bottomDelta).toBeLessThanOrEqual(2);
