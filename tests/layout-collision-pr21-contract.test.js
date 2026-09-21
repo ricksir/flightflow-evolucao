@@ -30,7 +30,7 @@ test('PR21 protege desktop, largura intermediária e viewport abaixo de 900px', 
   const source = CSS.slice(CSS.indexOf('FlightFlow Evolução — PR21 Collision-Safe Layout'));
   assert.ok(source.includes('@media (min-width: 1181px)'));
   assert.ok(source.includes('@media (min-width: 901px) and (max-width: 1180px)'));
-  assert.ok(source.includes('@media (max-width: 900px)'));
+  assert.ok(source.includes('@media (width <= 900px)'));
   assert.ok(source.includes('@media (max-width: 620px)'));
   assert.ok(source.includes('.protocol-card.protocol-floating'));
 });
