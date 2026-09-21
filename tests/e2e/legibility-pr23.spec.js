@@ -61,7 +61,7 @@ async function applySettledTheme(page, mode) {
     requestAnimationFrame(() => requestAnimationFrame(resolve));
   }));
 
-  await expect.poll(() => page.evaluate(({theme,palette}) => ({
+  await expect.poll(() => page.evaluate(() => ({
     theme: document.documentElement.dataset.theme || '',
     palette: document.documentElement.dataset.palette || '',
   })), { timeout: 2_000 }).toEqual({
