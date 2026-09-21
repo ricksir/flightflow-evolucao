@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- corrigidas **sobreposições e colisões de layout** na faixa de situação e no Temporal Deck: o controle “Mensagem e fluxo deste passo” passa a respeitar o container em larguras variáveis, os estados ganham quebra segura e os marcos DEP/TRF/TER recebem faixa própria acima do scrubber, com regressões geométricas em desktop, largura intermediária e viewport abaixo de 900 px;
+
 - corrigida a **navegação lateral da Mission Rail**: Operação e Mapa agora direcionam foco e destaque ao conteúdo, Quadro e Eventos ativam explicitamente o painel correspondente, e Base abre a consulta normativa, com estado ativo único e feedback acessível de cada ação;
 
 - corrigido o **Play da Rota Processada** no fechamento por Ordem TER: quando TER está ativo, a reprodução agora percorre o trecho derivado até o ADES, leva a barra a 100% e posiciona a aeronave exatamente no destino; antes de TER continua limitada ao último ETIM real;
