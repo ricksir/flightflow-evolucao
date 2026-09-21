@@ -18,7 +18,7 @@ function pr23Css() {
 test('PR23 aumenta tipografia operacional mínima do Quadro', () => {
   const source = pr23Css();
   for (const token of [
-    '--evo-legibility-label: 11.5px',
+    '--evo-legibility-label: 12px',
     '--evo-legibility-value: 14px',
     '--evo-legibility-value-wide: 14.5px',
     '--evo-legibility-heading: 15px',
@@ -36,6 +36,9 @@ test('PR23 reduz dominância do chip de alteração sem remover semântica', () 
   assert.ok(source.includes('opacity: .74'));
   assert.ok(source.includes('.field-card.changed .change-tag'));
   assert.ok(source.includes('border-color: rgba(213,138,0,.20)'));
+  assert.ok(source.includes('background-color: #f8fbfc'));
+  assert.ok(source.includes('background-color: #102b38'));
+  assert.ok(source.includes('background-color: #153b35'));
 });
 
 test('PR23 melhora leitura de tabs, timeline, caption e controles do mapa', () => {
