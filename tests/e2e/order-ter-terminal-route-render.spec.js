@@ -258,6 +258,77 @@ test('Ordem TER mantém um único fechamento UMGUL → SBCT estável em Próximo
 
   const before = await expectTerminal(page, setup.terIndex - 1, false);
 
+  // Limite complementar de aceitação: sem Ordem TER ativa, o Play real da
+  // Rota Processada deve encerrar exatamente no último ETIM, sem alcançar SBCT.
+  const preTerPlayStart = await page.evaluate(() => {
+    const api = window.FlightFlowRouteProcessedV7412;
+    const model = api.getModel();
+    const snapshot = model.resolvedSnapshots.at(-1);
+    const range = document.querySelector('#ffrpRange');
+    const limit = api.timedProgressLimit(snapshot);
+    const limitValue = Math.max(0, Math.round(limit * 1000));
+    const startValue = Math.max(0, limitValue - 5);
+
+    model.syncTimeline = false;
+    range.value = String(startValue);
+    range.dispatchEvent(new Event('input', { bubbles: true }));
+
+    return { limit, limitValue, startValue };
+  });
+
+  expect(preTerPlayStart.limit).toBeGreaterThan(0);
+  expect(preTerPlayStart.limit).toBeLessThan(1);
+  expect(preTerPlayStart.startValue).toBeLessThan(preTerPlayStart.limitValue);
+
+  await page.locator('#ffrpPlay').click();
+  await expect.poll(
+    () => page.locator('#ffrpPlay').textContent(),
+    { timeout: 5_000 }
+  ).toBe('▶');
+
+  const preTerPlayEnd = await page.evaluate(() => {
+    const api = window.FlightFlowRouteProcessedV7412;
+    const model = api.getModel();
+    const snapshot = model.resolvedSnapshots.at(-1);
+    const move = api.movementPointsForProfile(snapshot);
+    const fractions = api.routeDistanceFractions(move);
+    const imtbiIndex = move.findIndex(point => point.ident === 'IMTBI');
+    const svg = document.querySelector('#ffrpMap');
+    const planeStem = svg?.querySelector('.ffrp-plane .stem');
+    const destination = svg?.querySelector('.wp.destination circle');
+    const n = (node, attr) => Number(node?.getAttribute(attr));
+    const range = document.querySelector('#ffrpRange');
+
+    return {
+      routeProgress: Number(model.routeProgress),
+      timedLimit: api.timedProgressLimit(snapshot),
+      imtbiFraction: Number(fractions[imtbiIndex]),
+      rangeValue: Number(range?.value),
+      rangeMax: Number(range?.max),
+      planeX: n(planeStem, 'x1'),
+      planeY: n(planeStem, 'y1'),
+      destinationX: n(destination, 'cx'),
+      destinationY: n(destination, 'cy'),
+      footer: document.querySelector('#ffrpTime')?.textContent || '',
+    };
+  });
+
+  expect(preTerPlayEnd.routeProgress).toBeCloseTo(preTerPlayEnd.timedLimit, 6);
+  expect(preTerPlayEnd.routeProgress).toBeCloseTo(preTerPlayEnd.imtbiFraction, 6);
+  expect(preTerPlayEnd.rangeValue).toBe(preTerPlayEnd.rangeMax);
+  expect(preTerPlayEnd.rangeMax).toBe(Math.round(preTerPlayEnd.timedLimit * 1000));
+  expect(
+    Math.hypot(
+      preTerPlayEnd.planeX - preTerPlayEnd.destinationX,
+      preTerPlayEnd.planeY - preTerPlayEnd.destinationY
+    )
+  ).toBeGreaterThan(0.01);
+  expect(preTerPlayEnd.footer).toContain('limite ETIM');
+
+  await page.evaluate(() => {
+    window.FlightFlowRouteProcessedV7412.getModel().syncTimeline = true;
+  });
+
   const setVisualMode = async (theme, palette = '') => {
     await page.evaluate(({ theme, palette }) => {
       const root = document.documentElement;
