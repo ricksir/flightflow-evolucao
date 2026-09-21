@@ -5607,3 +5607,34 @@ html[data-theme="light"]:not([data-palette="velox"]) .real-map-layer-switches la
     transition: none !important;
   }
 }
+
+
+/* ==========================================================================
+   FlightFlow Evolução — PR20 Mission Rail Navigation Feedback
+   Feedback de navegação somente: estado ativo, alvo selecionado e anúncio.
+   ========================================================================== */
+
+.evo-rail-feedback {
+  display: block;
+  min-height: 1.6em;
+  margin-top: 4px;
+  color: var(--evo-mission-rail-muted, #7f9da8);
+  font: 800 .42rem/1.25 Inter,system-ui,sans-serif;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+
+.evo-rail-target-pulse {
+  outline: 2px solid rgba(67,191,220,.72) !important;
+  outline-offset: -3px;
+}
+
+html[data-palette="velox"] .evo-rail-target-pulse {
+  outline-color: rgba(73,231,173,.78) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .evo-rail-target-pulse {
+    transition: none !important;
+  }
+}
