@@ -1,14 +1,14 @@
 # Aceitação Manual — FlightFlow Evolução / main
 
-Este roteiro valida em navegador real a linha visual **V1–V11**, os contratos operacionais preservados e a remediação dos achados de aceitação tratada nos PRs **#20–#23**.
+Este roteiro valida em navegador real a linha visual **V1–V11**, os contratos operacionais preservados e as remediações visuais acumuladas até os PRs **#25–#29**.
 
 > **Status atual:** fechamento técnico pós-aceitação certificado; **revalidação humana final pendente**.
 >
-> Baseline funcional pós-remediação: `cd4adf92d726ed3a2dea0fe4fa23744b41784b4f`.
+> Baseline funcional certificado pós-PR29: `8cf3dcf13f22f707ec39e55a24022fb198e1a978`.
 >
-> Pós-merge quality gate #90: **696/696 Node + 97/97 Playwright**, sem `failed`, `flaky`, retry, timeout, `AssertionError`, `not ok` ou `SPATIAL_EQ_DIAG`.
+> Pós-merge quality gate #111: **698/698 Node + 106/106 Playwright**, sem `failed`, `flaky`, `retry`, `timeout`, `AssertionError`, `not ok` ou `SPATIAL_EQ_DIAG`.
 >
-> A rodada humana anterior foi **REPROVADA** pelos quatro grupos de achados agora corrigidos; este roteiro deve ser reexecutado antes de qualquer nova release.
+> A revalidação humana final deste baseline permanece **PENDENTE**; este roteiro deve ser reexecutado antes de qualquer nova release.
 
 ## 1. Preparação
 
@@ -62,12 +62,18 @@ Validar em **claro**, **escuro** e **Dashboard moderno/Velox**:
 - [ ] foco de teclado permanece visível;
 - [ ] não existe texto ilegível por contraste ou grade de cores.
 
-### Revalidação obrigatória dos quatro achados corrigidos
+### Revalidação obrigatória dos achados corrigidos
 
 - [ ] **PR20 / navegação:** Operação, Mapa, Quadro, Eventos e Base exibem comportamento claro, estado ativo e feedback perceptível;
 - [ ] **PR21 / colisões:** faixa de situação, “MENSAGEM E FLUXO DESTE PASSO” e marcos DEP/TRF/TER não se sobrepõem em desktop, largura intermediária ou abaixo de 900 px;
 - [ ] **PR22 / Velox:** Dashboard moderno/Velox é visualmente distinto do modo escuro, preservando as cores ATS semânticas;
 - [ ] **PR23 / legibilidade:** Quadro Operacional, tabs, timeline, captions e controles cartográficos permanecem legíveis nos três temas, sem competição excessiva do chip `ATUALIZADO`;
+- [ ] **PR25 / foco Mapa:** clicar em Mapa produz mudança visual perceptível e o retorno a Operação/Quadro/Eventos restaura a composição esperada;
+- [ ] **PR26 / hierarquia:** labels, valores, tabs e timeline têm leitura confortável sem reduzir indevidamente o mapa;
+- [ ] **PR27 / tema claro:** controles flutuantes do mapa usam superfícies claras e texto legível;
+- [ ] **PR28 / Quadro Atual:** a grade não parece tabela rígida; existem gap, radius, borda e superfície própria nos cards;
+- [ ] **PR28 / coerência:** Quadro Atual e Alterações compartilham linguagem visual compatível sem transformar todo o conteúdo em amarelo;
+- [ ] **PR28 / tipografia:** título do quadro, labels, valores e metadados apresentam hierarquia moderna e consistente;
 - [ ] o mapa continua sendo a superfície dominante após todas essas correções.
 
 ## 4. Fluxo operacional básico
@@ -141,6 +147,11 @@ A aceitação manual só pode ser marcada como concluída quando:
 **Resultado da aceitação:** [ ] APROVADO  [ ] REPROVADO  [ ] APROVADO COM RESSALVAS
 
 SHA testado: ______________________________
+
+Capturas obrigatórias em 1600×900:
+- [ ] Quadro Atual
+- [ ] Alterações
+- [ ] visão geral do dashboard
 
 Navegador/versão: _________________________
 
