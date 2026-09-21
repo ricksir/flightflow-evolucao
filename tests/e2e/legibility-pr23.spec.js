@@ -124,6 +124,10 @@ for (const mode of [
     await page.waitForTimeout(200);
 
     const m = await metrics(page);
+    console.log(`PR23_CONTRAST_DIAG ${mode.name}`, JSON.stringify({
+      valueColor: m.valueColor,
+      cardBackground: m.cardBackground,
+    }));
     expect(m.labelSize).toBeGreaterThanOrEqual(11);
     expect(m.valueSize).toBeGreaterThanOrEqual(13.5);
     expect(contrast(m.valueColor, m.cardBackground)).toBeGreaterThanOrEqual(4.5);
