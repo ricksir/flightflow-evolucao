@@ -120,9 +120,17 @@ for (const mode of [
     }, mode);
 
     const m = await metrics(page);
+    const ratio = contrast(m.valueColor, m.cardBackground);
+    console.log('[PR23-CONTRAST]', mode.name, JSON.stringify({
+      valueColor: m.valueColor,
+      cardBackground: m.cardBackground,
+      ratio,
+      labelSize: m.labelSize,
+      valueSize: m.valueSize,
+    }));
     expect(m.labelSize).toBeGreaterThanOrEqual(11);
     expect(m.valueSize).toBeGreaterThanOrEqual(13.5);
-    expect(contrast(m.valueColor, m.cardBackground)).toBeGreaterThanOrEqual(4.5);
+    expect(ratio).toBeGreaterThanOrEqual(4.5);
     expect(m.scrollWidth).toBeLessThanOrEqual(m.viewportWidth + 1);
   });
 }
