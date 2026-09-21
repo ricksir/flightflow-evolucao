@@ -20,16 +20,16 @@ test('PR20 carrega controlador de navegação do Mission Rail exatamente uma vez
 
 test('PR20 mapeia cada item do rail para o comportamento funcional esperado', () => {
   assert.deepEqual(RailNavigation.routeForHref('#workspaceCard'), {
-    key: 'operation', label: 'Operação', target: '#workspaceCard'
+    key: 'operation', label: 'Operação', target: '#workspaceCard', view: 'operation'
   });
   assert.deepEqual(RailNavigation.routeForHref('#dropZone'), {
-    key: 'map', label: 'Mapa', target: '#dropZone'
+    key: 'map', label: 'Mapa', target: '#dropZone', view: 'map'
   });
   assert.deepEqual(RailNavigation.routeForHref('#fieldsGrid'), {
-    key: 'board', label: 'Quadro', target: '[data-panel="data"]', tab: 'data'
+    key: 'board', label: 'Quadro', target: '[data-panel="data"]', tab: 'data', view: 'board'
   });
   assert.deepEqual(RailNavigation.routeForHref('#timelineList'), {
-    key: 'events', label: 'Eventos', target: '[data-panel="timeline"]', tab: 'timeline'
+    key: 'events', label: 'Eventos', target: '[data-panel="timeline"]', tab: 'timeline', view: 'events'
   });
   assert.deepEqual(RailNavigation.routeForHref('#knowledgeBaseBtn'), {
     key: 'base', label: 'Base', target: '#knowledgeBrowserModal', control: '#knowledgeBaseBtn'
@@ -59,4 +59,18 @@ test('PR20 possui feedback visual e acessível sem alterar a identidade do rail'
   assert.ok(source.includes('.evo-rail-target-pulse'));
   assert.ok(source.includes('html[data-palette="velox"] .evo-rail-target-pulse'));
   assert.ok(source.includes('@media (prefers-reduced-motion: reduce)'));
+});
+
+
+test('PR25 exige modo de foco perceptível para a ação Mapa', () => {
+  assert.equal(typeof RailNavigation.applyView, 'function');
+  assert.ok(MODULE_SOURCE.includes("root.dataset.railView = route.view"));
+  assert.ok(MODULE_SOURCE.includes("win.dispatchEvent(new win.Event('resize'))"));
+
+  const start = CSS.indexOf('FlightFlow Evolução — PR25 Map Focus Navigation');
+  assert.ok(start >= 0);
+  const source = CSS.slice(start);
+  assert.ok(source.includes('html[data-rail-view="map"] .content'));
+  assert.ok(source.includes('html[data-rail-view="map"] .inspector-card'));
+  assert.ok(source.includes('grid-template-columns: minmax(0,1fr) 0'));
 });

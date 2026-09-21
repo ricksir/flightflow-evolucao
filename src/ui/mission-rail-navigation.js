@@ -6,10 +6,10 @@
   'use strict';
 
   const ROUTES = Object.freeze({
-    '#workspaceCard': Object.freeze({ key: 'operation', label: 'Operação', target: '#workspaceCard' }),
-    '#dropZone': Object.freeze({ key: 'map', label: 'Mapa', target: '#dropZone' }),
-    '#fieldsGrid': Object.freeze({ key: 'board', label: 'Quadro', target: '[data-panel="data"]', tab: 'data' }),
-    '#timelineList': Object.freeze({ key: 'events', label: 'Eventos', target: '[data-panel="timeline"]', tab: 'timeline' }),
+    '#workspaceCard': Object.freeze({ key: 'operation', label: 'Operação', target: '#workspaceCard', view: 'operation' }),
+    '#dropZone': Object.freeze({ key: 'map', label: 'Mapa', target: '#dropZone', view: 'map' }),
+    '#fieldsGrid': Object.freeze({ key: 'board', label: 'Quadro', target: '[data-panel="data"]', tab: 'data', view: 'board' }),
+    '#timelineList': Object.freeze({ key: 'events', label: 'Eventos', target: '[data-panel="timeline"]', tab: 'timeline', view: 'events' }),
     '#knowledgeBaseBtn': Object.freeze({ key: 'base', label: 'Base', target: '#knowledgeBrowserModal', control: '#knowledgeBaseBtn' }),
   });
 
@@ -72,6 +72,25 @@
     }
   }
 
+  function applyView(scope, route) {
+    if (!scope || !route || !route.view) return '';
+    const root = scope.documentElement || scope.querySelector?.('html');
+    if (!root) return '';
+    root.dataset.railView = route.view;
+
+    const win = scope.defaultView || (typeof window !== 'undefined' ? window : null);
+    if (win && typeof win.dispatchEvent === 'function') {
+      const notifyResize = () => win.dispatchEvent(new win.Event('resize'));
+      if (typeof win.requestAnimationFrame === 'function') {
+        win.requestAnimationFrame(() => win.requestAnimationFrame(notifyResize));
+      } else {
+        const timer = typeof win.setTimeout === 'function' ? win.setTimeout.bind(win) : setTimeout;
+        timer(notifyResize, 0);
+      }
+    }
+    return route.view;
+  }
+
   function activateInspectorTab(scope, name) {
     if (!name) return null;
     const tab = scope.querySelector('.tab[data-tab="' + name + '"]');
@@ -88,6 +107,7 @@
     const feedback = rail ? ensureFeedback(scope, rail) : null;
     const win = scope.defaultView || (typeof window !== 'undefined' ? window : null);
 
+    applyView(scope, route);
     activateInspectorTab(scope, route.tab);
 
     if (route.control) {
@@ -127,6 +147,7 @@
     let lastContentItem = items.find(item => item.classList.contains('active')) || items[0];
     setActiveItem(items, lastContentItem);
     const initialRoute = routeForHref(lastContentItem.getAttribute('href'));
+    applyView(scope, initialRoute);
     announce(ensureFeedback(scope, rail), initialRoute, 'ativa');
 
     items.forEach(item => {
@@ -147,6 +168,7 @@
         if (!item) return;
         const route = routeForHref(href);
         lastContentItem = item;
+        applyView(scope, route);
         setActiveItem(items, item);
         announce(ensureFeedback(scope, rail), route, 'ativa');
       });
@@ -164,6 +186,7 @@
     const knowledgeDialog = scope.querySelector('#knowledgeBrowserModal');
     if (knowledgeDialog) {
       knowledgeDialog.addEventListener('close', () => {
+        applyView(scope, routeForHref(lastContentItem.getAttribute('href')));
         setActiveItem(items, lastContentItem);
         announce(ensureFeedback(scope, rail), routeForHref(lastContentItem.getAttribute('href')), 'ativa');
       });
@@ -180,5 +203,5 @@
     }
   }
 
-  return Object.freeze({ ROUTES, routeForHref, setActiveItem, navigate, init });
+  return Object.freeze({ ROUTES, routeForHref, setActiveItem, applyView, navigate, init });
 });

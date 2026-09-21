@@ -32,11 +32,29 @@ test('PR20 torna Operação, Mapa, Quadro, Eventos e Base funcionalmente navegá
   await openReadyApp(page);
 
   await expectActive(page, '#workspaceCard', 'Operação');
+  const normalLayout = await page.evaluate(() => ({
+    workspace: document.querySelector('.workspace-card')?.getBoundingClientRect().width || 0,
+    inspector: document.querySelector('.inspector-card')?.getBoundingClientRect().width || 0,
+    view: document.documentElement.dataset.railView || '',
+  }));
+  expect(normalLayout.view).toBe('operation');
+  expect(normalLayout.inspector).toBeGreaterThan(300);
 
   await railItem(page, '#dropZone').click();
   await expectActive(page, '#dropZone', 'Mapa');
   await expect(page.locator('#dropZone')).toHaveClass(/evo-rail-target-pulse/);
   await expect.poll(() => page.evaluate(() => document.activeElement?.id)).toBe('dropZone');
+  await expect.poll(() => page.evaluate(() => document.documentElement.dataset.railView)).toBe('map');
+  await expect.poll(() => page.evaluate(() => ({
+    workspace: document.querySelector('.workspace-card')?.getBoundingClientRect().width || 0,
+    inspector: document.querySelector('.inspector-card')?.getBoundingClientRect().width || 0,
+  }))).toEqual(expect.objectContaining({ inspector: 0 }));
+  const mapLayout = await page.evaluate(() => ({
+    workspace: document.querySelector('.workspace-card')?.getBoundingClientRect().width || 0,
+    inspector: document.querySelector('.inspector-card')?.getBoundingClientRect().width || 0,
+  }));
+  expect(mapLayout.workspace).toBeGreaterThan(normalLayout.workspace + 250);
+  expect(mapLayout.inspector).toBe(0);
 
   await railItem(page, '#fieldsGrid').click();
   await expectActive(page, '#fieldsGrid', 'Quadro');
@@ -44,6 +62,8 @@ test('PR20 torna Operação, Mapa, Quadro, Eventos e Base funcionalmente navegá
   await expect(page.locator('[data-panel="data"]')).toHaveClass(/\bactive\b/);
   await expect(page.locator('[data-panel="timeline"]')).not.toHaveClass(/\bactive\b/);
   await expect.poll(() => page.evaluate(() => document.activeElement?.getAttribute('data-panel'))).toBe('data');
+  await expect.poll(() => page.evaluate(() => document.documentElement.dataset.railView)).toBe('board');
+  await expect.poll(() => page.evaluate(() => document.querySelector('.inspector-card')?.getBoundingClientRect().width || 0)).toBeGreaterThan(300);
 
   await railItem(page, '#timelineList').click();
   await expectActive(page, '#timelineList', 'Eventos');
