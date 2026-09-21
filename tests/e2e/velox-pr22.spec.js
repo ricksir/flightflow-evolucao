@@ -54,7 +54,7 @@ test('PR22 torna Velox claramente distinto do tema escuro sem mudar semântica A
 
   expect(dark.palette).toBe('');
   expect(velox.palette).toBe('velox');
-  expect(velox.accent).toBe('#58efba');
+  expect(velox.accent).toBe('#49e7ad');
   expect(velox.accent).not.toBe(dark.accent);
 
   const differences = [
@@ -91,7 +91,7 @@ test('PR22 continua selecionável como Dashboard moderno e persiste após reload
   }))).toEqual({ theme:'dark', palette:'velox', saved:'velox' });
 
   const visual = await readChrome(page);
-  expect(visual.accent).toBe('#58efba');
+  expect(visual.accent).toBe('#49e7ad');
   expect(rgb(visual.topbar)).not.toEqual([0, 0, 0]);
 
   await page.reload({ waitUntil: 'load' });
