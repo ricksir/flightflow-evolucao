@@ -1,7 +1,7 @@
 const { test, expect } = require('@playwright/test');
 
 function rgb(value) {
-  const match = String(value || '').match(/rgba?\\(([^)]+)\\)/);
+  const match = String(value || '').match(/rgba?\(([^)]+)\)/);
   return match ? match[1].split(',').slice(0, 3).map(Number) : [0, 0, 0];
 }
 
