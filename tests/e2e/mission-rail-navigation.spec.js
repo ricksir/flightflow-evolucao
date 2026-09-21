@@ -3,6 +3,16 @@ const { test, expect } = require('@playwright/test');
 async function openReadyApp(page) {
   await page.setViewportSize({ width: 1600, height: 900 });
   await page.goto('/index.html', { waitUntil: 'load' });
+
+  const overlayDemo = page.locator('#overlayDemoBtn');
+  if (await overlayDemo.isVisible()) {
+    await overlayDemo.click();
+    await expect(page.locator('#scrubber')).toBeEnabled();
+    await expect(page.locator('#playBtn')).toHaveAttribute('title', /Pausar/, { timeout: 5_000 });
+    await page.locator('#restartBtn').click();
+    await expect(page.locator('#playBtn')).toHaveAttribute('title', /Reproduzir/);
+  }
+
   await expect(page.locator('.evo-rail-feedback')).toHaveCount(1);
 }
 
