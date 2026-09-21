@@ -18,10 +18,10 @@ function pr23Css() {
 test('PR23 aumenta tipografia operacional mínima do Quadro', () => {
   const source = pr23Css();
   for (const token of [
-    '--evo-legibility-label: 12px',
-    '--evo-legibility-value: 14px',
-    '--evo-legibility-value-wide: 14.5px',
-    '--evo-legibility-heading: 15px',
+    '--evo-legibility-label: 12.5px',
+    '--evo-legibility-value: 15px',
+    '--evo-legibility-value-wide: 15.5px',
+    '--evo-legibility-heading: 17px',
     '.fields-grid .field-label',
     '.fields-grid .field-value',
   ]) {
@@ -32,11 +32,11 @@ test('PR23 aumenta tipografia operacional mínima do Quadro', () => {
 test('PR23 reduz dominância do chip de alteração sem remover semântica', () => {
   const source = pr23Css();
   assert.ok(source.includes('.fields-grid .change-tag'));
-  assert.ok(source.includes('font-size: 8px'));
-  assert.ok(source.includes('opacity: .74'));
+  assert.ok(source.includes('font-size: 8.5px'));
+  assert.ok(source.includes('opacity: .66'));
   assert.ok(source.includes('.field-card.changed .change-tag'));
   assert.ok(source.includes('border-color: rgba(213,138,0,.20)'));
-  assert.ok(source.includes('background: #f8fbfc !important'));
+  assert.ok(source.includes('background: #fbfdfe !important'));
   assert.ok(source.includes('background: #102b38 !important'));
   assert.ok(source.includes('background: #153b35 !important'));
 });
@@ -68,4 +68,16 @@ test('PR23 preserva responsividade e não toca contratos funcionais protegidos',
   ]) {
     assert.equal(source.includes(token), false, 'PR23 não deve conter lógica protegida: ' + token);
   }
+});
+
+
+test('PR26 eleva o piso de legibilidade e neutraliza o fundo de campos atualizados', () => {
+  const source = pr23Css();
+  assert.ok(source.includes('--evo-frame-panel-width: 420px'));
+  assert.ok(source.includes('background: #fbfdfe !important'));
+  assert.ok(source.includes('box-shadow: inset 3px 0 #d58a00'));
+  assert.ok(source.includes('box-shadow: inset 3px 0 #e0a43a'));
+  assert.ok(source.includes('box-shadow: inset 3px 0 #d7a33c'));
+  assert.ok(source.includes('#currentTimeLabel'));
+  assert.ok(source.includes('font-size: 11px'));
 });
