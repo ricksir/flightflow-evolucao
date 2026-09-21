@@ -5643,7 +5643,7 @@ html[data-palette="velox"] .evo-rail-target-pulse {
 /* ==========================================================================
    FlightFlow Evolução — PR21 Collision-Safe Layout
    Reserva faixas geométricas explícitas para status, marcos e controles.
-   Não altera timeline, rota, goTo() ou buildTimeline().
+   Não altera comportamento temporal, espacial ou navegação operacional.
    ========================================================================== */
 
 .scene-head,
@@ -5750,7 +5750,7 @@ html[data-palette="velox"] .evo-rail-target-pulse {
   }
 }
 
-@media (max-width: 900px) {
+@media (width <= 900px) {
   .scene-head {
     align-items: stretch;
   }
