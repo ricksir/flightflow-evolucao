@@ -6583,7 +6583,7 @@ html[data-theme="light"] body {
   font-weight: 680;
   line-height: 1;
   letter-spacing: .025em;
-  opacity: .82;
+  opacity: .78;
   box-shadow: none;
 }
 
@@ -6707,6 +6707,11 @@ html[data-theme="dark"][data-palette="velox"] .tab-panel[data-panel="data"] .fie
     inset 3px 0 var(--pr28-accent-warm),
     inset 0 1px rgba(255,255,255,.025),
     var(--pr28-shadow) !important;
+}
+
+html[data-theme="dark"][data-palette="velox"] .tab-panel[data-panel="data"] .fields-grid .field-label,
+html[data-theme="dark"][data-palette="velox"] .tab-panel[data-panel="data"] .fields-grid .field-previous {
+  color: #d8f3ea !important;
 }
 
 @media (min-width: 901px) and (max-width: 1180px) {
