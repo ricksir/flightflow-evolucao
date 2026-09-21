@@ -1,12 +1,14 @@
-# Aceitação Manual — FlightFlow Evolução V11 / main
+# Aceitação Manual — FlightFlow Evolução / main
 
-Este roteiro valida em navegador real a linha visual **V1–V11** e os contratos operacionais preservados no `main`.
+Este roteiro valida em navegador real a linha visual **V1–V11**, os contratos operacionais preservados e a remediação dos achados de aceitação tratada nos PRs **#20–#23**.
 
-> **Status atual:** automação certificada. Aceitação humana ainda **pendente**.
+> **Status atual:** fechamento técnico pós-aceitação certificado; **revalidação humana final pendente**.
 >
-> Último SHA funcional V11 certificado: `a27ffee33577d88536a3828f9f3cca97b47fc898`.
+> Baseline funcional pós-remediação: `cd4adf92d726ed3a2dea0fe4fa23744b41784b4f`.
 >
-> Pós-merge workflow #59: **675/675 Node + 79/79 Playwright**, sem contadores críticos.
+> Pós-merge quality gate #90: **696/696 Node + 97/97 Playwright**, sem `failed`, `flaky`, retry, timeout, `AssertionError`, `not ok` ou `SPATIAL_EQ_DIAG`.
+>
+> A rodada humana anterior foi **REPROVADA** pelos quatro grupos de achados agora corrigidos; este roteiro deve ser reexecutado antes de qualquer nova release.
 
 ## 1. Preparação
 
@@ -59,6 +61,14 @@ Validar em **claro**, **escuro** e **Dashboard moderno/Velox**:
 - [ ] Velox altera chrome/acento sem substituir semântica ATS;
 - [ ] foco de teclado permanece visível;
 - [ ] não existe texto ilegível por contraste ou grade de cores.
+
+### Revalidação obrigatória dos quatro achados corrigidos
+
+- [ ] **PR20 / navegação:** Operação, Mapa, Quadro, Eventos e Base exibem comportamento claro, estado ativo e feedback perceptível;
+- [ ] **PR21 / colisões:** faixa de situação, “MENSAGEM E FLUXO DESTE PASSO” e marcos DEP/TRF/TER não se sobrepõem em desktop, largura intermediária ou abaixo de 900 px;
+- [ ] **PR22 / Velox:** Dashboard moderno/Velox é visualmente distinto do modo escuro, preservando as cores ATS semânticas;
+- [ ] **PR23 / legibilidade:** Quadro Operacional, tabs, timeline, captions e controles cartográficos permanecem legíveis nos três temas, sem competição excessiva do chip `ATUALIZADO`;
+- [ ] o mapa continua sendo a superfície dominante após todas essas correções.
 
 ## 4. Fluxo operacional básico
 
