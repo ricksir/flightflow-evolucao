@@ -46,10 +46,10 @@ test('PR22 cria uma paleta de chrome própria para o Dashboard moderno', () => {
 
 test('PR22 diferencia chrome e acento sem redefinir as cores semânticas ATS', () => {
   const source = pr22Css();
-  assert.ok(source.includes('--ffds-accent: #58efba'));
-  assert.ok(source.includes('--evo-command-accent: #58efba'));
-  assert.ok(source.includes('--evo-mission-rail-accent: #58efba'));
-  assert.ok(source.includes('--evo-temporal-accent: #58efba'));
+  assert.ok(source.includes('--ffds-accent: #49e7ad'));
+  assert.ok(source.includes('--evo-command-accent: #49e7ad'));
+  assert.ok(source.includes('--evo-mission-rail-accent: #49e7ad'));
+  assert.ok(source.includes('--evo-temporal-accent: #49e7ad'));
 
   for (const semantic of ['--evo-dep:', '--evo-trf:', '--evo-ter:']) {
     assert.equal(source.includes(semantic), false, semantic + ' não deve ser redefinida pelo PR22');
