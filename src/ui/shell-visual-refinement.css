@@ -6092,11 +6092,15 @@ html[data-theme="dark"][data-palette="velox"] .tab-panel[data-panel="data"] .fie
 }
 
 html[data-theme="light"]:not([data-palette="velox"]) .tab-panel[data-panel="data"] .fields-grid .field-card {
-  background-color: #f8fbfc;
+  background: #f8fbfc !important;
+}
+
+html[data-theme="light"]:not([data-palette="velox"]) .tab-panel[data-panel="data"] .fields-grid .field-card.changed {
+  background: #fffaf0 !important;
 }
 
 html[data-theme="light"]:not([data-palette="velox"]) .tab-panel[data-panel="data"] .fields-grid .field-value {
-  color: #102f3b;
+  color: #102f3b !important;
 }
 
 html[data-theme="light"]:not([data-palette="velox"]) .tab-panel[data-panel="data"] .fields-grid .field-label {
@@ -6104,11 +6108,15 @@ html[data-theme="light"]:not([data-palette="velox"]) .tab-panel[data-panel="data
 }
 
 html[data-theme="dark"]:not([data-palette="velox"]) .tab-panel[data-panel="data"] .fields-grid .field-card {
-  background-color: #102b38;
+  background: #102b38 !important;
+}
+
+html[data-theme="dark"]:not([data-palette="velox"]) .tab-panel[data-panel="data"] .fields-grid .field-card.changed {
+  background: #172f39 !important;
 }
 
 html[data-theme="dark"]:not([data-palette="velox"]) .tab-panel[data-panel="data"] .fields-grid .field-value {
-  color: #f0f9fb;
+  color: #f0f9fb !important;
 }
 
 html[data-theme="dark"]:not([data-palette="velox"]) .tab-panel[data-panel="data"] .fields-grid .field-label {
@@ -6116,12 +6124,15 @@ html[data-theme="dark"]:not([data-palette="velox"]) .tab-panel[data-panel="data"
 }
 
 html[data-theme="dark"][data-palette="velox"] .tab-panel[data-panel="data"] .fields-grid .field-card {
-  background-color: #153b35;
-  background-image: linear-gradient(145deg,rgba(88,239,186,.035),rgba(255,255,255,.012));
+  background: #153b35 !important;
+}
+
+html[data-theme="dark"][data-palette="velox"] .tab-panel[data-panel="data"] .fields-grid .field-card.changed {
+  background: #1b4038 !important;
 }
 
 html[data-theme="dark"][data-palette="velox"] .tab-panel[data-panel="data"] .fields-grid .field-value {
-  color: #effff8;
+  color: #effff8 !important;
 }
 
 html[data-theme="dark"][data-palette="velox"] .tab-panel[data-panel="data"] .fields-grid .field-label {
@@ -6158,8 +6169,8 @@ html[data-theme="dark"][data-palette="velox"] .tab-panel[data-panel="data"] .fie
   line-height: 1.25;
 }
 
-.scene-caption p {
-  font-size: 11.5px;
+.workspace-card .scene-caption p {
+  font-size: 12px !important;
   line-height: 1.5;
 }
 
