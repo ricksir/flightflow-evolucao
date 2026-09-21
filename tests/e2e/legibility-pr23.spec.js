@@ -36,6 +36,40 @@ async function loadDemo(page, viewport = { width: 1600, height: 900 }) {
   await expect(page.locator('#playBtn')).toHaveAttribute('title', /Reproduzir/);
 }
 
+async function applySettledTheme(page, mode) {
+  // Este teste mede contraste estático do estado final, não frames de
+  // interpolação durante a troca de tema. A célula do Quadro possui uma
+  // transição visual própria; desabilitá-la aqui mantém o teste fiel à
+  // superfície efetivamente aplicada após a troca.
+  await page.addStyleTag({ content: `
+    .tab-panel[data-panel="data"] .fields-grid .field-card,
+    .tab-panel[data-panel="data"] .fields-grid .field-card:hover {
+      transition: none !important;
+    }
+  ` });
+
+  await page.evaluate(({theme,palette}) => {
+    const root = document.documentElement;
+    root.dataset.theme = theme;
+    if (palette) root.dataset.palette = palette;
+    else delete root.dataset.palette;
+  }, mode);
+
+  // Aguarda dois ciclos de pintura para que style/layout sejam recalculados
+  // inclusive se o Quadro tiver sido renderizado novamente no mesmo tick.
+  await page.evaluate(() => new Promise(resolve => {
+    requestAnimationFrame(() => requestAnimationFrame(resolve));
+  }));
+
+  await expect.poll(() => page.evaluate(({theme,palette}) => ({
+    theme: document.documentElement.dataset.theme || '',
+    palette: document.documentElement.dataset.palette || '',
+  })), { timeout: 2_000 }).toEqual({
+    theme: mode.theme,
+    palette: mode.palette,
+  });
+}
+
 async function metrics(page) {
   return page.evaluate(() => {
     const style = selector => {
@@ -113,21 +147,9 @@ for (const mode of [
 ]) {
   test(`PR23 preserva legibilidade operacional no tema ${mode.name}`, async ({ page }) => {
     await loadDemo(page);
-    await page.evaluate(({theme,palette}) => {
-      document.documentElement.dataset.theme = theme;
-      if (palette) document.documentElement.dataset.palette = palette;
-      else delete document.documentElement.dataset.palette;
-    }, mode);
-
-    // Os cards possuem transição curta de background. A aceitação mede o
-    // estado visual estabilizado, não o frame intermediário da troca de tema.
-    await page.waitForTimeout(200);
+    await applySettledTheme(page, mode);
 
     const m = await metrics(page);
-    console.log(`PR23_CONTRAST_DIAG ${mode.name}`, JSON.stringify({
-      valueColor: m.valueColor,
-      cardBackground: m.cardBackground,
-    }));
     expect(m.labelSize).toBeGreaterThanOrEqual(11);
     expect(m.valueSize).toBeGreaterThanOrEqual(13.5);
     expect(contrast(m.valueColor, m.cardBackground)).toBeGreaterThanOrEqual(4.5);
