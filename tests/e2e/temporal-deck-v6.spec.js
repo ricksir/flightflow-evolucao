@@ -45,17 +45,23 @@ test('Temporal Deck V6 torna a timeline inferior dominante sem alterar o scrubbe
   expect(result.v4Loaded).toBe(true);
 });
 
-test('Temporal Deck V6 permanece escuro no tema claro e preserva os controles originais', async ({ page }) => {
+test('Temporal Deck V6 harmoniza com o tema claro e preserva controles, dark e Velox', async ({ page }) => {
   await page.goto('/index.html', { waitUntil: 'load' });
-  await page.evaluate(() => document.documentElement.setAttribute('data-theme', 'light'));
 
-  const result = await page.evaluate(() => {
+  const setMode = mode => page.evaluate(({ theme, palette }) => {
+    document.documentElement.dataset.theme = theme;
+    if (palette) document.documentElement.dataset.palette = palette;
+    else delete document.documentElement.dataset.palette;
+  }, mode);
+
+  const readState = () => page.evaluate(() => {
     const transport = document.querySelector('.transport');
     const play = document.querySelector('#playBtn');
     const scrubber = document.querySelector('#scrubber');
     const speed = document.querySelector('#speedSelect');
 
     return {
+      backgroundColor: getComputedStyle(transport).backgroundColor,
       backgroundImage: getComputedStyle(transport).backgroundImage,
       playRadius: getComputedStyle(play).borderRadius,
       scrubberCount: document.querySelectorAll('#scrubber').length,
@@ -65,10 +71,25 @@ test('Temporal Deck V6 permanece escuro no tema claro e preserva os controles or
     };
   });
 
-  expect(result.backgroundImage).toContain('linear-gradient');
-  expect(result.playRadius).toBe('5px');
-  expect(result.scrubberCount).toBe(1);
-  expect(result.speedCount).toBe(1);
-  expect(result.scrubberType).toBe('range');
-  expect(result.speedValue).toBe('1');
+  await setMode({ theme: 'light', palette: '' });
+  const light = await readState();
+  expect(light.backgroundColor).toBe('rgb(234, 243, 246)');
+  expect(light.backgroundImage).toContain('linear-gradient');
+  expect(light.playRadius).toBe('5px');
+  expect(light.scrubberCount).toBe(1);
+  expect(light.speedCount).toBe(1);
+  expect(light.scrubberType).toBe('range');
+  expect(light.speedValue).toBe('1');
+
+  await setMode({ theme: 'dark', palette: '' });
+  const dark = await readState();
+  expect(dark.backgroundColor).not.toBe(light.backgroundColor);
+
+  await setMode({ theme: 'light', palette: 'velox' });
+  const velox = await readState();
+  expect(velox.backgroundColor).not.toBe(light.backgroundColor);
+  expect(velox.scrubberCount).toBe(light.scrubberCount);
+  expect(velox.speedCount).toBe(light.speedCount);
+  expect(velox.scrubberType).toBe(light.scrubberType);
+  expect(velox.speedValue).toBe(light.speedValue);
 });

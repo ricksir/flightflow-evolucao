@@ -43,23 +43,43 @@ test('Mission Rail V9 mantém navegação compacta e active-state técnico no de
   expect(metrics.anchors).toEqual(['#workspaceCard','#dropZone','#fieldsGrid','#timelineList','#knowledgeBaseBtn']);
 });
 
-test('Mission Rail V9 continua escura no tema claro e mantém foco visível', async ({ page }) => {
+test('Mission Rail V9 harmoniza com o tema claro e mantém foco, dark e Velox', async ({ page }) => {
   await page.setViewportSize({ width: 1600, height: 900 });
   await page.goto('/index.html', { waitUntil: 'load' });
-  await page.evaluate(() => document.documentElement.setAttribute('data-theme', 'light'));
 
-  const second = page.locator('.evo-rail-item').nth(1);
-  await second.focus();
+  const setMode = mode => page.evaluate(({ theme, palette }) => {
+    document.documentElement.dataset.theme = theme;
+    if (palette) document.documentElement.dataset.palette = palette;
+    else delete document.documentElement.dataset.palette;
+  }, mode);
 
-  const metrics = await page.evaluate(() => {
+  const readMetrics = () => page.evaluate(() => {
     const rail = document.querySelector('.evo-rail');
     const focused = document.activeElement;
-    const railBg = getComputedStyle(rail).backgroundImage;
+    const style = getComputedStyle(rail);
     const focusShadow = focused ? getComputedStyle(focused).boxShadow : '';
-    return { railBg, focusShadow, href: focused?.getAttribute('href') };
+    return {
+      railBgColor: style.backgroundColor,
+      railBgImage: style.backgroundImage,
+      focusShadow,
+      href: focused?.getAttribute('href'),
+    };
   });
 
-  expect(metrics.railBg).toContain('linear-gradient');
-  expect(metrics.focusShadow).not.toBe('none');
-  expect(metrics.href).toBe('#dropZone');
+  await setMode({ theme: 'light', palette: '' });
+  const second = page.locator('.evo-rail-item').nth(1);
+  await second.focus();
+  const light = await readMetrics();
+  expect(light.railBgColor).toBe('rgb(231, 241, 244)');
+  expect(light.railBgImage).toContain('linear-gradient');
+  expect(light.focusShadow).not.toBe('none');
+  expect(light.href).toBe('#dropZone');
+
+  await setMode({ theme: 'dark', palette: '' });
+  const dark = await readMetrics();
+  expect(dark.railBgColor).not.toBe(light.railBgColor);
+
+  await setMode({ theme: 'light', palette: 'velox' });
+  const velox = await readMetrics();
+  expect(velox.railBgColor).not.toBe(light.railBgColor);
 });

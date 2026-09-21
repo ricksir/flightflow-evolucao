@@ -43,19 +43,22 @@ test('Operational Command Bar V7 organiza o header em zonas técnicas sem substi
   expect(result.configCount).toBe(1);
 });
 
-test('Operational Command Bar V7 permanece escura no tema claro e preserva foco explícito', async ({ page }) => {
+test('Operational Command Bar V7 harmoniza com o tema claro e preserva foco, dark e Velox', async ({ page }) => {
   await page.goto('/index.html', { waitUntil: 'load' });
-  await page.evaluate(() => document.documentElement.setAttribute('data-theme', 'light'));
 
-  await page.locator('#configBtn').focus();
-  await expect(page.locator('#configBtn')).toBeFocused();
+  const setMode = mode => page.evaluate(({ theme, palette }) => {
+    document.documentElement.dataset.theme = theme;
+    if (palette) document.documentElement.dataset.palette = palette;
+    else delete document.documentElement.dataset.palette;
+  }, mode);
 
-  const visual = await page.evaluate(() => {
+  const readVisual = () => page.evaluate(() => {
     const topbar = getComputedStyle(document.querySelector('.topbar'));
     const config = getComputedStyle(document.querySelector('#configBtn'));
     const brand = getComputedStyle(document.querySelector('.brand-title'));
     return {
-      background: topbar.backgroundImage,
+      backgroundColor: topbar.backgroundColor,
+      backgroundImage: topbar.backgroundImage,
       radius: topbar.borderRadius,
       brandColor: brand.color,
       focusStyle: config.outlineStyle,
@@ -63,11 +66,26 @@ test('Operational Command Bar V7 permanece escura no tema claro e preserva foco 
     };
   });
 
-  expect(visual.background).toContain('linear-gradient');
-  expect(visual.radius).toBe('16px');
-  expect(visual.brandColor).not.toBe('rgb(21, 56, 78)');
-  expect(visual.focusStyle).not.toBe('none');
-  expect(visual.focusWidth).toBeGreaterThanOrEqual(2);
+  await setMode({ theme: 'light', palette: '' });
+  await page.locator('#configBtn').focus();
+  await expect(page.locator('#configBtn')).toBeFocused();
+  const light = await readVisual();
+  expect(light.backgroundColor).toBe('rgb(245, 250, 252)');
+  expect(light.backgroundImage).toContain('linear-gradient');
+  expect(light.radius).toBe('16px');
+  expect(light.brandColor).toBe('rgb(16, 47, 61)');
+  expect(light.focusStyle).not.toBe('none');
+  expect(light.focusWidth).toBeGreaterThanOrEqual(2);
+
+  await setMode({ theme: 'dark', palette: '' });
+  const dark = await readVisual();
+  expect(dark.backgroundColor).not.toBe(light.backgroundColor);
+  expect(dark.brandColor).not.toBe(light.brandColor);
+
+  await setMode({ theme: 'light', palette: 'velox' });
+  const velox = await readVisual();
+  expect(velox.backgroundColor).not.toBe(light.backgroundColor);
+  expect(velox.brandColor).not.toBe(light.brandColor);
 });
 
 test('Operational Command Bar V7 quebra a fonte do plano para segunda linha em largura intermediária', async ({ page }) => {
