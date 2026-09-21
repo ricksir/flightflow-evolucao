@@ -1,21 +1,21 @@
 # Roadmap técnico — FlightFlow Evolução
 
-> Estado revisado em **21/09/2026**, após o fechamento técnico da remediação de aceitação nos PRs **#20–#23**.
+> Estado revisado em **21/09/2026**, após o fechamento técnico dos refinamentos visuais até o **PR29**.
 
 ## Estado atual
 
-A rodada principal de evolução visual e a remediação dos quatro achados da primeira aceitação estão tecnicamente concluídas. O baseline funcional pós-remediação é:
+A rodada principal de evolução visual e os refinamentos derivados das aceitações humanas estão tecnicamente concluídos até o PR29. O baseline funcional certificado é:
 
-`cd4adf92d726ed3a2dea0fe4fa23744b41784b4f`
+`8cf3dcf13f22f707ec39e55a24022fb198e1a978`
 
 Certificação pós-merge atual:
 
-- quality gate **#90**: sucesso;
-- **696/696** testes Node;
-- **97/97** testes Playwright;
-- zero `failed`, `flaky`, `retry`, `TimeoutError`, `AssertionError`, `SPATIAL_EQ_DIAG` e `not ok`;
-- housekeeping **#24**: sucesso;
-- branch `fix/pr23-legibility-card-refinement` removida.
+- quality gate **#111**: sucesso;
+- **698/698** testes Node;
+- **106/106** testes Playwright;
+- zero `failed`, `flaky`, `retry`, `timeout`, `AssertionError`, `SPATIAL_EQ_DIAG` e `not ok`;
+- housekeeping **#31**: sucesso;
+- branches temporárias do PR28/PR29 removidas.
 
 Baseline histórico V11: `a27ffee33577d88536a3828f9f3cca97b47fc898`, workflow #59, **675/675 Node + 79/79 Playwright**.
 
@@ -44,14 +44,20 @@ Baseline histórico V11: `a27ffee33577d88536a3828f9f3cca97b47fc898`, workflow #5
 - [x] Living Operational Chart V10;
 - [x] Flight Situation Strip V11.
 
-### Remediação da aceitação original
+### Remediação e refinamentos pós-aceitação
 
 - [x] PR #20 — navegação lateral e feedback de estado;
 - [x] PR #21 — sobreposições e colisões;
 - [x] PR #22 — diferenciação do Dashboard moderno/Velox;
 - [x] PR #23 — legibilidade, tipografia, contraste e refinamento dos cards;
 - [x] quality gate #90 verde no pós-merge do PR23;
-- [x] housekeeping #24 e remoção da branch do PR23.
+- [x] PR #25 — foco visual efetivo do Mapa;
+- [x] PR #26 — legibilidade real do dashboard;
+- [x] PR #27 — controles do mapa claros no tema claro;
+- [x] PR #28 — Quadro Atual modernizado e alinhado a Alterações;
+- [x] PR #29 — contrato visual de tema estabilizado sem mudança de produto;
+- [x] quality gate #111 verde no pós-merge do PR29;
+- [x] housekeeping #31 e remoção das branches temporárias.
 
 ## Rodada de fechamento
 
@@ -63,7 +69,7 @@ Baseline histórico V11: `a27ffee33577d88536a3828f9f3cca97b47fc898`, workflow #5
 
 ### 2. Revalidação manual final — pendente
 
-Reexecutar `docs/MANUAL-ACCEPTANCE.md` no `main` pós-PR23, com histórico representativo, e registrar o resultado. A aceitação anterior encontrou os quatro achados já corrigidos e não equivale à aprovação do estado atual.
+Reexecutar `docs/MANUAL-ACCEPTANCE.md` no `main` pós-PR29, com histórico representativo, e registrar o resultado. A aceitação anterior encontrou os quatro achados já corrigidos e não equivale à aprovação do estado atual.
 
 Obrigatório antes de nova release:
 
