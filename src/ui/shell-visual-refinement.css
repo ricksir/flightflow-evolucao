@@ -5638,3 +5638,172 @@ html[data-palette="velox"] .evo-rail-target-pulse {
     transition: none !important;
   }
 }
+
+
+/* ==========================================================================
+   FlightFlow Evolução — PR21 Collision-Safe Layout
+   Reserva faixas geométricas explícitas para status, marcos e controles.
+   Não altera comportamento temporal, espacial ou navegação operacional.
+   ========================================================================== */
+
+.scene-head,
+.flight-id-block,
+.scene-status,
+.scrubber-wrap {
+  min-width: 0;
+}
+
+.scene-status {
+  display: flex !important;
+  flex-wrap: wrap;
+  align-items: center;
+  align-content: center;
+  gap: 4px;
+  max-width: 100%;
+}
+
+.evo-status-kicker {
+  position: static !important;
+  flex: 1 0 100%;
+  margin: 0 0 1px;
+  min-width: 0;
+}
+
+.status-badge,
+.stage-badge,
+.frame-counter {
+  flex: 0 0 auto;
+}
+
+.scene-protocol-toggle {
+  flex: 0 1 auto;
+  width: auto;
+  max-width: min(320px, 100%);
+  height: auto !important;
+  min-height: 26px;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  text-align: center;
+  line-height: 1.2 !important;
+}
+
+.scrubber-wrap {
+  position: relative;
+  overflow: visible;
+  padding-top: 42px !important;
+}
+
+.evo-transport-kicker {
+  top: 6px !important;
+  line-height: 1.1;
+  z-index: 3;
+}
+
+.evo-transport-milestones {
+  top: 28px !important;
+  height: 13px;
+  z-index: 2;
+}
+
+.evo-transport-marker {
+  height: 13px;
+}
+
+.evo-transport-marker b {
+  top: -3px !important;
+  line-height: 1 !important;
+}
+
+.scrubber {
+  position: relative;
+  z-index: 1;
+}
+
+.protocol-card.protocol-floating {
+  max-height: min(52vh, calc(100vh - 150px)) !important;
+}
+
+@media (min-width: 1181px) {
+  .scene-status {
+    justify-content: flex-end;
+    padding: 0 0 0 12px;
+  }
+}
+
+@media (min-width: 901px) and (max-width: 1180px) {
+  .scene-head {
+    grid-template-columns: minmax(0,1fr);
+    row-gap: 7px;
+  }
+
+  .scene-status {
+    width: 100%;
+    justify-self: stretch;
+    justify-content: flex-start;
+    margin-left: 0;
+    padding: 0;
+    border-left: 0;
+  }
+
+  .scene-protocol-toggle {
+    max-width: min(360px, 100%);
+  }
+}
+
+@media (width <= 900px) {
+  .scene-head {
+    align-items: stretch;
+  }
+
+  .scene-status {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .scene-protocol-toggle {
+    flex: 1 1 220px;
+    max-width: 100%;
+  }
+
+  .scrubber-wrap {
+    min-height: 76px;
+    padding-top: 42px !important;
+  }
+
+  .protocol-card.protocol-floating {
+    max-height: min(48vh, calc(100vh - 140px)) !important;
+  }
+}
+
+@media (max-width: 620px) {
+  .scene-status {
+    gap: 5px;
+  }
+
+  .status-badge,
+  .stage-badge,
+  .frame-counter {
+    min-height: 28px;
+    height: auto;
+  }
+
+  .scene-protocol-toggle {
+    flex-basis: 100%;
+    min-height: 32px;
+  }
+
+  .evo-transport-marker b {
+    font-size: 8px;
+    padding: 2px 3px;
+  }
+
+  .protocol-card.protocol-floating {
+    top: 64px;
+    left: 8px;
+    width: calc(100vw - 16px);
+    min-width: 0;
+    max-width: calc(100vw - 16px);
+    max-height: calc(100vh - 132px) !important;
+    resize: none;
+  }
+}
