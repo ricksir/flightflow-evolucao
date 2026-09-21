@@ -5807,3 +5807,191 @@ html[data-palette="velox"] .evo-rail-target-pulse {
     resize: none;
   }
 }
+
+
+/* ==========================================================================
+   FlightFlow Evolução — PR22 Velox Visual Identity
+   Identidade própria do Dashboard moderno: chrome teal/emerald em camadas.
+   Mantém intactas as cores ATS semânticas e o comportamento dos componentes.
+   ========================================================================== */
+
+html[data-theme="dark"][data-palette="velox"] {
+  --velox-chrome-deep: #0a1f1d;
+  --velox-chrome-base: #12332f;
+  --velox-chrome-raised: #173f39;
+  --velox-chrome-soft: #1c4941;
+  --velox-chrome-line: rgba(102,242,194,.30);
+  --velox-chrome-line-soft: rgba(102,242,194,.17);
+  --velox-chrome-text: #eafff7;
+  --velox-chrome-muted: #a8d8c8;
+  --ffds-accent: #58efba;
+  --ffds-accent-strong: #26c992;
+  --ffds-accent-soft: rgba(88,239,186,.13);
+  --evo-command-accent: #58efba;
+  --evo-mission-rail-accent: #58efba;
+  --evo-temporal-accent: #58efba;
+  --evo-chart-accent: #58efba;
+  --evo-situation-accent: #58efba;
+}
+
+html[data-theme="dark"][data-palette="velox"] body {
+  background-color: #071714;
+  background-image:
+    radial-gradient(circle at 14% -8%,rgba(88,239,186,.19),transparent 34%),
+    radial-gradient(circle at 88% 4%,rgba(72,189,204,.13),transparent 31%),
+    linear-gradient(145deg,#071714 0%,#0b2823 50%,#0b342d 100%);
+}
+
+html[data-theme="dark"][data-palette="velox"] .topbar {
+  border-color: var(--velox-chrome-line) !important;
+  background-color: var(--velox-chrome-raised) !important;
+  background-image:
+    linear-gradient(105deg,rgba(88,239,186,.12),transparent 32%),
+    linear-gradient(180deg,#1b4941,#12332f) !important;
+  box-shadow:
+    0 16px 38px rgba(0,18,14,.27),
+    inset 0 1px rgba(234,255,247,.08) !important;
+}
+
+html[data-theme="dark"][data-palette="velox"] .workspace-card {
+  border-color: var(--velox-chrome-line-soft) !important;
+  background-color: #102b28 !important;
+  background-image: linear-gradient(180deg,#143630,#0c2421) !important;
+  box-shadow:
+    0 18px 46px rgba(0,18,14,.25),
+    inset 0 1px rgba(234,255,247,.045) !important;
+}
+
+html[data-theme="dark"][data-palette="velox"] .inspector-card {
+  border-color: var(--velox-chrome-line) !important;
+  background-color: #173631 !important;
+  background-image: linear-gradient(180deg,#1a413a,#102b27) !important;
+  box-shadow:
+    0 18px 46px rgba(0,18,14,.27),
+    inset 0 1px rgba(234,255,247,.05) !important;
+}
+
+html[data-theme="dark"][data-palette="velox"] .scene-head {
+  border-bottom-color: var(--velox-chrome-line-soft);
+  background-color: rgba(27,73,65,.72);
+  background-image: linear-gradient(90deg,rgba(88,239,186,.075),transparent 44%);
+}
+
+html[data-theme="dark"][data-palette="velox"] .inspector-tabs {
+  border-bottom-color: var(--velox-chrome-line-soft);
+  background-color: #153832 !important;
+  background-image: linear-gradient(180deg,rgba(88,239,186,.055),rgba(255,255,255,.012));
+}
+
+html[data-theme="dark"][data-palette="velox"] .tab {
+  color: var(--velox-chrome-muted);
+  background-color: rgba(255,255,255,.025);
+}
+
+html[data-theme="dark"][data-palette="velox"] .tab.active {
+  border-color: rgba(88,239,186,.31);
+  background-color: rgba(88,239,186,.14);
+  color: var(--velox-chrome-text);
+  box-shadow: inset 0 1px rgba(234,255,247,.065);
+}
+
+html[data-theme="dark"][data-palette="velox"] .tab.active::after {
+  background: #58efba;
+  box-shadow: 0 0 14px rgba(88,239,186,.48);
+}
+
+html[data-theme="dark"][data-palette="velox"] .transport {
+  border-color: var(--velox-chrome-line) !important;
+  background-color: #153c36 !important;
+  background-image:
+    linear-gradient(100deg,rgba(88,239,186,.09),transparent 38%),
+    linear-gradient(180deg,#19473f,#102f2b) !important;
+  box-shadow:
+    0 14px 36px rgba(0,18,14,.25),
+    inset 0 1px rgba(234,255,247,.065) !important;
+}
+
+html[data-theme="dark"][data-palette="velox"] .transport-left,
+html[data-theme="dark"][data-palette="velox"] .transport-right,
+html[data-theme="dark"][data-palette="velox"] .scrubber-wrap {
+  border-color: var(--velox-chrome-line-soft);
+  background-color: rgba(7,30,26,.48);
+  background-image: linear-gradient(180deg,rgba(255,255,255,.035),rgba(88,239,186,.025));
+}
+
+@media (min-width: 901px) {
+  html[data-theme="dark"][data-palette="velox"] .evo-rail {
+    border-color: var(--velox-chrome-line) !important;
+    background-color: #163b35 !important;
+    background-image:
+      linear-gradient(180deg,rgba(88,239,186,.09),transparent 22%),
+      linear-gradient(180deg,#19453e,#0f302b) !important;
+    box-shadow:
+      7px 0 25px rgba(0,18,14,.22),
+      inset -1px 0 rgba(234,255,247,.045) !important;
+  }
+
+  html[data-theme="dark"][data-palette="velox"] .evo-rail-item {
+    color: #a5d4c5;
+  }
+
+  html[data-theme="dark"][data-palette="velox"] .evo-rail-item.active {
+    border-color: rgba(88,239,186,.29);
+    background: linear-gradient(90deg,rgba(88,239,186,.18),rgba(88,239,186,.055));
+    color: #effff9;
+  }
+
+  html[data-theme="dark"][data-palette="velox"] .evo-rail-item.active .evo-rail-icon {
+    border-color: rgba(88,239,186,.36);
+    background: rgba(88,239,186,.13);
+    color: #eafff7;
+  }
+}
+
+html[data-theme="dark"][data-palette="velox"] .field-card,
+html[data-theme="dark"][data-palette="velox"] .timeline-body {
+  border-color: rgba(102,242,194,.14);
+  background-color: rgba(22,61,54,.48);
+  background-image: linear-gradient(145deg,rgba(88,239,186,.045),rgba(255,255,255,.018));
+}
+
+html[data-theme="dark"][data-palette="velox"] .real-map-control-group,
+html[data-theme="dark"][data-palette="velox"] .real-map-layer-switches {
+  border-color: rgba(102,242,194,.22);
+  background-color: rgba(18,51,47,.91);
+  box-shadow: 0 8px 24px rgba(0,18,14,.22);
+}
+
+html[data-theme="dark"][data-palette="velox"] .config-drawer {
+  border-left-color: var(--velox-chrome-line);
+  background-color: #102d28;
+  background-image: linear-gradient(180deg,#173f38,#0d2723);
+}
+
+html[data-theme="dark"][data-palette="velox"] .evo-product-badge {
+  border-color: rgba(88,239,186,.36);
+  background: rgba(88,239,186,.13);
+  color: #b8f8df;
+}
+
+html[data-theme="dark"][data-palette="velox"] .brand-mark {
+  border-color: rgba(88,239,186,.40);
+  background: linear-gradient(145deg,#236353,#123f35);
+  box-shadow:
+    0 0 0 1px rgba(88,239,186,.10),
+    0 8px 24px rgba(0,18,14,.28),
+    0 0 24px rgba(88,239,186,.14);
+}
+
+html[data-theme="dark"][data-palette="velox"] .topbar::before,
+html[data-theme="dark"][data-palette="velox"] .transport::before {
+  background: linear-gradient(90deg,transparent,rgba(88,239,186,.62),transparent);
+}
+
+html[data-theme="dark"][data-palette="velox"] .play-btn,
+html[data-theme="dark"][data-palette="velox"] .btn-primary {
+  border-color: rgba(88,239,186,.48);
+  background: linear-gradient(135deg,#33dca1,#67f1bd);
+  color: #062019;
+  box-shadow: 0 8px 25px rgba(51,220,161,.22);
+}
