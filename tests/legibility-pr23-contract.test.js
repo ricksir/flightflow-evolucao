@@ -36,9 +36,9 @@ test('PR23 reduz dominância do chip de alteração sem remover semântica', () 
   assert.ok(source.includes('opacity: .74'));
   assert.ok(source.includes('.field-card.changed .change-tag'));
   assert.ok(source.includes('border-color: rgba(213,138,0,.20)'));
-  assert.ok(source.includes('background-color: #f8fbfc'));
-  assert.ok(source.includes('background-color: #102b38'));
-  assert.ok(source.includes('background-color: #153b35'));
+  assert.ok(source.includes('background: #f8fbfc !important'));
+  assert.ok(source.includes('background: #102b38 !important'));
+  assert.ok(source.includes('background: #153b35 !important'));
 });
 
 test('PR23 melhora leitura de tabs, timeline, caption e controles do mapa', () => {
