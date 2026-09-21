@@ -135,7 +135,7 @@ test('PR23 mantém ATUALIZADO secundário em relação ao valor operacional', as
     const m = await metrics(page);
     expect(m.changeTagText.toUpperCase()).toContain('ATUALIZ');
     expect(m.changeTagSize).toBeLessThan(m.valueSize);
-    expect(m.changeTagSize).toBeLessThanOrEqual(8.5);
+    expect(m.changeTagSize).toBeLessThanOrEqual(10);
     expect(m.changeTagOpacity).toBeLessThanOrEqual(0.8);
   }
 });

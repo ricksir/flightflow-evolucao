@@ -6366,3 +6366,386 @@ html[data-theme="light"]:not([data-palette="velox"]) #realMapControls.real-map-c
   background: #edf5f7 !important;
   color: #315563 !important;
 }
+
+
+/* ==========================================================================
+   FlightFlow Evolução — PR28 Unified Operational Surface
+   Unifica Quadro Atual e Alterações sob a mesma linguagem visual e tipográfica.
+   Camada exclusivamente visual: não altera estado, navegação, rota ou timeline.
+   ========================================================================== */
+
+:root {
+  --ff-font-sans: Inter, "Segoe UI Variable Text", "Segoe UI Variable", "Segoe UI",
+    system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  --pr28-panel-bg: #f5f7f8;
+  --pr28-surface: #fbfcfc;
+  --pr28-surface-warm: #fbf7ea;
+  --pr28-border: #d7e1e5;
+  --pr28-border-warm: #ddc98f;
+  --pr28-text: #183847;
+  --pr28-text-secondary: #607984;
+  --pr28-accent: #1686a8;
+  --pr28-accent-warm: #b98a1e;
+  --pr28-card-radius: 12px;
+  --pr28-panel-radius: 14px;
+  --pr28-card-gap: 8px;
+  --pr28-shadow: 0 5px 16px rgba(31,72,88,.055);
+  --evo-legibility-heading: 19px;
+  --evo-legibility-label: 12.5px;
+  --evo-legibility-value: 15.5px;
+  --evo-legibility-value-wide: 16px;
+  --evo-legibility-meta: 11px;
+}
+
+body,
+button,
+input,
+select,
+textarea {
+  font-family: var(--ff-font-sans);
+}
+
+body {
+  font-feature-settings: "kern" 1, "liga" 1;
+}
+
+html[data-theme="light"] body {
+  background:
+    radial-gradient(circle at 10% -10%,rgba(22,134,168,.075),transparent 34%),
+    linear-gradient(145deg,#f1f5f6 0%,var(--pr28-panel-bg) 48%,#edf3f4 100%);
+}
+
+/* Quadro Atual: deixa de parecer uma tabela rígida e passa a usar cards operacionais. */
+.tab-panel[data-panel="data"] {
+  padding: 10px 10px 12px;
+  background: var(--pr28-panel-bg);
+}
+
+.tab-panel[data-panel="data"] .panel-heading {
+  min-height: 62px;
+  margin: 0 0 10px;
+  padding: 12px 14px 11px;
+  border: 1px solid var(--pr28-border);
+  border-radius: var(--pr28-panel-radius);
+  background: var(--pr28-surface);
+  box-shadow: var(--pr28-shadow);
+}
+
+.tab-panel[data-panel="data"] .panel-heading .eyebrow {
+  min-height: 13px;
+  margin-bottom: 4px;
+  color: var(--pr28-text-secondary);
+  font-size: 11px;
+  font-weight: 680;
+  line-height: 1.2;
+  letter-spacing: .09em;
+}
+
+.tab-panel[data-panel="data"] .panel-heading .eyebrow::after {
+  color: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  letter-spacing: inherit;
+}
+
+.tab-panel[data-panel="data"] .panel-heading h2 {
+  margin-top: 2px;
+  color: var(--pr28-text);
+  font-size: var(--evo-legibility-heading) !important;
+  font-weight: 760;
+  line-height: 1.25;
+  letter-spacing: -.015em;
+}
+
+.tab-panel[data-panel="data"] .panel-tools {
+  gap: 6px;
+}
+
+.tab-panel[data-panel="data"] .panel-tools .icon-btn {
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  border-radius: 9px;
+}
+
+.tab-panel[data-panel="data"] .fields-grid {
+  display: grid;
+  grid-template-columns: repeat(2,minmax(0,1fr));
+  gap: var(--pr28-card-gap);
+  padding: 0;
+  align-content: start;
+  border: 0;
+  background: transparent !important;
+}
+
+.tab-panel[data-panel="data"] .fields-grid .field-card,
+.tab-panel[data-panel="data"] .fields-grid .field-card:hover {
+  position: relative;
+  min-height: 72px;
+  margin: 0;
+  padding: 11px 13px 11px 15px;
+  border: 1px solid var(--pr28-border) !important;
+  border-radius: var(--pr28-card-radius);
+  background: var(--pr28-surface) !important;
+  box-shadow:
+    inset 0 1px rgba(255,255,255,.78),
+    var(--pr28-shadow) !important;
+  transform: none !important;
+}
+
+.tab-panel[data-panel="data"] .fields-grid .field-card:hover {
+  border-color: #bfd1d8 !important;
+  background: #f9fcfc !important;
+  box-shadow:
+    inset 0 1px rgba(255,255,255,.82),
+    0 7px 18px rgba(31,72,88,.075) !important;
+}
+
+.tab-panel[data-panel="data"] .fields-grid .field-card::before {
+  left: 0;
+  top: 13px;
+  bottom: 13px;
+  width: 3px;
+  border-radius: 0 4px 4px 0;
+  background: color-mix(in srgb,var(--pr28-accent) 58%,transparent);
+}
+
+.tab-panel[data-panel="data"] .fields-grid .field-card.changed,
+.tab-panel[data-panel="data"] .fields-grid .field-card.changed:hover {
+  border-color: var(--pr28-border-warm) !important;
+  background:
+    linear-gradient(135deg,rgba(185,138,30,.035),transparent 56%),
+    var(--pr28-surface) !important;
+  box-shadow:
+    inset 3px 0 var(--pr28-accent-warm),
+    inset 0 1px rgba(255,255,255,.80),
+    var(--pr28-shadow) !important;
+}
+
+.tab-panel[data-panel="data"] .fields-grid .field-card.changed::before {
+  display: none;
+}
+
+.tab-panel[data-panel="data"] .fields-grid .field-card[data-span="2"],
+.tab-panel[data-panel="data"] .fields-grid .field-card.wide {
+  grid-column: 1 / -1;
+}
+
+.tab-panel[data-panel="data"] .fields-grid .field-label,
+.tab-panel[data-panel="data"] .fields-grid .field-card[data-span="2"] .field-label {
+  min-height: 16px;
+  margin: 0 0 4px;
+  color: var(--pr28-text-secondary);
+  font-size: var(--evo-legibility-label);
+  font-weight: 670;
+  line-height: 1.3;
+  letter-spacing: .015em;
+  text-transform: none;
+}
+
+.tab-panel[data-panel="data"] .fields-grid .field-value,
+.tab-panel[data-panel="data"] .fields-grid .field-card[data-span="1"] .field-value {
+  margin-top: 0;
+  color: var(--pr28-text) !important;
+  font-family: var(--ff-font-sans);
+  font-size: var(--evo-legibility-value);
+  font-weight: 710;
+  line-height: 1.4;
+  letter-spacing: -.005em;
+  font-variant-numeric: tabular-nums;
+}
+
+.tab-panel[data-panel="data"] .fields-grid .field-card[data-span="2"] .field-value,
+.tab-panel[data-panel="data"] .fields-grid .field-card.wide .field-value,
+.tab-panel[data-panel="data"] .fields-grid .field-card[data-span="2"][data-field="route"] .field-value,
+.tab-panel[data-panel="data"] .fields-grid .field-card[data-span="2"][data-field="sid"] .field-value,
+.tab-panel[data-panel="data"] .fields-grid .field-card[data-span="2"][data-field="star"] .field-value {
+  font-size: var(--evo-legibility-value-wide);
+  line-height: 1.42;
+}
+
+.tab-panel[data-panel="data"] .fields-grid .field-previous {
+  color: var(--pr28-text-secondary);
+  font-size: 11.5px;
+  font-weight: 540;
+  line-height: 1.4;
+}
+
+.tab-panel[data-panel="data"] .fields-grid .change-tag,
+.tab-panel[data-panel="data"] .fields-grid .field-card.changed .change-tag {
+  min-height: 18px;
+  padding: 3px 7px;
+  border: 1px solid rgba(185,138,30,.30);
+  border-radius: 999px;
+  background: rgba(185,138,30,.075);
+  color: #76570f;
+  font-size: 9.5px;
+  font-weight: 680;
+  line-height: 1;
+  letter-spacing: .025em;
+  opacity: .78;
+  box-shadow: none;
+}
+
+/* Alterações: apenas cosmética para compartilhar raio, borda e profundidade. */
+.change-item {
+  padding: 11px 13px;
+  border: 1px solid var(--pr28-border);
+  border-radius: var(--pr28-card-radius);
+  background: var(--pr28-surface);
+  box-shadow: var(--pr28-shadow);
+}
+
+.change-item::before {
+  border-radius: 0 4px 4px 0;
+}
+
+.inspector-tabs .tab {
+  font-family: var(--ff-font-sans);
+  font-size: 12.5px;
+  font-weight: 680;
+  letter-spacing: -.005em;
+}
+
+.panel-heading h2,
+.timeline-op,
+.scene-caption,
+.evo-transport-kicker,
+#currentTimeLabel,
+#endTimeLabel,
+#eventLabel {
+  font-family: var(--ff-font-sans);
+}
+
+/* Tema escuro. */
+html[data-theme="dark"] {
+  --pr28-panel-bg: #0b202a;
+  --pr28-surface: #102b38;
+  --pr28-border: rgba(158,205,219,.19);
+  --pr28-border-warm: rgba(224,164,58,.48);
+  --pr28-text: #f0f9fb;
+  --pr28-text-secondary: #b9d0d8;
+  --pr28-accent: #35d7ff;
+  --pr28-accent-warm: #e0a43a;
+  --pr28-shadow: 0 7px 20px rgba(0,0,0,.12);
+}
+
+html[data-theme="dark"] .tab-panel[data-panel="data"],
+html[data-theme="dark"] .tab-panel[data-panel="data"] .fields-grid {
+  background: var(--pr28-panel-bg) !important;
+}
+
+html[data-theme="dark"] .tab-panel[data-panel="data"] .panel-heading,
+html[data-theme="dark"] .tab-panel[data-panel="data"] .fields-grid .field-card,
+html[data-theme="dark"] .tab-panel[data-panel="data"] .fields-grid .field-card:hover,
+html[data-theme="dark"] .change-item {
+  border-color: var(--pr28-border) !important;
+  background: var(--pr28-surface) !important;
+  box-shadow:
+    inset 0 1px rgba(255,255,255,.025),
+    var(--pr28-shadow) !important;
+}
+
+html[data-theme="dark"] .tab-panel[data-panel="data"] .panel-heading h2,
+html[data-theme="dark"] .tab-panel[data-panel="data"] .fields-grid .field-value {
+  color: var(--pr28-text) !important;
+}
+
+html[data-theme="dark"] .tab-panel[data-panel="data"] .panel-heading .eyebrow,
+html[data-theme="dark"] .tab-panel[data-panel="data"] .fields-grid .field-label,
+html[data-theme="dark"] .tab-panel[data-panel="data"] .fields-grid .field-previous {
+  color: var(--pr28-text-secondary);
+}
+
+html[data-theme="dark"] .tab-panel[data-panel="data"] .fields-grid .field-card.changed,
+html[data-theme="dark"] .tab-panel[data-panel="data"] .fields-grid .field-card.changed:hover {
+  border-color: var(--pr28-border-warm) !important;
+  background:
+    linear-gradient(135deg,rgba(224,164,58,.055),transparent 56%),
+    var(--pr28-surface) !important;
+  box-shadow:
+    inset 3px 0 var(--pr28-accent-warm),
+    inset 0 1px rgba(255,255,255,.025),
+    var(--pr28-shadow) !important;
+}
+
+html[data-theme="dark"] .tab-panel[data-panel="data"] .fields-grid .change-tag,
+html[data-theme="dark"] .tab-panel[data-panel="data"] .fields-grid .field-card.changed .change-tag {
+  border-color: rgba(242,190,83,.28);
+  background: rgba(224,164,58,.10);
+  color: #f0d18a;
+}
+
+/* Velox preserva a identidade emerald sem perder a nova gramática de superfície. */
+html[data-theme="dark"][data-palette="velox"] {
+  --pr28-panel-bg: #0d2924;
+  --pr28-surface: #153b35;
+  --pr28-border: rgba(92,226,181,.20);
+  --pr28-border-warm: rgba(215,163,60,.48);
+  --pr28-text: #effff8;
+  --pr28-text-secondary: #c2eadc;
+  --pr28-accent: #49e7ad;
+  --pr28-accent-warm: #d7a33c;
+  --pr28-shadow: 0 7px 20px rgba(0,18,14,.15);
+}
+
+html[data-theme="dark"][data-palette="velox"] .tab-panel[data-panel="data"] .panel-heading,
+html[data-theme="dark"][data-palette="velox"] .tab-panel[data-panel="data"] .fields-grid .field-card,
+html[data-theme="dark"][data-palette="velox"] .tab-panel[data-panel="data"] .fields-grid .field-card:hover,
+html[data-theme="dark"][data-palette="velox"] .change-item {
+  border-color: var(--pr28-border) !important;
+  background: var(--pr28-surface) !important;
+}
+
+html[data-theme="dark"][data-palette="velox"] .tab-panel[data-panel="data"] .fields-grid .field-card.changed,
+html[data-theme="dark"][data-palette="velox"] .tab-panel[data-panel="data"] .fields-grid .field-card.changed:hover {
+  border-color: var(--pr28-border-warm) !important;
+  background:
+    linear-gradient(135deg,rgba(215,163,60,.055),transparent 56%),
+    var(--pr28-surface) !important;
+  box-shadow:
+    inset 3px 0 var(--pr28-accent-warm),
+    inset 0 1px rgba(255,255,255,.025),
+    var(--pr28-shadow) !important;
+}
+
+html[data-theme="dark"][data-palette="velox"] .tab-panel[data-panel="data"] .fields-grid .field-label,
+html[data-theme="dark"][data-palette="velox"] .tab-panel[data-panel="data"] .fields-grid .field-previous {
+  color: #d8f3ea !important;
+}
+
+@media (min-width: 901px) and (max-width: 1180px) {
+  :root {
+    --evo-legibility-label: 11.5px;
+    --evo-legibility-value: 14.5px;
+    --evo-legibility-value-wide: 15px;
+  }
+
+  .tab-panel[data-panel="data"] {
+    padding-inline: 8px;
+  }
+
+  .tab-panel[data-panel="data"] .fields-grid {
+    gap: 7px;
+  }
+}
+
+@media (width <= 900px) {
+  :root {
+    --evo-legibility-label: 12px;
+    --evo-legibility-value: 14.5px;
+    --evo-legibility-value-wide: 15px;
+  }
+}
+
+@media (max-width: 620px) {
+  .tab-panel[data-panel="data"] .fields-grid {
+    grid-template-columns: 1fr;
+    gap: 7px;
+  }
+
+  .tab-panel[data-panel="data"] .fields-grid .field-card[data-span="2"],
+  .tab-panel[data-panel="data"] .fields-grid .field-card.wide {
+    grid-column: auto;
+  }
+}

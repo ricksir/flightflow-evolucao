@@ -1,6 +1,6 @@
 const { test, expect } = require('@playwright/test');
 
-test('Operational Board V5 mantém o quadro legível e contínuo sem alterar a navegação', async ({ page }) => {
+test('Operational Board V5 mantém o quadro legível e moderno sem alterar a navegação', async ({ page }) => {
   await page.goto('/index.html', { waitUntil: 'load' });
 
   const overlayDemo = page.locator('#overlayDemoBtn');
@@ -39,9 +39,9 @@ test('Operational Board V5 mantém o quadro legível e contínuo sem alterar a n
   });
 
   expect(result.panelDisplay).toBe('flex');
-  expect(result.gridGap).toBe('0px');
+  expect(parseFloat(result.gridGap)).toBeGreaterThanOrEqual(7);
   expect(result.gridColumns.split(' ').length).toBeGreaterThanOrEqual(2);
-  expect(result.cardRadius).toBe('0px');
+  expect(parseFloat(result.cardRadius)).toBeGreaterThanOrEqual(10);
   expect(result.cardTransform).toBe('none');
   expect(result.labelSize).toBeGreaterThanOrEqual(10);
   expect(result.valueSize).toBeGreaterThanOrEqual(12);
@@ -52,7 +52,7 @@ test('Operational Board V5 mantém o quadro legível e contínuo sem alterar a n
   expect(result.builderLoaded).toBe(true);
 });
 
-test('Operational Board V5 preserva a grade em tema escuro', async ({ page }) => {
+test('Operational Board V5 preserva os cards em tema escuro', async ({ page }) => {
   await page.goto('/index.html', { waitUntil: 'load' });
   await page.evaluate(() => document.documentElement.setAttribute('data-theme', 'dark'));
 
@@ -72,7 +72,7 @@ test('Operational Board V5 preserva a grade em tema escuro', async ({ page }) =>
     };
   });
 
-  expect(theme.cardRadius).toBe('0px');
+  expect(parseFloat(theme.cardRadius)).toBeGreaterThanOrEqual(10);
   expect(theme.labelSize).toBeGreaterThanOrEqual(10);
   expect(theme.boardLine).toContain('rgba');
 });
