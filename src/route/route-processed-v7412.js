@@ -1141,6 +1141,29 @@
     return cumulative.map(v=>clamp(v/total,0,1));
   }
 
+  function routeDistanceProfileNm(points) {
+    const list=(points||[]).filter(p=>p?.geo&&Number.isFinite(Number(p.geo.lat))&&Number.isFinite(Number(p.geo.lon)));
+    if(!list.length)return {points:[],cumulativeNm:[],fractions:[],totalNm:0};
+    const toRad=value=>Number(value)*Math.PI/180;
+    const cumulativeNm=[0];let totalNm=0;
+    for(let i=1;i<list.length;i++){
+      const a=list[i-1].geo,b=list[i].geo;
+      const lat1=toRad(a.lat),lat2=toRad(b.lat),dLat=lat2-lat1,dLon=toRad(Number(b.lon)-Number(a.lon));
+      const h=Math.sin(dLat/2)**2+Math.cos(lat1)*Math.cos(lat2)*Math.sin(dLon/2)**2;
+      const d=3440.065*2*Math.asin(Math.min(1,Math.sqrt(Math.max(0,h))));
+      totalNm+=Number.isFinite(d)?d:0;cumulativeNm.push(totalNm);
+    }
+    const fractions=totalNm>1e-9?cumulativeNm.map(value=>clamp(value/totalNm,0,1)):cumulativeNm.map((_,i)=>i/Math.max(1,list.length-1));
+    return {points:list,cumulativeNm,fractions,totalNm};
+  }
+
+  function derivedProgressAtKey(key,depKey,totalDistanceNm,speedKts) {
+    if(!Number.isFinite(key)||!Number.isFinite(depKey)||!Number.isFinite(totalDistanceNm)||totalDistanceNm<=0||!Number.isFinite(speedKts)||speedKts<=0)return 0;
+    if(key<=depKey)return 0;
+    const flownNm=((key-depKey)/3600000)*speedKts;
+    return clamp(flownNm/totalDistanceNm,0,1);
+  }
+
   function progressBetweenCanonicalPoints(canonical,fractions,aIndex,bIndex,localFraction=0) {
     if(!canonical?.length)return 0;
     const ai=clamp(Number(aIndex)||0,0,canonical.length-1),bi=clamp(Number(bIndex)||0,0,canonical.length-1);
@@ -1236,6 +1259,59 @@
     const nativeEvents=window.__FlightFlowFirBridge?.state?.parsed?.events||model.history?.events||[];
     const nativeTotal=Math.max(nativeEvents.length,1);
     const dep=firstDepartureAnchor();
+
+    const declaredPreview=declaredDestinationPreview(master);
+    const speedKts=Number(model.history?.speedKts);
+    const derivedDistance=routeDistanceProfileNm(canonical);
+    const depKeyCandidate=Number.isFinite(dep?.key)?dep.key:null;
+    const canDerive=!!(master.declaredFallback&&declaredPreview.visible&&Number.isFinite(depKeyCandidate)&&Number.isFinite(speedKts)&&speedKts>0&&derivedDistance.totalNm>0);
+    if(canDerive){
+      const startNative=clamp(dep.index,0,nativeTotal-1);
+      const depKey=depKeyCandidate;
+      const terminal=terminalClosureContext();
+      const arrivalIndex=nativeEvents.findIndex((event,index)=>index>startNative&&isArrivalEvent(event));
+      const jurisdictionEndIndex=nativeEvents.findIndex((event,index)=>index>startNative&&isJurisdictionEndEvent(event));
+      const archiveIndex=nativeEvents.findIndex((event,index)=>index>startNative&&isArchiveEvent(event));
+      const derivedDurationMs=(derivedDistance.totalNm/speedKts)*3600000;
+      const derivedArrivalKey=depKey+derivedDurationMs;
+      let freezeProgress=null;
+      const targets=[];let previous=0;
+      for(let i=0;i<nativeTotal;i++){
+        const key=nativeEventTimeOrHistory(i,nativeEvents);
+        let target=0;
+        if(i<=startNative)target=0;
+        else if(terminal&&i>=terminal.nativeIndex)target=1;
+        else if(arrivalIndex>=0&&i>=arrivalIndex)target=1;
+        else if(jurisdictionEndIndex>=0&&i>=jurisdictionEndIndex){
+          if(freezeProgress==null){
+            const stopKey=nativeEventTimeOrHistory(jurisdictionEndIndex,nativeEvents);
+            freezeProgress=Number.isFinite(stopKey)?derivedProgressAtKey(stopKey,depKey,derivedDistance.totalNm,speedKts):previous;
+          }
+          target=freezeProgress;
+        }else if(archiveIndex>=0&&i>=archiveIndex){
+          target=previous;
+        }else target=derivedProgressAtKey(key,depKey,derivedDistance.totalNm,speedKts);
+        target=clamp(Math.max(previous,target),0,1);
+        targets.push(target);previous=target;
+      }
+      const milestones=canonical.map((_,pi)=>{
+        const goal=Number.isFinite(derivedDistance.fractions[pi])?derivedDistance.fractions[pi]:pi/Math.max(1,canonical.length-1);
+        let idx=targets.findIndex((value,eventIndex)=>eventIndex>=startNative&&value+1e-9>=goal);
+        if(idx<0)idx=nativeTotal-1;
+        return idx;
+      });
+      const endNative=targets.findIndex((value,index)=>index>startNative&&value>=.999999);
+      return {
+        mode:'derived',derived:true,source:'DEP + geometria publicada + velocidade declarada',
+        snapshot:master,departureSnapshot:master,points:canonical,distanceFractions:derivedDistance.fractions,
+        cumulativeDistanceNm:derivedDistance.cumulativeNm,totalDistanceNm:derivedDistance.totalNm,
+        speedCode:model.history?.speedCode||'',speedKts,startNative,departureKey:depKey,departureEvent:dep?.event||null,
+        derivedDurationMs,derivedArrivalKey,arrivalIndex,jurisdictionEndIndex,archiveIndex,
+        endNative:endNative>=0?endNative:nativeTotal-1,milestones,targets,
+        terminalClosure:terminal?{nativeIndex:terminal.nativeIndex,key:terminal.key,source:terminal.source}:null,
+      };
+    }
+
     const fallbackWindow=movementWindowForHistory();
     const startNative=dep?clamp(dep.index,0,nativeTotal-1):historyIndexToNativeIndex(fallbackWindow.start,nativeTotal);
     const depKey=Number.isFinite(dep?.key)?dep.key:nativeEventTimeOrHistory(startNative,nativeEvents);
