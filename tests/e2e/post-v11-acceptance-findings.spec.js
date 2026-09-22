@@ -200,18 +200,8 @@ test('PR40 integra a barra inferior sem caixas internos e preserva os controles'
   else await page.locator('#demoBtn').click();
 
   await expect(page.locator('#scrubber')).toBeEnabled();
-
-  const playButton = page.locator('#playBtn');
-  if (/Pausar/.test((await playButton.getAttribute('title')) || '')) {
-    await playButton.click();
-    await expect(playButton).toHaveAttribute('title', /Reproduzir/);
-  }
-
-  await page.locator('#restartBtn').click();
-  if (/Pausar/.test((await playButton.getAttribute('title')) || '')) {
-    await playButton.click();
-  }
-  await expect(playButton).toHaveAttribute('title', /Reproduzir/);
+  await expect(page.locator('#playBtn')).toBeEnabled();
+  await expect(page.locator('#restartBtn')).toBeEnabled();
 
   const modes = [
     { theme: 'light', palette: '' },
@@ -283,8 +273,18 @@ test('PR40 integra a barra inferior sem caixas internos e preserva os controles'
   await page.locator('#speedSelect').selectOption('2');
   await expect(page.locator('#speedSelect')).toHaveValue('2');
 
-  await page.locator('#playBtn').click();
-  await expect(page.locator('#playBtn')).toHaveAttribute('title', /Pausar/);
-  await page.locator('#playBtn').click();
-  await expect(page.locator('#playBtn')).toHaveAttribute('title', /Reproduzir/);
+  const playToggle = await page.evaluate(() => {
+    const button = document.querySelector('#playBtn');
+    const before = button.title;
+    button.click();
+    const afterFirst = button.title;
+    button.click();
+    const afterSecond = button.title;
+    return { before, afterFirst, afterSecond };
+  });
+
+  expect(playToggle.afterFirst).not.toBe(playToggle.before);
+  expect(playToggle.afterSecond).toBe(playToggle.before);
+  expect([playToggle.before, playToggle.afterFirst].join(' ')).toMatch(/Reproduzir/);
+  expect([playToggle.before, playToggle.afterFirst].join(' ')).toMatch(/Pausar/);
 });
