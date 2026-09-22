@@ -1,12 +1,12 @@
 # Aceitação Manual — FlightFlow Evolução / main
 
-Este roteiro valida em navegador real a linha visual **V1–V11**, os contratos operacionais preservados e as remediações visuais acumuladas até os PRs **#25–#29**.
+Este roteiro valida em navegador real a linha visual **V1–V11**, os contratos operacionais preservados e as remediações acumuladas até o **PR34**.
 
 > **Status atual:** fechamento técnico pós-aceitação certificado; **revalidação humana final pendente**.
 >
-> Baseline funcional certificado pós-PR29: `8cf3dcf13f22f707ec39e55a24022fb198e1a978`.
+> Baseline funcional certificado pós-PR34: `2d3ebd01b888f5760abe4ddd3d46ba287de0b782`.
 >
-> Pós-merge quality gate #111: **698/698 Node + 106/106 Playwright**, sem `failed`, `flaky`, `retry`, `timeout`, `AssertionError`, `not ok` ou `SPATIAL_EQ_DIAG`.
+> Pós-merge quality gate #124: **698/698 Node + 108/108 Playwright**, sem `failed`, `flaky`, `retry`, `timeout`, `AssertionError`, `not ok` ou `SPATIAL_EQ_DIAG`.
 >
 > A revalidação humana final deste baseline permanece **PENDENTE**; este roteiro deve ser reexecutado antes de qualquer nova release.
 
@@ -74,6 +74,10 @@ Validar em **claro**, **escuro** e **Dashboard moderno/Velox**:
 - [ ] **PR28 / Quadro Atual:** a grade não parece tabela rígida; existem gap, radius, borda e superfície própria nos cards;
 - [ ] **PR28 / coerência:** Quadro Atual e Alterações compartilham linguagem visual compatível sem transformar todo o conteúdo em amarelo;
 - [ ] **PR28 / tipografia:** título do quadro, labels, valores e metadados apresentam hierarquia moderna e consistente;
+- [ ] **PR31 / tipografia nativa:** texto e títulos mantêm aparência consistente sem depender de fonte externa não carregada;
+- [ ] **PR32 / cabeçalho do Quadro Atual:** títulos longos, como “Evento Automático de Envio de Mensagem ACT”, quebram sem invadir o primeiro card e o eyebrow mostra apenas “QUADRO ATUAL”;
+- [ ] **PR33 / scroll da Rota Processada:** em “Acompanhar timeline”, avançar e retroceder eventos move a lista lateral para manter o waypoint atual visível;
+- [ ] **PR34 / cabeçalho sticky:** o card atual permanece abaixo do cabeçalho “Quadro x/y / Mostrar quadro no FlightFlow”, sem ficar encoberto;
 - [ ] o mapa continua sendo a superfície dominante após todas essas correções.
 
 ## 4. Fluxo operacional básico
@@ -128,6 +132,9 @@ Validar:
 ## 7. Ferramentas e painéis
 
 - [ ] Rota Processada abre sem cobrir indevidamente a rota;
+- [ ] em **Acompanhar timeline**, usar ▶/◀ por vários eventos faz a lista lateral acompanhar o waypoint atual;
+- [ ] o waypoint atual fica destacado e visível abaixo do cabeçalho sticky da sidebar;
+- [ ] Próximo/Anterior da tela principal também mantém a Rota Processada sincronizada quando ela está seguindo a timeline;
 - [ ] legenda da Rota Processada permanece utilizável;
 - [ ] STRIP abre, atualiza, minimiza e restaura;
 - [ ] FPV abre, atualiza, minimiza e restaura;
