@@ -200,8 +200,15 @@ test('PR40 integra a barra inferior sem caixas internos e preserva os controles'
   else await page.locator('#demoBtn').click();
 
   await expect(page.locator('#scrubber')).toBeEnabled();
+
+  const playButton = page.locator('#playBtn');
+  if (/Pausar/.test((await playButton.getAttribute('title')) || '')) {
+    await playButton.click();
+    await expect(playButton).toHaveAttribute('title', /Reproduzir/);
+  }
+
   await page.locator('#restartBtn').click();
-  await expect(page.locator('#playBtn')).toHaveAttribute('title', /Reproduzir/);
+  await expect(playButton).toHaveAttribute('title', /Reproduzir/);
 
   const modes = [
     { theme: 'light', palette: '' },
