@@ -7085,8 +7085,7 @@ html[data-theme="dark"][data-palette="velox"] .tab-panel[data-panel="data"] .fie
 
   .scene-head {
     min-height: 50px;
-    padding-top: 4px;
-    padding-bottom: 4px;
+    padding: 2px 10px !important;
     gap: 8px;
   }
 
