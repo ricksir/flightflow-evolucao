@@ -55,7 +55,7 @@ test('PR26 exige dashboard realmente legível em 1600x900', async ({page}) => {
   expect(m.time).toBeGreaterThanOrEqual(11);
   expect(contrast(m.normalValue,m.normalBg)).toBeGreaterThanOrEqual(4.5);
   expect(contrast(m.normalLabel,m.normalBg)).toBeGreaterThanOrEqual(4.5);
-  if(m.changedBg){expect(m.changedBg).toBe(m.normalBg);expect(m.changedShadow).not.toBe('none');}
+  if(m.changedBg){expect(m.changedBg).not.toBe(m.normalBg);expect(m.changedShadow).not.toBe('none');}
   expect(m.scrollWidth).toBeLessThanOrEqual(m.viewportWidth+1);
 });
 
