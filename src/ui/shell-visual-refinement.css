@@ -7184,10 +7184,21 @@ html[data-theme="dark"][data-palette="velox"] .tab-panel[data-panel="data"] .fie
 .evo-transport-marker b {
   top: 0 !important;
   padding-inline: 3px;
-  font-size: 8px;
   letter-spacing: .02em;
 }
 
 .evo-transport-marker:nth-child(even) b {
   top: -12px !important;
+}
+
+/* DEP pode ocorrer em rajadas muito próximas. Em cada faixa, os rótulos
+   alternam o lado da haste para não se sobreporem, sem mover os marcos. */
+.evo-transport-marker-dep:nth-child(4n + 1) b,
+.evo-transport-marker-dep:nth-child(4n + 2) b {
+  transform: translate(-100%,-100%);
+}
+
+.evo-transport-marker-dep:nth-child(4n + 3) b,
+.evo-transport-marker-dep:nth-child(4n + 4) b {
+  transform: translate(0,-100%);
 }
