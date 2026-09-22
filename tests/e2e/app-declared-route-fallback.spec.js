@@ -196,26 +196,40 @@ test('APP derivado exibe todos os fixos da rota processada também no mapa princ
     api.setFixesVisible(true);
     api.applyProcessedRouteToFlightFlow();
 
+    const model = api.getModel();
+    const engine = bridge.realMapState?.engine || '';
     const vector = document.querySelector('#ffrpVectorFixLayer');
-    const titles = Array.from(vector?.querySelectorAll('.ffrp-vfix title') || [])
+    const vectorTitles = Array.from(vector?.querySelectorAll('.ffrp-vfix title') || [])
       .map(node => node.textContent || '');
+
+    const nativeFixes = model.nativeFixLayer?.getLayers?.() || [];
+    const nativeRoutes = model.nativeMapLayer?.getLayers?.() || [];
+    const nativeTitles = nativeFixes.map(layer => {
+      const content = layer.getTooltip?.()?.getContent?.();
+      return typeof content === 'string' ? content : String(content || '');
+    });
+
     return {
-      vectorPresent: Boolean(vector),
-      routeCount: vector?.querySelectorAll('.ffrp-vroute-declared').length || 0,
-      fixCount: vector?.querySelectorAll('.ffrp-vfix').length || 0,
-      titles,
-      text: vector?.textContent || '',
+      engine,
+      routeCount: engine === 'leaflet'
+        ? nativeRoutes.length
+        : (vector?.querySelectorAll('.ffrp-vroute-declared').length || 0),
+      fixCount: engine === 'leaflet'
+        ? nativeFixes.length
+        : (vector?.querySelectorAll('.ffrp-vfix').length || 0),
+      labels: engine === 'leaflet' ? nativeTitles : vectorTitles,
+      text: engine === 'leaflet' ? nativeTitles.join(' ') : (vector?.textContent || ''),
     };
   }, APP_DERIVED_FIXTURE);
 
-  expect(result.vectorPresent).toBe(true);
+  expect(['leaflet', '']).toContain(result.engine);
   expect(result.routeCount).toBeGreaterThanOrEqual(1);
   expect(result.fixCount).toBeGreaterThanOrEqual(6);
   for (const ident of ['SBBR', 'GEPMO', 'ANBIR', 'IREGU', 'REINA', 'SBCF']) {
     expect(result.text).toContain(ident);
   }
   for (const ident of ['GEPMO', 'ANBIR', 'IREGU', 'REINA']) {
-    expect(result.titles.some(title => title.includes(ident))).toBe(true);
+    expect(result.labels.some(label => label.includes(ident))).toBe(true);
   }
 });
 
