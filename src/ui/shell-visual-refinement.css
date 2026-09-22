@@ -6857,13 +6857,21 @@ h3,
 .tab-panel[data-panel="data"] .fields-grid .field-card.changed,
 .tab-panel[data-panel="data"] .fields-grid .field-card.changed:hover {
   border-color: #d6b45b !important;
-  background-color: #fff7df !important;
-  background-image:
-    linear-gradient(135deg,rgba(214,164,42,.15),rgba(214,164,42,.055) 58%,transparent 86%) !important;
+  background:
+    linear-gradient(135deg,rgba(214,164,42,.15),rgba(214,164,42,.055) 58%,transparent 86%),
+    #fff7df !important;
   box-shadow:
     inset 3px 0 #c18d19,
     inset 0 1px rgba(255,255,255,.84),
     0 7px 20px rgba(92,67,12,.075) !important;
+}
+
+html[data-theme="light"]:not([data-palette="velox"]) .tab-panel[data-panel="data"] .fields-grid .field-card.changed,
+html[data-theme="light"]:not([data-palette="velox"]) .tab-panel[data-panel="data"] .fields-grid .field-card.changed:hover {
+  border-color: #d6b45b !important;
+  background:
+    linear-gradient(135deg,rgba(214,164,42,.15),rgba(214,164,42,.055) 58%,transparent 86%),
+    #fff7df !important;
 }
 
 .tab-panel[data-panel="data"] .fields-grid .field-card.changed .change-tag {
@@ -6879,12 +6887,12 @@ h3,
   opacity: .78;
 }
 
-html[data-theme="dark"] .tab-panel[data-panel="data"] .fields-grid .field-card.changed,
-html[data-theme="dark"] .tab-panel[data-panel="data"] .fields-grid .field-card.changed:hover {
+html[data-theme="dark"]:not([data-palette="velox"]) .tab-panel[data-panel="data"] .fields-grid .field-card.changed,
+html[data-theme="dark"]:not([data-palette="velox"]) .tab-panel[data-panel="data"] .fields-grid .field-card.changed:hover {
   border-color: rgba(232,177,66,.58) !important;
-  background-color: #2d2a1f !important;
-  background-image:
-    linear-gradient(135deg,rgba(232,177,66,.15),rgba(232,177,66,.06) 60%,transparent 88%) !important;
+  background:
+    linear-gradient(135deg,rgba(232,177,66,.15),rgba(232,177,66,.06) 60%,transparent 88%),
+    #2d2a1f !important;
   box-shadow:
     inset 3px 0 #e0a43a,
     inset 0 1px rgba(255,255,255,.035),
@@ -6894,9 +6902,9 @@ html[data-theme="dark"] .tab-panel[data-panel="data"] .fields-grid .field-card.c
 html[data-theme="dark"][data-palette="velox"] .tab-panel[data-panel="data"] .fields-grid .field-card.changed,
 html[data-theme="dark"][data-palette="velox"] .tab-panel[data-panel="data"] .fields-grid .field-card.changed:hover {
   border-color: rgba(215,163,60,.62) !important;
-  background-color: #2d382c !important;
-  background-image:
-    linear-gradient(135deg,rgba(215,163,60,.14),rgba(215,163,60,.055) 60%,transparent 88%) !important;
+  background:
+    linear-gradient(135deg,rgba(215,163,60,.14),rgba(215,163,60,.055) 60%,transparent 88%),
+    #2d382c !important;
   box-shadow:
     inset 3px 0 #d7a33c,
     inset 0 1px rgba(255,255,255,.03),
