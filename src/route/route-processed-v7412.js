@@ -1975,11 +1975,15 @@
     if(!card||!side)return false;
     const sideRect=side.getBoundingClientRect();
     const cardRect=card.getBoundingClientRect();
+    const sticky=qs('.ffrp-snap-head',side);
+    const stickyRect=sticky?.getBoundingClientRect?.();
     const margin=12;
-    const visibleTop=sideRect.top+margin;
+    const visibleTop=Math.max(sideRect.top+margin,Number(stickyRect?.bottom||0)+margin);
     const visibleBottom=sideRect.bottom-margin;
     if(cardRect.top>=visibleTop&&cardRect.bottom<=visibleBottom)return false;
-    const target=side.scrollTop+(cardRect.top-sideRect.top)-Math.max(margin,(side.clientHeight-cardRect.height)/2);
+    const availableHeight=Math.max(cardRect.height,visibleBottom-visibleTop);
+    const desiredTop=visibleTop+Math.max(0,(availableHeight-cardRect.height)/2);
+    const target=side.scrollTop+(cardRect.top-desiredTop);
     side.scrollTop=Math.max(0,target);
     return true;
   }

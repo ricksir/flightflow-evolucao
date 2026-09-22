@@ -104,17 +104,21 @@ test('Rota Processada acompanha o waypoint atual no scroll ao avançar pelas set
 
   const position = await page.evaluate(() => {
     const side = document.querySelector('.ffrp-side');
+    const head = document.querySelector('.ffrp-snap-head');
     const card = document.querySelector('#ffrpRouteList .ffrp-point.active-point');
     const sr = side.getBoundingClientRect();
+    const hr = head.getBoundingClientRect();
     const cr = card.getBoundingClientRect();
     return {
       scrollTop: side.scrollTop,
       activeIndex: Number(card.dataset.plotIndex),
-      visible: cr.top >= sr.top - 1 && cr.bottom <= sr.bottom + 1,
+      visibleInSide: cr.top >= sr.top - 1 && cr.bottom <= sr.bottom + 1,
+      clearOfStickyHeader: cr.top >= hr.bottom + 7,
     };
   });
 
   expect(position.activeIndex).toBe(setup.targetPoint);
   expect(position.scrollTop).toBeGreaterThan(0);
-  expect(position.visible).toBe(true);
+  expect(position.visibleInSide).toBe(true);
+  expect(position.clearOfStickyHeader).toBe(true);
 });
