@@ -2,7 +2,7 @@
 
 > Checkpoint técnico para continuidade entre conversas/agentes.
 >
-> Atualizado em **22/09/2026**, após o fechamento técnico dos PRs **#31–#34** derivados da aceitação humana pós-PR29.
+> Atualizado em **22/09/2026**, após o fechamento técnico dos PRs **#36–#41** da rodada final de remediação visual/funcional.
 >
 > **Fase atual: REVALIDAÇÃO HUMANA FINAL e preparação de release, sem abertura automática de V12.**
 
@@ -12,8 +12,8 @@
 - Branch principal: `main`.
 - Repositório estável/fechado anterior: `ricksir/flightflow-ats` — **não alterar nesta linha de trabalho**.
 - Baseline de origem da evolução: `b2bb9acc03096beeebbd36098b8008ef81639df8`.
-- Baseline funcional certificado pós-PR34:
-  `2d3ebd01b888f5760abe4ddd3d46ba287de0b782`.
+- Baseline funcional certificado mais recente:
+  `fc30aff8ffba37ecae94c9fc4810706071f79b77`.
 - Baseline histórico V11:
   `a27ffee33577d88536a3828f9f3cca97b47fc898`.
 - O topo real de `main` pode conter commits exclusivamente documentais posteriores; sempre conferir o SHA atual antes de escrever.
@@ -22,6 +22,31 @@
 - A próxima release **não deve ser publicada** antes da aceitação manual registrada.
 
 ## 2. Certificação atual
+
+### Fechamento técnico mais recente — PRs #36 a #41
+
+A rodada final de aceitação foi dividida em PRs curtos para evitar mudanças acopladas e facilitar regressão:
+
+- PR **#36** — scroll proporcional da Rota Processada, preservando o waypoint ativo visível sem aparentar fim prematuro em ~70% do progresso;
+- PR **#37** — correções de sobreposição/quebra de texto e destaque quente perceptível para cards de Dados do Plano com `ATUALIZADO`;
+- PR **#38** — Mission Rail V9 recolhível no desktop, com ícones preservados, acessibilidade e ganho real de largura para mapa/workspace;
+- PR **#39** — compactação do shell superior, incluindo alinhamento real de `--topbar-h` e redução da Flight Situation Strip sem colidir controles;
+- PR **#40** — Temporal Deck inferior visualmente contínuo, removendo os caixotes internos e preservando Play, anterior/próximo, scrubber, velocidade e toggles;
+- PR **#41** — estabilização exclusiva do teste PR40 para normalizar Play/Pause quando a demonstração inicia em autoplay; nenhum código funcional alterado.
+
+Fechamento certificado:
+
+- SHA funcional pós-merge: `fc30aff8ffba37ecae94c9fc4810706071f79b77`;
+- quality gate pós-merge **#146**: sucesso;
+- **699/699 Node**;
+- **115/115 Playwright**;
+- zero `failed`, `flaky`, `retry`, `timeout`, `AssertionError`, `not ok` e `SPATIAL_EQ_DIAG`;
+- housekeeping **#43**: sucesso;
+- nenhum PR aberto;
+- branches remanescentes: `main` e `design/pilot-shell-v1`;
+- nenhuma release/tag criada e nenhuma V12 iniciada.
+
+A automação certifica o estado técnico, mas a aceitação humana final continua obrigatória antes de release.
 
 ### Fechamento técnico mais recente — PRs #31 a #34
 
@@ -169,17 +194,17 @@ ETIM é alias visual/operacional. A abreviação normativa usada na MCA 100-27/2
 
 ### Automatizado — concluído
 
-- V11 preservada;
-- PRs #31–#34 mergeados sobre a rodada visual anterior;
-- tipografia nativa, cabeçalho do Quadro Atual e acompanhamento de scroll da Rota Processada protegidos por regressões dedicadas;
-- quality gate pós-merge #124 verde no baseline funcional `2d3ebd01b888f5760abe4ddd3d46ba287de0b782`;
-- log bruto auditado com **698/698 Node + 108/108 Playwright** e contadores críticos em zero;
-- housekeeping #36 concluído e branch temporária removida;
-- nenhum PR aberto no fechamento.
+- V11 preservada e fronteiras temporal/espacial mantidas;
+- PRs #36–#41 concluíram a rodada final de remediação visual/funcional em mudanças curtas e isoladas;
+- Rota Processada, Dados do Plano, Mission Rail, shell superior e Temporal Deck possuem regressões específicas;
+- quality gate pós-merge #146 verde no baseline funcional `fc30aff8ffba37ecae94c9fc4810706071f79b77`;
+- log bruto auditado com **699/699 Node + 115/115 Playwright** e contadores críticos em zero;
+- housekeeping #43 concluído;
+- nenhum PR aberto no fechamento e apenas `main` + `design/pilot-shell-v1` remanescentes.
 
 ### Humano — revalidação final pendente
 
-A automação **não substitui** a aceitação visual/operacional. A validação humana avançou parcialmente, mas é necessário reexecutar `docs/MANUAL-ACCEPTANCE.md` sobre o `main` pós-PR34. O reteste prioritário é a Rota Processada em **Acompanhar timeline**, avançando e retrocedendo vários eventos para confirmar que o card do ponto atual acompanha o scroll e permanece abaixo do cabeçalho sticky.
+A automação **não substitui** a aceitação visual/operacional. É necessário reexecutar `docs/MANUAL-ACCEPTANCE.md` sobre o `main` pós-PR41. O reteste prioritário deve cobrir: Rota Processada em progresso intermediário e avançado; Dados do Plano com campos atualizados; Mission Rail expandido/recolhido; dashboard completo após a compactação superior; e barra inferior contínua nos temas claro, escuro e Velox.
 
 Até essa revalidação:
 
