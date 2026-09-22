@@ -6749,3 +6749,45 @@ html[data-theme="dark"][data-palette="velox"] .tab-panel[data-panel="data"] .fie
     grid-column: auto;
   }
 }
+
+
+/* ==========================================================================
+   FlightFlow Evolução — PR31 Native Typography Delivery
+   Remove a dependência implícita de uma Inter não carregada e usa famílias
+   nativas com cortes ópticos adequados para texto e títulos.
+   ========================================================================== */
+
+:root {
+  --ff-font-sans: "Segoe UI Variable Text", "Segoe UI Variable", "Segoe UI",
+    system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  --ff-font-display: "Segoe UI Variable Display", "Segoe UI Variable", "Segoe UI",
+    system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+body,
+button,
+input,
+select,
+textarea {
+  font-family: var(--ff-font-sans);
+  font-optical-sizing: auto;
+}
+
+body {
+  text-rendering: optimizeLegibility;
+}
+
+h1,
+h2,
+h3,
+.panel-heading h2 {
+  font-family: var(--ff-font-display);
+  font-optical-sizing: auto;
+}
+
+.tab-panel[data-panel="data"] .fields-grid .field-label,
+.tab-panel[data-panel="data"] .fields-grid .field-value,
+.tab-panel[data-panel="data"] .fields-grid .field-previous,
+.inspector-tabs .tab {
+  font-family: var(--ff-font-sans);
+}
