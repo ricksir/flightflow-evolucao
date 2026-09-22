@@ -94,6 +94,7 @@ test('PR28 remove grade rígida e cria cards premium no Quadro Atual', async ({ 
       labelColor: ls.color,
       valueColor: vs.color,
       cardFont: cs.fontFamily,
+      headingFont: hs.fontFamily,
       workspaceWidth: workspace.width,
       inspectorWidth: inspector.width,
       scrollWidth: document.documentElement.scrollWidth,
@@ -111,7 +112,10 @@ test('PR28 remove grade rígida e cria cards premium no Quadro Atual', async ({ 
   expect(m.headingSize).toBeGreaterThanOrEqual(18);
   expect(contrast(m.labelColor, m.cardBg)).toBeGreaterThanOrEqual(4.5);
   expect(contrast(m.valueColor, m.cardBg)).toBeGreaterThanOrEqual(4.5);
-  expect(m.cardFont).toMatch(/Inter|Segoe UI|system-ui/i);
+  expect(m.cardFont).toMatch(/Segoe UI Variable Text|Segoe UI|system-ui/i);
+  expect(m.cardFont).not.toMatch(/^["']?Inter/i);
+  expect(m.headingFont).toMatch(/Segoe UI Variable Display|Segoe UI|system-ui/i);
+  expect(m.headingFont).not.toMatch(/^["']?Inter/i);
   expect(m.workspaceWidth).toBeGreaterThan(m.inspectorWidth * 2);
   expect(m.scrollWidth).toBeLessThanOrEqual(m.viewportWidth + 1);
 });
