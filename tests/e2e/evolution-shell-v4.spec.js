@@ -53,3 +53,52 @@ test('Pilot Shell V4 mantém identidade e tabs técnicas visíveis', async ({ pa
   expect(visual.tabRadius).toBe('0px');
   expect(['flex', 'inline-flex']).toContain(visual.badgeDisplay);
 });
+
+
+test('PR46 mantém rótulos densos do scrubber sem colisão em 1600x900', async ({ page }) => {
+  await page.setViewportSize({ width: 1600, height: 900 });
+  await page.goto('/index.html', { waitUntil: 'load' });
+
+  const overlayDemo = page.locator('#overlayDemoBtn');
+  if (await overlayDemo.isVisible()) await overlayDemo.click();
+  else await page.locator('#demoBtn').click();
+
+  await expect(page.locator('.evo-transport-marker-dep').first()).toBeAttached();
+
+  const result = await page.evaluate(() => {
+    const labels = [...document.querySelectorAll('#transportMilestones .evo-transport-marker b')]
+      .filter(node => {
+        const r = node.getBoundingClientRect();
+        return r.width > 0 && r.height > 0;
+      })
+      .map(node => {
+        const r = node.getBoundingClientRect();
+        return {
+          text: (node.textContent || '').trim(),
+          left: r.left,
+          right: r.right,
+          top: r.top,
+          bottom: r.bottom,
+        };
+      });
+
+    const overlaps = [];
+    for (let i = 0; i < labels.length; i += 1) {
+      for (let j = i + 1; j < labels.length; j += 1) {
+        const a = labels[i];
+        const b = labels[j];
+        const intersects = a.left < b.right && a.right > b.left &&
+          a.top < b.bottom && a.bottom > b.top;
+        if (intersects) overlaps.push([a.text, b.text]);
+      }
+    }
+    return {
+      count: labels.length,
+      depCount: labels.filter(item => item.text === 'DEP').length,
+      overlaps,
+    };
+  });
+
+  expect(result.depCount).toBeGreaterThanOrEqual(4);
+  expect(result.overlaps).toEqual([]);
+});
