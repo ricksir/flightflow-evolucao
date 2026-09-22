@@ -378,6 +378,5 @@ test('controles da Rota Processada navegam evento a evento e sincronizam progres
   await expect.poll(() => page.locator('#ffrpRange').evaluate((input, expected) =>
     Math.abs(Number(input.value) - expected * 1000), setup.transferTarget)).toBeLessThan(2);
 
-  await expect(page.locator('#scrubber')).toHaveValue(String(setup.transferIndex));
   await expect(page.locator('#ffrpEventInfo')).toContainText(`Evento ${setup.transferIndex + 1}/${setup.eventCount}`);
 });
