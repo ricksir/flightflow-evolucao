@@ -7178,17 +7178,11 @@ html[data-theme="dark"][data-palette="velox"] .tab-panel[data-panel="data"] .fie
 
 
 /* ==========================================================================
-   PR46 — evita colisão visual entre marcos densos da timeline inferior.
-   Apenas apresentação: alterna os rótulos em duas faixas verticais.
+   PR46 — evita colisão visual entre marcos DEP densos da timeline inferior.
+   Todos os ticks permanecem; rótulos DEP redundantes alternam visibilidade.
    ========================================================================== */
-.evo-transport-marker b {
-  top: 0 !important;
-  padding-inline: 3px;
-  letter-spacing: .02em;
-}
-
-.evo-transport-marker:nth-child(even) b {
-  top: -12px !important;
+.evo-transport-marker-dep:nth-child(even) b {
+  display: none;
 }
 
 /* DEP pode ocorrer em rajadas muito próximas. Em cada faixa, os rótulos
