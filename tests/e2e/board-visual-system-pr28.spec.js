@@ -218,3 +218,52 @@ for (const mode of [
     expect(m.scrollWidth).toBeLessThanOrEqual(m.viewportWidth + 1);
   });
 }
+
+
+test('PR32 título operacional longo não invade os cards e eyebrow não duplica', async ({ page }) => {
+  await loadDemo(page);
+  await setMode(page, 'dark', 'velox');
+
+  await page.evaluate(() => {
+    const title = document.querySelector('#operationTitle');
+    title.textContent = 'Evento Automático de Envio de Mensagem ACT';
+  });
+
+  await page.evaluate(() => new Promise(resolve =>
+    requestAnimationFrame(() => requestAnimationFrame(resolve))));
+
+  const m = await page.evaluate(() => {
+    const heading = document.querySelector('[data-panel="data"] .panel-heading');
+    const title = document.querySelector('#operationTitle');
+    const eyebrow = document.querySelector('[data-panel="data"] .panel-heading .eyebrow');
+    const grid = document.querySelector('[data-panel="data"] .fields-grid');
+    const headingRect = heading.getBoundingClientRect();
+    const titleRect = title.getBoundingClientRect();
+    const gridRect = grid.getBoundingClientRect();
+    const pseudo = getComputedStyle(eyebrow, '::after');
+
+    return {
+      eyebrowText: eyebrow.textContent.trim(),
+      eyebrowAfterContent: pseudo.content,
+      eyebrowAfterDisplay: pseudo.display,
+      headingTop: headingRect.top,
+      headingBottom: headingRect.bottom,
+      titleTop: titleRect.top,
+      titleBottom: titleRect.bottom,
+      titleHeight: titleRect.height,
+      gridTop: gridRect.top,
+      headingHeight: headingRect.height,
+      scrollWidth: document.documentElement.scrollWidth,
+      viewportWidth: innerWidth,
+    };
+  });
+
+  expect(m.eyebrowText).toBe('QUADRO ATUAL');
+  expect(['none', 'normal', '""']).toContain(m.eyebrowAfterContent);
+  expect(m.eyebrowAfterDisplay).toBe('none');
+  expect(m.titleHeight).toBeGreaterThan(20);
+  expect(m.titleBottom).toBeLessThanOrEqual(m.headingBottom + 0.5);
+  expect(m.gridTop).toBeGreaterThanOrEqual(m.headingBottom + 7);
+  expect(m.headingHeight).toBeGreaterThanOrEqual(m.titleBottom - m.headingTop + 8);
+  expect(m.scrollWidth).toBeLessThanOrEqual(m.viewportWidth + 1);
+});

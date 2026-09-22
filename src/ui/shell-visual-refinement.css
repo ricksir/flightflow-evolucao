@@ -6791,3 +6791,45 @@ h3,
 .inspector-tabs .tab {
   font-family: var(--ff-font-sans);
 }
+
+
+/* ==========================================================================
+   FlightFlow Evolução — PR32 Board Heading Collision
+   Correção derivada da aceitação visual humana de 21/09/2026.
+   ========================================================================== */
+
+.tab-panel[data-panel="data"] .panel-heading {
+  height: auto !important;
+  min-height: 62px;
+  flex: 0 0 auto;
+  align-items: flex-start;
+  overflow: visible;
+}
+
+.tab-panel[data-panel="data"] .panel-heading > :first-child {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.tab-panel[data-panel="data"] .panel-tools {
+  flex: 0 0 auto;
+}
+
+.tab-panel[data-panel="data"] .panel-heading .eyebrow {
+  display: block;
+  font-size: 11px;
+  line-height: 1.2;
+}
+
+.tab-panel[data-panel="data"] .panel-heading .eyebrow::after {
+  content: none !important;
+  display: none !important;
+}
+
+#operationTitle {
+  min-width: 0;
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: break-word;
+  text-wrap: balance;
+}
