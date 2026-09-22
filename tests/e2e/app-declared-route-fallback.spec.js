@@ -80,14 +80,20 @@ test('histórico APP sem PONTOS exibe rota declarada UZ35 e seus fixos no mapa',
     const declared = document.querySelectorAll('#ffrpMap .route-declared').length;
     const historical = document.querySelectorAll('#ffrpMap .route-line').length;
     const pointCount = document.querySelectorAll('#ffrpMap .wp').length;
+    const destinationPreview = document.querySelectorAll('#ffrpMap .ffrp-declared-destination-preview[data-declared-destination="1"]').length;
+    const mapText = document.querySelector('#ffrpMap')?.textContent || '';
     const routeCards = Array.from(document.querySelectorAll('#ffrpRouteList .ffrp-point'))
       .map(node => node.textContent || '');
-    return { declared, historical, pointCount, routeCards };
+    return { declared, historical, pointCount, destinationPreview, mapText, routeCards };
   });
 
   expect(visual.declared).toBeGreaterThanOrEqual(1);
   expect(visual.historical).toBe(0);
   expect(visual.pointCount).toBeGreaterThanOrEqual(6);
+  expect(visual.destinationPreview).toBe(1);
+  for (const ident of ['SBBR', 'GEPMO', 'ANBIR', 'IREGU', 'REINA', 'SBCF']) {
+    expect(visual.mapText).toContain(ident);
+  }
   expect(visual.routeCards.join(' ')).not.toMatch(/ETIM\s+\d/);
 });
 
