@@ -120,7 +120,7 @@ test('PR38 recolhe e expande o Mission Rail com ganho real de área útil', asyn
     const label = document.querySelector('.evo-rail-item.active > span:last-child');
     const icon = document.querySelector('.evo-rail-item.active .evo-rail-icon');
     return {
-      collapsed: document.querySelector('.app')?.classList.contains('evo-rail-collapsed'),
+      collapsed: rail?.closest('.app')?.classList.contains('evo-rail-collapsed'),
       railWidth: rail?.getBoundingClientRect().width || 0,
       workspaceWidth: workspace?.getBoundingClientRect().width || 0,
       labelDisplay: label ? getComputedStyle(label).display : '',
@@ -135,7 +135,9 @@ test('PR38 recolhe e expande o Mission Rail com ganho real de área útil', asyn
 
   await toggle.focus();
   await page.keyboard.press('Enter');
-  await expect(page.locator('.app')).toHaveClass(/evo-rail-collapsed/);
+  await expect.poll(() => page.evaluate(() =>
+    document.querySelector('.evo-rail')?.closest('.app')?.classList.contains('evo-rail-collapsed')
+  )).toBe(true);
   await expect(toggle).toHaveAttribute('aria-expanded', 'false');
   await expect(toggle).toHaveAttribute('aria-label', 'Expandir barra lateral');
   await expect(page.locator('.evo-rail-item.active')).toHaveAttribute('aria-label', 'Operação');
@@ -148,7 +150,9 @@ test('PR38 recolhe e expande o Mission Rail com ganho real de área útil', asyn
   expect(collapsed.scrollWidth).toBeLessThanOrEqual(collapsed.viewportWidth + 1);
 
   await toggle.click();
-  await expect(page.locator('.app')).not.toHaveClass(/evo-rail-collapsed/);
+  await expect.poll(() => page.evaluate(() =>
+    document.querySelector('.evo-rail')?.closest('.app')?.classList.contains('evo-rail-collapsed')
+  )).toBe(false);
   await expect(toggle).toHaveAttribute('aria-expanded', 'true');
 
   const restored = await read();
