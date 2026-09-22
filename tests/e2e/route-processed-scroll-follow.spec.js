@@ -72,8 +72,9 @@ test('Rota Processada acompanha o waypoint atual no scroll ao avançar pelas set
       }
     }
 
+    const progress = api.progressForNativeEventIndex(targetEvent, total);
     api.jumpToFlightEvent(0);
-    return { total, targetEvent, targetPoint };
+    return { total, targetEvent, targetPoint, progress };
   }, ROUTE_FIXTURE);
 
   expect(setup.targetEvent).toBeGreaterThan(0);
@@ -109,8 +110,11 @@ test('Rota Processada acompanha o waypoint atual no scroll ao avançar pelas set
     const sr = side.getBoundingClientRect();
     const hr = head.getBoundingClientRect();
     const cr = card.getBoundingClientRect();
+    const maxScroll = Math.max(0, side.scrollHeight - side.clientHeight);
     return {
       scrollTop: side.scrollTop,
+      scrollRatio: maxScroll > 0 ? side.scrollTop / maxScroll : 0,
+      routeProgress: Number(window.FlightFlowRouteProcessedV7412?.getModel?.().routeProgress || 0),
       activeIndex: Number(card.dataset.plotIndex),
       visibleInSide: cr.top >= sr.top - 1 && cr.bottom <= sr.bottom + 1,
       clearOfStickyHeader: cr.top >= hr.bottom + 7,
@@ -121,4 +125,6 @@ test('Rota Processada acompanha o waypoint atual no scroll ao avançar pelas set
   expect(position.scrollTop).toBeGreaterThan(0);
   expect(position.visibleInSide).toBe(true);
   expect(position.clearOfStickyHeader).toBe(true);
+  expect(position.scrollRatio).toBeLessThan(0.92);
+  expect(Math.abs(position.scrollRatio - position.routeProgress)).toBeLessThanOrEqual(0.22);
 });
