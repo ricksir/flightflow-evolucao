@@ -179,6 +179,59 @@ Estado: ARQ Setor anterior: T3 NUL NUL atual: T3 NUL NUL seguinte: BS NUL NUL
 ############################################################
 `;
 
+
+
+test('APP derivado exibe todos os fixos da rota processada também no mapa principal', async ({ page }) => {
+  await page.goto('/index.html', { waitUntil: 'load' });
+  await expect.poll(() => page.evaluate(() => Boolean(window.FlightFlowRouteProcessedV7412 && window.FlightParser))).toBe(true);
+
+  const result = await page.evaluate(async fixture => {
+    const api = window.FlightFlowRouteProcessedV7412;
+    const bridge = window.__FlightFlowFirBridge;
+    const parsed = window.FlightParser.parseHistoryText(fixture, { includeRawText: true });
+    bridge.state.parsed = parsed;
+    bridge.state.index = parsed.events.findIndex(event => event.messageType === 'ACP');
+    bridge.state.geo.eventRoutes = [];
+    await api.analyzeText(fixture, 'TAM3720APP-main-map-e2e.txt');
+    api.setFixesVisible(true);
+    api.applyProcessedRouteToFlightFlow();
+
+    const model = api.getModel();
+    const engine = bridge.realMapState?.engine || '';
+    const vector = document.querySelector('#ffrpVectorFixLayer');
+    const vectorTitles = Array.from(vector?.querySelectorAll('.ffrp-vfix title') || [])
+      .map(node => node.textContent || '');
+
+    const nativeFixes = model.nativeFixLayer?.getLayers?.() || [];
+    const nativeRoutes = model.nativeMapLayer?.getLayers?.() || [];
+    const nativeTitles = nativeFixes.map(layer => {
+      const content = layer.getTooltip?.()?.getContent?.();
+      return typeof content === 'string' ? content : String(content || '');
+    });
+
+    return {
+      engine,
+      routeCount: engine === 'leaflet'
+        ? nativeRoutes.length
+        : (vector?.querySelectorAll('.ffrp-vroute-declared').length || 0),
+      fixCount: engine === 'leaflet'
+        ? nativeFixes.length
+        : (vector?.querySelectorAll('.ffrp-vfix').length || 0),
+      labels: engine === 'leaflet' ? nativeTitles : vectorTitles,
+      text: engine === 'leaflet' ? nativeTitles.join(' ') : (vector?.textContent || ''),
+    };
+  }, APP_DERIVED_FIXTURE);
+
+  expect(result.routeCount).toBeGreaterThanOrEqual(1);
+  expect(result.fixCount).toBeGreaterThanOrEqual(6);
+  for (const ident of ['SBBR', 'GEPMO', 'ANBIR', 'IREGU', 'REINA', 'SBCF']) {
+    expect(result.text).toContain(ident);
+  }
+  for (const ident of ['GEPMO', 'ANBIR', 'IREGU', 'REINA']) {
+    expect(result.labels.some(label => label.includes(ident))).toBe(true);
+  }
+});
+
 test('APP sem ETIM avança pela rota derivada após DEP e congela no TER da jurisdição', async ({ page }) => {
   await page.goto('/index.html', { waitUntil: 'load' });
   await expect.poll(() => page.evaluate(() => Boolean(window.FlightFlowRouteProcessedV7412 && window.FlightParser))).toBe(true);
