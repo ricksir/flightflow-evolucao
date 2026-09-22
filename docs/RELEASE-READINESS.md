@@ -1,24 +1,24 @@
 # Release Readiness — FlightFlow Evolução
 
-> **Status:** a release `v0.2.0` já foi publicada. A linha atual `main` / `0.2.1-dev` contém a evolução visual até a **V11** e os refinamentos pós-aceitação até o **PR29**. Uma **revalidação humana final registrada** continua obrigatória antes de qualquer nova release.
+> **Status:** a release `v0.2.0` já foi publicada. A linha atual `main` / `0.2.1-dev` contém a evolução visual até a **V11** e os refinamentos pós-aceitação até o **PR34**. Uma **revalidação humana final registrada** continua obrigatória antes de qualquer nova release.
 
 Este documento define quando o FlightFlow ATS pode ser considerado pronto para uma versão estável.
 
 
 
-## Candidato técnico atual — pós-PR29
+## Candidato técnico atual — pós-PR34
 
 Baseline funcional certificado:
 
-`8cf3dcf13f22f707ec39e55a24022fb198e1a978`
+`2d3ebd01b888f5760abe4ddd3d46ba287de0b782`
 
 Evidência automatizada pós-merge:
 
-- quality gate **#111**: sucesso;
+- quality gate **#124**: sucesso;
 - **698/698 Node**;
-- **106/106 Playwright**;
+- **108/108 Playwright**;
 - zero `failed`, `flaky`, `retry`, `timeout`, `AssertionError`, `not ok` e `SPATIAL_EQ_DIAG`;
-- housekeeping **#31**: sucesso.
+- housekeeping **#36**: sucesso.
 
 A rodada mais recente corrigiu, sem alterar os contratos temporais/espaciais:
 
@@ -26,7 +26,11 @@ A rodada mais recente corrigiu, sem alterar os contratos temporais/espaciais:
 - PR #26 — reforço de legibilidade do dashboard;
 - PR #27 — controles cartográficos claros no tema claro;
 - PR #28 — unificação visual do Quadro Atual com Alterações e modernização tipográfica;
-- PR #29 — estabilidade determinística do contrato de contraste durante troca de tema.
+- PR #29 — estabilidade determinística do contrato de contraste durante troca de tema;
+- PR #31 — tipografia nativa entregue sem dependência externa;
+- PR #32 — cabeçalho do Quadro Atual sem duplicação/colisão;
+- PR #33 — acompanhamento automático do ponto atual no scroll da Rota Processada;
+- PR #34 — proteção do card ativo contra o cabeçalho sticky da sidebar.
 
 A revalidação humana do novo `main` ainda é necessária antes de uma release.
 
@@ -123,7 +127,7 @@ Esses casos estão em `tests/real-plan-route-regressions.test.js` e testes relac
 
 ## Aceitação manual antes da versão estável
 
-A automação não substitui a validação do produto com históricos representativos. Para o candidato pós-PR29, reexecutar integralmente `docs/MANUAL-ACCEPTANCE.md` e registrar o SHA testado, navegador, resoluções e históricos utilizados. A execução anterior identificou os quatro achados já remediados; ela não deve ser reutilizada como aprovação do estado atual. Antes de criar a versão estável, executar e registrar:
+A automação não substitui a validação do produto com históricos representativos. Para o candidato pós-PR34, reexecutar integralmente `docs/MANUAL-ACCEPTANCE.md` e registrar o SHA testado, navegador, resoluções e históricos utilizados. A execução anterior identificou os quatro achados já remediados; ela não deve ser reutilizada como aprovação do estado atual. Antes de criar a versão estável, executar e registrar:
 
 - [ ] carregar pelo menos um histórico real representativo sem erro fatal;
 - [ ] validar DEP e evolução temporal;

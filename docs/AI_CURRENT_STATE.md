@@ -2,7 +2,7 @@
 
 > Checkpoint técnico para continuidade entre conversas/agentes.
 >
-> Atualizado em **21/09/2026**, após o fechamento técnico dos PRs **#25–#29** sobre o baseline pós-PR23.
+> Atualizado em **22/09/2026**, após o fechamento técnico dos PRs **#31–#34** derivados da aceitação humana pós-PR29.
 >
 > **Fase atual: REVALIDAÇÃO HUMANA FINAL e preparação de release, sem abertura automática de V12.**
 
@@ -12,8 +12,8 @@
 - Branch principal: `main`.
 - Repositório estável/fechado anterior: `ricksir/flightflow-ats` — **não alterar nesta linha de trabalho**.
 - Baseline de origem da evolução: `b2bb9acc03096beeebbd36098b8008ef81639df8`.
-- Baseline funcional certificado pós-PR29:
-  `8cf3dcf13f22f707ec39e55a24022fb198e1a978`.
+- Baseline funcional certificado pós-PR34:
+  `2d3ebd01b888f5760abe4ddd3d46ba287de0b782`.
 - Baseline histórico V11:
   `a27ffee33577d88536a3828f9f3cca97b47fc898`.
 - O topo real de `main` pode conter commits exclusivamente documentais posteriores; sempre conferir o SHA atual antes de escrever.
@@ -23,28 +23,27 @@
 
 ## 2. Certificação atual
 
-### Fechamento técnico mais recente — PRs #25 a #29
+### Fechamento técnico mais recente — PRs #31 a #34
 
-Após o fechamento dos PRs #20–#23, a revalidação humana encontrou novos problemas de percepção visual. A rodada seguinte foi separada em PRs curtos:
+Após o ciclo PR25–PR29, a aceitação humana continuou sobre a `main` e gerou correções curtas e isoladas:
 
-- PR **#25** — Mapa com foco visual realmente perceptível;
-- PR **#26** — reforço de legibilidade e hierarquia do dashboard;
-- PR **#27** — superfícies claras dos controles cartográficos no tema claro;
-- PR **#28** — unificação visual de Quadro Atual e Alterações, nova tipografia e sistema de cards;
-- PR **#29** — estabilização determinística do contrato Playwright de contraste durante troca de tema, sem alterar CSS ou lógica ATS.
+- PR **#31** — substituição da dependência implícita de uma Inter não carregada por tipografia nativa variável, sem dependência de rede;
+- PR **#32** — correção do cabeçalho do Quadro Atual: remoção do pseudo-texto duplicado e proteção de títulos operacionais longos contra colisão com os cards;
+- PR **#33** — a lista lateral da Rota Processada passa a marcar o waypoint atual e acompanhar automaticamente o scroll quando segue a timeline;
+- PR **#34** — o scroll da Rota Processada passa a considerar o cabeçalho sticky, evitando que o card atual fique visualmente encoberto.
 
 Fechamento certificado:
 
-- SHA funcional pós-merge: `8cf3dcf13f22f707ec39e55a24022fb198e1a978`;
-- quality gate pós-merge **#111**: sucesso;
+- SHA funcional pós-merge: `2d3ebd01b888f5760abe4ddd3d46ba287de0b782`;
+- quality gate pós-merge **#124**: sucesso;
 - **698/698 Node**;
-- **106/106 Playwright**;
+- **108/108 Playwright**;
 - zero `failed`, `flaky`, `retry`, `timeout`, `AssertionError`, `not ok` e `SPATIAL_EQ_DIAG`;
-- housekeeping **#31**: sucesso;
-- branches temporárias dos PRs #28 e #29 removidas;
+- housekeeping **#36**: sucesso;
+- branch temporária do PR34 removida;
 - nenhum PR permaneceu aberto no fechamento.
 
-A certificação acima não substitui a revalidação humana do novo `main`. Não declarar nova release estável antes dessa reexecução.
+A aceitação humana foi **parcial**: os screenshots enviados permitiram identificar e corrigir PR32, e o uso real da Rota Processada revelou o problema corrigido em PR33/PR34. Ainda é necessário retestar a `main` pós-PR34 e concluir a matriz manual antes de qualquer release.
 
 ### V11 — Flight Situation Strip
 
@@ -171,16 +170,16 @@ ETIM é alias visual/operacional. A abreviação normativa usada na MCA 100-27/2
 ### Automatizado — concluído
 
 - V11 preservada;
-- PRs #25–#29 mergeados sobre a remediação anterior;
-- Quadro Atual e Alterações agora compartilham linguagem visual de cards, bordas e radius;
-- quality gate pós-merge #111 verde no baseline funcional `8cf3dcf13f22f707ec39e55a24022fb198e1a978`;
-- log bruto auditado com **698/698 Node + 106/106 Playwright** e contadores críticos em zero;
-- housekeeping #31 concluído e branches temporárias removidas;
-- documentação sincronizada nesta rodada.
+- PRs #31–#34 mergeados sobre a rodada visual anterior;
+- tipografia nativa, cabeçalho do Quadro Atual e acompanhamento de scroll da Rota Processada protegidos por regressões dedicadas;
+- quality gate pós-merge #124 verde no baseline funcional `2d3ebd01b888f5760abe4ddd3d46ba287de0b782`;
+- log bruto auditado com **698/698 Node + 108/108 Playwright** e contadores críticos em zero;
+- housekeeping #36 concluído e branch temporária removida;
+- nenhum PR aberto no fechamento.
 
 ### Humano — revalidação final pendente
 
-A automação **não substitui** a aceitação visual/operacional. É necessário reexecutar `docs/MANUAL-ACCEPTANCE.md` sobre o `main` pós-PR29, com atenção especial ao Quadro Atual, Alterações e visão geral do dashboard, antes de declarar nova versão estável.
+A automação **não substitui** a aceitação visual/operacional. A validação humana avançou parcialmente, mas é necessário reexecutar `docs/MANUAL-ACCEPTANCE.md` sobre o `main` pós-PR34. O reteste prioritário é a Rota Processada em **Acompanhar timeline**, avançando e retrocedendo vários eventos para confirmar que o card do ponto atual acompanha o scroll e permanece abaixo do cabeçalho sticky.
 
 Até essa revalidação:
 
