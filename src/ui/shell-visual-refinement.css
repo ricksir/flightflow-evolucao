@@ -7108,3 +7108,70 @@ html[data-theme="dark"][data-palette="velox"] .tab-panel[data-panel="data"] .fie
     white-space: nowrap;
   }
 }
+
+
+/* ==========================================================================
+   FlightFlow Evolução — PR40 Fluid Transport Bar
+   Remove caixotes internos e mantém uma única superfície contínua de controle.
+   Não altera timeline, scrubber, velocidade, eventos ou lógica ATS.
+   ========================================================================== */
+
+@media (min-width: 901px) {
+  .transport {
+    gap: 8px;
+    padding: 5px 8px;
+  }
+
+  .transport-left,
+  .transport-right,
+  .scrubber-wrap,
+  html[data-theme="light"] .transport-left,
+  html[data-theme="light"] .transport-right,
+  html[data-theme="light"] .scrubber-wrap,
+  html[data-theme="light"]:not([data-palette="velox"]) .transport-left,
+  html[data-theme="light"]:not([data-palette="velox"]) .transport-right,
+  html[data-theme="light"]:not([data-palette="velox"]) .scrubber-wrap,
+  html[data-theme="dark"][data-palette="velox"] .transport-left,
+  html[data-theme="dark"][data-palette="velox"] .transport-right,
+  html[data-theme="dark"][data-palette="velox"] .scrubber-wrap {
+    border: 0 !important;
+    background: transparent !important;
+    background-image: none !important;
+    box-shadow: none !important;
+  }
+
+  .transport-left,
+  .transport-right {
+    align-self: center;
+    padding: 0;
+  }
+
+  .scrubber-wrap {
+    padding: 24px 8px 3px;
+  }
+
+  .transport-btn,
+  .transport .toggle-btn {
+    border-color: transparent;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .transport-btn:hover:not(:disabled),
+  .transport .toggle-btn:hover:not(:disabled) {
+    border-color: rgba(67,191,220,.22);
+    background: rgba(67,191,220,.065);
+  }
+
+  html[data-theme="light"]:not([data-palette="velox"]) .transport-btn,
+  html[data-theme="light"]:not([data-palette="velox"]) .transport .toggle-btn {
+    border-color: transparent;
+    background: transparent;
+  }
+
+  html[data-theme="dark"][data-palette="velox"] .transport-btn,
+  html[data-theme="dark"][data-palette="velox"] .transport .toggle-btn {
+    border-color: transparent;
+    background: transparent;
+  }
+}
