@@ -32,7 +32,8 @@ test('Flight Situation Strip V11 organiza rota e estado em faixa técnica no des
 
   expect(metrics.headDisplay).toBe('grid');
   expect(metrics.headColumns.split(' ').length).toBeGreaterThanOrEqual(2);
-  expect(metrics.headHeight).toBeGreaterThanOrEqual(58);
+  expect(metrics.headHeight).toBeGreaterThanOrEqual(48);
+  expect(metrics.headHeight).toBeLessThanOrEqual(52);
   expect(metrics.routeFont.toLowerCase()).toContain('monospace');
   expect(metrics.routeNumeric).toContain('tabular-nums');
   expect(metrics.statusRadius).toBe('0px');

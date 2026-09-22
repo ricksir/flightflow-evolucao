@@ -7062,3 +7062,49 @@ html[data-theme="dark"][data-palette="velox"] .tab-panel[data-panel="data"] .fie
     border: 0;
   }
 }
+
+
+/* ==========================================================================
+   FlightFlow Evolução — PR39 Compact Upper Shell
+   Reduz somente a faixa vertical entre o cabeçalho e o mapa em desktop.
+   ========================================================================== */
+
+@media (min-width: 1181px) {
+  html[data-font-layout="normal"] {
+    --topbar-h: 52px;
+  }
+
+  .app {
+    row-gap: 3px;
+  }
+
+  html[data-font-layout="normal"] .topbar,
+  .topbar {
+    min-height: 52px;
+    height: 52px;
+    max-height: 52px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+  }
+
+  .scene-head {
+    min-height: 50px;
+    padding: 2px 10px !important;
+    gap: 8px;
+  }
+
+  .flight-id-block {
+    padding-right: 8px;
+  }
+
+  .scene-status {
+    flex-wrap: nowrap;
+    gap: 3px;
+  }
+
+  .scene-status .evo-status-kicker {
+    flex: 0 0 auto;
+    margin: 0 2px 0 0;
+    white-space: nowrap;
+  }
+}
