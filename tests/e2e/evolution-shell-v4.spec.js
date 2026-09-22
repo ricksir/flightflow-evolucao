@@ -105,6 +105,7 @@ test('PR46 mantém rótulos densos do scrubber sem colisão em 1600x900', async 
     };
   });
 
+  // Todos os ticks permanecem; somente textos DEP redundantes podem ser ocultados para evitar colisão.
   expect(result.totalDepCount).toBeGreaterThanOrEqual(4);
   expect(result.visibleDepCount).toBeGreaterThanOrEqual(2);
   expect(result.hiddenDepCount).toBeGreaterThan(0);
