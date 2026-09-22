@@ -292,17 +292,9 @@ for (const mode of [
       const tr = tag.getBoundingClientRect();
       const lr = label.getBoundingClientRect();
 
-      const parseRgb = value => {
-        const match = String(value).match(/rgba?\(([^)]+)\)/);
-        return match ? match[1].split(',').slice(0, 3).map(Number) : [0, 0, 0];
-      };
-      const a = parseRgb(cs.backgroundColor);
-      const b = parseRgb(ns.backgroundColor);
-      const colorDistance = a.reduce((sum, value, index) => sum + Math.abs(value - b[index]), 0);
-
       return {
-        colorDistance,
         backgroundImage: cs.backgroundImage,
+        borderChanged: cs.borderTopColor !== ns.borderTopColor,
         tagPosition: ts.position,
         tagBottom: tr.bottom,
         labelTop: lr.top,
@@ -311,8 +303,9 @@ for (const mode of [
       };
     });
 
-    expect(metrics.colorDistance).toBeGreaterThan(16);
-    expect(metrics.backgroundImage).not.toBe('none');
+    expect(metrics.backgroundImage).toMatch(/linear-gradient/i);
+    expect(metrics.backgroundImage).toMatch(/214|232|215/);
+    expect(metrics.borderChanged).toBe(true);
     expect(metrics.tagPosition).toBe('static');
     expect(metrics.tagBottom).toBeLessThanOrEqual(metrics.labelTop + 0.5);
     expect(metrics.cardScrollWidth).toBeLessThanOrEqual(metrics.cardClientWidth + 1);
