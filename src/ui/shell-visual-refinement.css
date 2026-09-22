@@ -6833,3 +6833,117 @@ h3,
   overflow-wrap: break-word;
   text-wrap: balance;
 }
+
+
+/* ==========================================================================
+   FlightFlow Evolução — PR37 Visual Separation & Change Highlight
+   Corrige colisões observadas na aceitação humana e devolve destaque quente
+   perceptível aos campos atualizados, sem alterar estado ou dados operacionais.
+   ========================================================================== */
+
+.tab-panel[data-panel="data"] .fields-grid .field-card {
+  min-width: 0;
+  align-content: start;
+}
+
+.tab-panel[data-panel="data"] .fields-grid .field-card .field-label,
+.tab-panel[data-panel="data"] .fields-grid .field-card .field-value,
+.tab-panel[data-panel="data"] .fields-grid .field-card .field-previous {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.tab-panel[data-panel="data"] .fields-grid .field-card.changed,
+.tab-panel[data-panel="data"] .fields-grid .field-card.changed:hover {
+  border-color: #d6b45b !important;
+  background:
+    linear-gradient(135deg,rgba(214,164,42,.15),rgba(214,164,42,.055) 58%,transparent 86%),
+    #fff9e8 !important;
+  box-shadow:
+    inset 3px 0 #c18d19,
+    inset 0 1px rgba(255,255,255,.84),
+    0 7px 20px rgba(92,67,12,.075) !important;
+}
+
+.tab-panel[data-panel="data"] .fields-grid .field-card.changed .change-tag {
+  position: static;
+  display: inline-flex;
+  align-items: center;
+  width: max-content;
+  max-width: 100%;
+  min-height: 19px;
+  margin: 0 0 7px;
+  padding: 3px 7px;
+  flex: 0 0 auto;
+  opacity: .92;
+}
+
+html[data-theme="dark"] .tab-panel[data-panel="data"] .fields-grid .field-card.changed,
+html[data-theme="dark"] .tab-panel[data-panel="data"] .fields-grid .field-card.changed:hover {
+  border-color: rgba(232,177,66,.58) !important;
+  background:
+    linear-gradient(135deg,rgba(232,177,66,.15),rgba(232,177,66,.06) 60%,transparent 88%),
+    #29291f !important;
+  box-shadow:
+    inset 3px 0 #e0a43a,
+    inset 0 1px rgba(255,255,255,.035),
+    0 7px 20px rgba(0,0,0,.15) !important;
+}
+
+html[data-theme="dark"][data-palette="velox"] .tab-panel[data-panel="data"] .fields-grid .field-card.changed,
+html[data-theme="dark"][data-palette="velox"] .tab-panel[data-panel="data"] .fields-grid .field-card.changed:hover {
+  border-color: rgba(215,163,60,.62) !important;
+  background:
+    linear-gradient(135deg,rgba(215,163,60,.14),rgba(215,163,60,.055) 60%,transparent 88%),
+    #28352e !important;
+  box-shadow:
+    inset 3px 0 #d7a33c,
+    inset 0 1px rgba(255,255,255,.03),
+    0 7px 20px rgba(0,18,14,.16) !important;
+}
+
+.timeline-item,
+.timeline-body,
+.timeline-op,
+.timeline-meta {
+  min-width: 0;
+}
+
+.timeline-op,
+.timeline-chip,
+.timeline-meta .source-chip {
+  overflow-wrap: anywhere;
+}
+
+.timeline-meta {
+  align-items: flex-start;
+  row-gap: 6px;
+}
+
+.timeline-chip,
+.timeline-meta .source-chip {
+  max-width: 100%;
+  white-space: normal;
+}
+
+.message-actions {
+  flex-wrap: wrap;
+  row-gap: 7px;
+}
+
+.scrubber-labels > span {
+  min-width: 0;
+}
+
+#currentTimeLabel,
+#endTimeLabel {
+  white-space: nowrap;
+}
+
+#eventLabel {
+  overflow: hidden;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
