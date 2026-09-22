@@ -66,6 +66,7 @@ test('PR46 mantém rótulos densos do scrubber sem colisão em 1600x900', async 
   await expect(page.locator('.evo-transport-marker-dep').first()).toBeAttached();
 
   const result = await page.evaluate(() => {
+    const allDepLabels = [...document.querySelectorAll('#transportMilestones .evo-transport-marker-dep b')];
     const labels = [...document.querySelectorAll('#transportMilestones .evo-transport-marker b')]
       .filter(node => {
         const r = node.getBoundingClientRect();
@@ -94,11 +95,19 @@ test('PR46 mantém rótulos densos do scrubber sem colisão em 1600x900', async 
     }
     return {
       count: labels.length,
-      depCount: labels.filter(item => item.text === 'DEP').length,
+      totalDepCount: allDepLabels.length,
+      visibleDepCount: labels.filter(item => item.text === 'DEP').length,
+      hiddenDepCount: allDepLabels.filter(node => {
+        const r = node.getBoundingClientRect();
+        return r.width === 0 || r.height === 0;
+      }).length,
       overlaps,
     };
   });
 
-  expect(result.depCount).toBeGreaterThanOrEqual(4);
+  expect(result.totalDepCount).toBeGreaterThanOrEqual(4);
+  expect(result.visibleDepCount).toBeGreaterThanOrEqual(2);
+  expect(result.hiddenDepCount).toBeGreaterThan(0);
+  expect(result.visibleDepCount).toBeLessThan(result.totalDepCount);
   expect(result.overlaps).toEqual([]);
 });
