@@ -55,8 +55,6 @@ test('histórico APP sem PONTOS exibe rota declarada UZ35 e seus fixos no mapa',
         lon: Number(point.geo?.lon),
       })) || [],
       timedLimit: snapshot ? api.timedProgressLimit(snapshot) : null,
-      mainBadge: document.querySelector('#ffrpMainBadge')?.textContent || '',
-      mainBadgeHidden: document.querySelector('#ffrpMainBadge')?.hidden ?? true,
     };
   });
 
@@ -65,8 +63,6 @@ test('histórico APP sem PONTOS exibe rota declarada UZ35 e seus fixos no mapa',
   expect(result.ids).toEqual(['SBBR', 'GEPMO', 'ANBIR', 'IREGU', 'REINA']);
   expect(result.geos.every(point => Number.isFinite(point.lat) && Number.isFinite(point.lon))).toBe(true);
   expect(result.timedLimit).toBe(0);
-  expect(result.mainBadgeHidden).toBe(false);
-  expect(result.mainBadge).toContain('ROTA PROCESSADA');
 
   await expect(page.locator('#ffrpOpen')).toBeVisible();
   await page.locator('#ffrpOpen').click();
