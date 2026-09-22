@@ -32,9 +32,11 @@ test('aceitação pós-V11 harmoniza o tema claro e reduz área morta sem criar 
   assert.ok(source.includes('html[data-theme="light"]:not([data-palette="velox"]) .workspace-card .scene-caption'));
 });
 
-test('Rota Processada separa limite ETIM de limite de playback terminal', () => {
+test('Rota Processada separa ETIM histórico, fechamento terminal e playback derivado', () => {
   assert.match(ROUTE, /function routePlaybackLimit\(snapshot,index=nativeEventIndex\(\)\)/);
-  assert.match(ROUTE, /return terminal\.active \? 1 : timedProgressLimit\(snapshot\)/);
+  assert.match(ROUTE, /if\(terminal\.active\)return 1/);
+  assert.match(ROUTE, /profile\?\.mode==='derived'.*return 1/);
+  assert.match(ROUTE, /return timedProgressLimit\(snapshot\)/);
   assert.match(ROUTE, /limit=routePlaybackLimit\(snap\)/);
   assert.match(ROUTE, /routePlaybackLimit, transferMarkersForSnapshot/);
   assert.match(ROUTE, /queueMicrotask\(\(\)=>syncFromNativeTimeline\(\)\)/);
