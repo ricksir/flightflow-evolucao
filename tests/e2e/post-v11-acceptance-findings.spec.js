@@ -145,3 +145,47 @@ test('demonstração TAM3542 continua íntegra após compactação e correções
   expect(layout.sceneWidth).toBeGreaterThan(layout.workspaceWidth * 0.9);
   expect(layout.scrollWidth).toBeLessThanOrEqual(layout.viewportWidth + 1);
 });
+
+
+test('PR39 reduz área morta superior sem comprimir controles em 1600x900', async ({ page }) => {
+  await page.setViewportSize({ width: 1600, height: 900 });
+  await page.goto('/index.html', { waitUntil: 'load' });
+
+  const metrics = await page.evaluate(() => {
+    const topbar = document.querySelector('.topbar');
+    const sceneHead = document.querySelector('.scene-head');
+    const dropZone = document.querySelector('#dropZone');
+    const flightId = document.querySelector('.flight-id-block');
+    const sceneStatus = document.querySelector('.scene-status');
+    if (!topbar || !sceneHead || !dropZone || !flightId || !sceneStatus) {
+      throw new Error('Estrutura superior operacional indisponível');
+    }
+
+    const topbarRect = topbar.getBoundingClientRect();
+    const sceneHeadRect = sceneHead.getBoundingClientRect();
+    const dropZoneRect = dropZone.getBoundingClientRect();
+    const flightRect = flightId.getBoundingClientRect();
+    const statusRect = sceneStatus.getBoundingClientRect();
+
+    return {
+      topbarHeight: topbarRect.height,
+      sceneHeadHeight: sceneHeadRect.height,
+      mapLeadIn: dropZoneRect.top - topbarRect.bottom,
+      sceneHeadFits: sceneHead.scrollHeight <= sceneHead.clientHeight + 1,
+      topbarFits: topbar.scrollHeight <= topbar.clientHeight + 1,
+      flightInside: flightRect.top >= sceneHeadRect.top - 1 && flightRect.bottom <= sceneHeadRect.bottom + 1,
+      statusInside: statusRect.top >= sceneHeadRect.top - 1 && statusRect.bottom <= sceneHeadRect.bottom + 1,
+      scrollWidth: document.documentElement.scrollWidth,
+      viewportWidth: innerWidth,
+    };
+  });
+
+  expect(metrics.topbarHeight).toBeLessThanOrEqual(53);
+  expect(metrics.sceneHeadHeight).toBeLessThanOrEqual(52);
+  expect(metrics.mapLeadIn).toBeLessThanOrEqual(56);
+  expect(metrics.sceneHeadFits).toBe(true);
+  expect(metrics.topbarFits).toBe(true);
+  expect(metrics.flightInside).toBe(true);
+  expect(metrics.statusInside).toBe(true);
+  expect(metrics.scrollWidth).toBeLessThanOrEqual(metrics.viewportWidth + 1);
+});
