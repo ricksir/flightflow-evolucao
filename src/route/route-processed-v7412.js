@@ -969,6 +969,10 @@
 
   function movementPointsForProfile(snapshot) {
     const base=movementPoints(snapshot);
+    if(snapshot?.declaredFallback){
+      const preview=declaredDestinationPreview(snapshot);
+      if(preview.visible)return base.concat(preview.destination);
+    }
     const closure=terminalClosureContext();
     const destination=terminalClosurePoint(snapshot);
     if(!closure||!destination)return base;
@@ -998,7 +1002,10 @@
 
   function routePlaybackLimit(snapshot,index=nativeEventIndex()) {
     const terminal=terminalClosureState(snapshot,index);
-    return terminal.active ? 1 : timedProgressLimit(snapshot);
+    if(terminal.active)return 1;
+    const profile=model.movementProfile||buildMovementProfile();
+    if(profile?.mode==='derived'&&profile.snapshot?.signature===snapshot?.signature)return 1;
+    return timedProgressLimit(snapshot);
   }
 
   function countResolvedGeos(snapshot){return (snapshot?.points||[]).filter(p=>p.geo&&Number.isFinite(Number(p.geo.lat))&&Number.isFinite(Number(p.geo.lon))).length}
@@ -1036,6 +1043,26 @@
     if(/RECEP(?:Ç|C)[AÃ]O DE MENSAGEM DEP/.test(op))return true;
     if(/OPERA(?:Ç|C)[AÃ]O\s*:\s*RECEP(?:Ç|C)[AÃ]O DE MENSAGEM DEP/.test(raw))return true;
     return false;
+  }
+
+  function isArrivalEvent(event) {
+    const text=movementEventText(event);
+    const msg=norm(event?.messageType||event?.snapshot?.messageType||'');
+    return msg==='ARR'||/RECEP(?:Ç|C)[AÃ]O DE MENSAGEM ARR|MENSAGEM ARR\b/.test(text);
+  }
+
+  function isArchiveEvent(event) {
+    const text=movementEventText(event);
+    const status=norm(event?.snapshot?.status||event?.sector?.state||'');
+    return status==='ARQUIVADO'||status==='ARQ'||/ARQUIV/.test(text);
+  }
+
+  function isJurisdictionEndEvent(event) {
+    if(isArrivalEvent(event)||isArchiveEvent(event))return false;
+    const text=movementEventText(event);
+    const status=norm(event?.snapshot?.status||event?.sector?.state||'');
+    if(status==='TERMINADO'||status==='TER'||status==='CANCELADO'||status==='CNL')return true;
+    return /EVENTO AUTOM[ÁA]TICO DE T[ÉE]RMINO|RECEP(?:Ç|C)[AÃ]O DE MENSAGEM (?:TTY )?CNL/.test(text);
   }
 
   function firstDepartureAnchor() {
