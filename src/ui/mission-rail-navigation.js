@@ -135,6 +135,63 @@
     return route;
   }
 
+  function notifyLayout(win) {
+    if (!win || typeof win.dispatchEvent !== 'function') return;
+    const notify = () => win.dispatchEvent(new win.Event('resize'));
+    if (typeof win.requestAnimationFrame === 'function') {
+      win.requestAnimationFrame(() => win.requestAnimationFrame(notify));
+    } else {
+      const timer = typeof win.setTimeout === 'function' ? win.setTimeout.bind(win) : setTimeout;
+      timer(notify, 0);
+    }
+  }
+
+  function applyCollapsedState(scope, rail, collapsed, shouldNotify = true) {
+    if (!scope || !rail) return false;
+    const app = rail.closest ? rail.closest('.app') : null;
+    if (!app) return false;
+
+    const value = Boolean(collapsed);
+    app.classList.toggle('evo-rail-collapsed', value);
+    rail.dataset.collapsed = value ? 'true' : 'false';
+
+    const toggle = rail.querySelector('.evo-rail-toggle');
+    if (toggle) {
+      toggle.setAttribute('aria-expanded', String(!value));
+      toggle.setAttribute('aria-label', value ? 'Expandir barra lateral' : 'Recolher barra lateral');
+      toggle.title = value ? 'Expandir Mission Rail' : 'Recolher Mission Rail';
+      toggle.textContent = value ? '›' : '‹';
+    }
+
+    if (shouldNotify) {
+      const win = scope.defaultView || (typeof window !== 'undefined' ? window : null);
+      notifyLayout(win);
+    }
+    return value;
+  }
+
+  function ensureCollapseControl(scope, rail) {
+    if (!scope || !rail) return null;
+    let toggle = rail.querySelector('.evo-rail-toggle');
+
+    if (!toggle) {
+      toggle = scope.createElement('button');
+      toggle.type = 'button';
+      toggle.className = 'evo-rail-toggle';
+      const nav = rail.querySelector('.evo-rail-nav');
+      rail.insertBefore(toggle, nav || rail.firstChild);
+
+      toggle.addEventListener('click', () => {
+        const app = rail.closest ? rail.closest('.app') : null;
+        applyCollapsedState(scope, rail, !app?.classList.contains('evo-rail-collapsed'));
+      });
+    }
+
+    const app = rail.closest ? rail.closest('.app') : null;
+    applyCollapsedState(scope, rail, Boolean(app?.classList.contains('evo-rail-collapsed')), false);
+    return toggle;
+  }
+
   function init(root) {
     const scope = root || (typeof document !== 'undefined' ? document : null);
     if (!scope) return null;
@@ -143,6 +200,12 @@
 
     const items = Array.from(rail.querySelectorAll('.evo-rail-item'));
     if (!items.length) return null;
+
+    items.forEach(item => {
+      const route = routeForHref(item.getAttribute('href'));
+      if (route && !item.hasAttribute('aria-label')) item.setAttribute('aria-label', route.label);
+    });
+    ensureCollapseControl(scope, rail);
 
     let lastContentItem = items.find(item => item.classList.contains('active')) || items[0];
     setActiveItem(items, lastContentItem);
@@ -203,5 +266,8 @@
     }
   }
 
-  return Object.freeze({ ROUTES, routeForHref, setActiveItem, applyView, navigate, init });
+  return Object.freeze({
+    ROUTES, routeForHref, setActiveItem, applyView, navigate,
+    notifyLayout, applyCollapsedState, ensureCollapseControl, init
+  });
 });
