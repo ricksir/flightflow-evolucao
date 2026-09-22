@@ -1,6 +1,6 @@
 const { test, expect } = require('@playwright/test');
 
-const APP_FIXTURE = String.raw\`
+const APP_FIXTURE = String.raw`
 Indicativo do plano: TAM3720
 ADEP: SBBR
 ADES: SBCF
@@ -22,7 +22,7 @@ Estado: ATV Setor anterior: NUL NUL atual: DS REC NUL seguinte: DS REC NUL
 Conteúdo         :
 (DEPSBBR/SBBR058-TAM3720-SBBR1229-SBCF-DOF/260709)
 ############################################################
-\`;
+`;
 
 test('histórico APP sem PONTOS exibe rota declarada UZ35 e seus fixos no mapa', async ({ page }) => {
   await page.goto('/index.html', { waitUntil: 'load' });
