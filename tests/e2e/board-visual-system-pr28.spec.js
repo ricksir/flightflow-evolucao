@@ -267,3 +267,94 @@ test('PR32 título operacional longo não invade os cards e eyebrow não duplica
   expect(m.headingHeight).toBeGreaterThanOrEqual(m.titleBottom - m.headingTop + 8);
   expect(m.scrollWidth).toBeLessThanOrEqual(m.viewportWidth + 1);
 });
+
+
+for (const mode of [
+  { theme: 'light', palette: '', label: 'claro' },
+  { theme: 'dark', palette: '', label: 'escuro' },
+  { theme: 'dark', palette: 'velox', label: 'Velox' },
+]) {
+  test('PR37 destaca atualização e mantém chip fora do texto no tema ' + mode.label, async ({ page }) => {
+    await loadDemo(page);
+    await findChangedState(page);
+    await setMode(page, mode.theme, mode.palette);
+
+    const metrics = await page.evaluate(() => {
+      const changed = document.querySelector('#fieldsGrid .field-card.changed');
+      const normal = document.querySelector('#fieldsGrid .field-card:not(.changed)');
+      const tag = changed?.querySelector('.change-tag');
+      const label = changed?.querySelector('.field-label');
+      if (!changed || !normal || !tag || !label) throw new Error('Estado visual de alteração não disponível');
+
+      const cs = getComputedStyle(changed);
+      const ns = getComputedStyle(normal);
+      const ts = getComputedStyle(tag);
+      const tr = tag.getBoundingClientRect();
+      const lr = label.getBoundingClientRect();
+
+      const parseRgb = value => {
+        const match = String(value).match(/rgba?\(([^)]+)\)/);
+        return match ? match[1].split(',').slice(0, 3).map(Number) : [0, 0, 0];
+      };
+      const a = parseRgb(cs.backgroundColor);
+      const b = parseRgb(ns.backgroundColor);
+      const colorDistance = a.reduce((sum, value, index) => sum + Math.abs(value - b[index]), 0);
+
+      return {
+        colorDistance,
+        backgroundImage: cs.backgroundImage,
+        tagPosition: ts.position,
+        tagBottom: tr.bottom,
+        labelTop: lr.top,
+        cardScrollWidth: changed.scrollWidth,
+        cardClientWidth: changed.clientWidth,
+      };
+    });
+
+    expect(metrics.colorDistance).toBeGreaterThan(16);
+    expect(metrics.backgroundImage).not.toBe('none');
+    expect(metrics.tagPosition).toBe('static');
+    expect(metrics.tagBottom).toBeLessThanOrEqual(metrics.labelTop + 0.5);
+    expect(metrics.cardScrollWidth).toBeLessThanOrEqual(metrics.cardClientWidth + 1);
+  });
+}
+
+test('PR37 textos longos permanecem contidos no Quadro Atual e na timeline', async ({ page }) => {
+  await loadDemo(page);
+  await findChangedState(page);
+  await setMode(page, 'light');
+
+  const metrics = await page.evaluate(() => {
+    const changed = document.querySelector('#fieldsGrid .field-card.changed');
+    const label = changed?.querySelector('.field-label');
+    const value = changed?.querySelector('.field-value');
+    if (!changed || !label || !value) throw new Error('Card alterado não disponível');
+
+    label.textContent = 'Identificação operacional atualizada com descrição extensa';
+    value.textContent = 'VALOR OPERACIONAL MUITO LONGO PARA VALIDAR QUEBRA SEGURA SEM INVADIR O CARD ADJACENTE';
+
+    const timeline = [...document.querySelectorAll('.timeline-item')]
+      .find(item => item.querySelector('.timeline-op') && item.querySelector('.timeline-meta'));
+    if (!timeline) throw new Error('Timeline com metadados não disponível');
+    const op = timeline.querySelector('.timeline-op');
+    const meta = timeline.querySelector('.timeline-meta');
+    op.textContent = 'Evento operacional com descrição propositalmente longa para validar composição sem sobreposição';
+
+    const cr = changed.getBoundingClientRect();
+    const vr = value.getBoundingClientRect();
+    const or = op.getBoundingClientRect();
+    const mr = meta.getBoundingClientRect();
+
+    return {
+      cardContained: changed.scrollWidth <= changed.clientWidth + 1 && vr.right <= cr.right + 0.5 && vr.bottom <= cr.bottom + 0.5,
+      timelineContained: timeline.scrollWidth <= timeline.clientWidth + 1,
+      timelineSeparated: or.bottom <= mr.top + 0.5,
+      documentContained: document.documentElement.scrollWidth <= innerWidth + 1,
+    };
+  });
+
+  expect(metrics.cardContained).toBe(true);
+  expect(metrics.timelineContained).toBe(true);
+  expect(metrics.timelineSeparated).toBe(true);
+  expect(metrics.documentContained).toBe(true);
+});
