@@ -1968,23 +1968,39 @@
     qsa('.wp[data-plot-index]',svg).forEach(node=>{node.addEventListener('click',()=>select(Number(node.dataset.plotIndex)));node.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();select(Number(node.dataset.plotIndex));}});});
   }
 
-  function keepRoutePointVisible(list, index) {
+  function keepRoutePointVisible(list, index, progress=0) {
     if(!list||!Number.isInteger(index)||index<0)return false;
     const card=qs(`.ffrp-point[data-plot-index="${index}"]`,list);
     const side=card?.closest?.('.ffrp-side');
     if(!card||!side)return false;
     const sideRect=side.getBoundingClientRect();
-    const cardRect=card.getBoundingClientRect();
     const sticky=qs('.ffrp-snap-head',side);
     const stickyRect=sticky?.getBoundingClientRect?.();
     const margin=12;
     const visibleTop=Math.max(sideRect.top+margin,Number(stickyRect?.bottom||0)+margin);
     const visibleBottom=sideRect.bottom-margin;
-    if(cardRect.top>=visibleTop&&cardRect.bottom<=visibleBottom)return false;
-    const availableHeight=Math.max(cardRect.height,visibleBottom-visibleTop);
-    const desiredTop=visibleTop+Math.max(0,(availableHeight-cardRect.height)/2);
-    const target=side.scrollTop+(cardRect.top-desiredTop);
-    side.scrollTop=Math.max(0,target);
+    const visibleHeight=Math.max(1,visibleBottom-visibleTop);
+
+    // Reserva geometria real abaixo da rota para que o scroll não chegue ao
+    // fim apenas porque o card ativo entrou na metade inferior da viewport.
+    // O fim da barra passa a representar o fim da progressão, não o fim precoce
+    // do conteúdo necessário para manter o card visível.
+    list.style.paddingBottom=`${Math.max(72,Math.round(visibleHeight*.62))}px`;
+
+    const cardRect=card.getBoundingClientRect();
+    const topInset=Math.max(0,visibleTop-sideRect.top);
+    const bottomInset=Math.max(0,sideRect.bottom-visibleBottom);
+    const cardTopInScroll=side.scrollTop+(cardRect.top-sideRect.top);
+    const cardBottomInScroll=side.scrollTop+(cardRect.bottom-sideRect.top);
+    const minScrollForCard=Math.max(0,cardBottomInScroll-(side.clientHeight-bottomInset));
+    const maxScrollForCard=Math.max(0,cardTopInScroll-topInset);
+    const maxScroll=Math.max(0,side.scrollHeight-side.clientHeight);
+    const progressTarget=maxScroll*clamp(Number(progress)||0,0,1);
+    const lower=Math.min(minScrollForCard,maxScrollForCard);
+    const upper=Math.max(minScrollForCard,maxScrollForCard);
+    const target=Math.min(maxScroll,Math.max(0,clamp(progressTarget,lower,upper)));
+    if(Math.abs(side.scrollTop-target)<1)return false;
+    side.scrollTop=target;
     return true;
   }
 
@@ -1997,7 +2013,7 @@
     const displayContext=routeDisplayContext(snap,progress),plotPoints=displayContext.plotPoints,activePlotIndex=displayContext.focusPlotIndex;
     const list=qs('#ffrpRouteList');list.innerHTML=plotPoints.map((p,i)=>{const actualIndex=i<snap.points.length?i:-1,tr=actualIndex>=0?transferByPoint.get(actualIndex):null,kind=p.declared?'<em class="ffrp-route-kind declared">DECLARADA</em>':p.destinationOnly?'<em class="ffrp-route-kind destination">ADES</em>':/^[A-Z]{4}$/.test(p.ident)&&(i===0||i===snap.points.length-1)?'<em class="ffrp-route-kind airport">AERÓDROMO</em>':p.geo?.kind==='coordinate'?'<em class="ffrp-route-kind coord">COORD.</em>':'<em class="ffrp-route-kind">FIXO</em>',meta=p.declared?`ROTA ${p.airway||''} · SEM ETIM`:p.destinationOnly?(terminal.active?'FECHAMENTO TERMINAL DERIVADO · SEM ETIM':terminal.visible?'FECHAMENTO TERMINAL PREVISTO · SEM ETIM':'TRAJETO TERMINAL NÃO ESPECIFICADO'):[p.etim?`ETIM ${p.etim}${p.passed?'*':''}`:'',p.cfl?`CFL ${p.cfl}`:''].filter(Boolean).join(' · ')||'Sem ETIM/CFL',extraClass=[p.declared?'declared-point':p.destinationOnly?(terminal.active?'destination-point terminal-point':terminal.visible?'destination-point terminal-point pending-terminal-point':'destination-point'):'',i===activePlotIndex?'active-point':'',model.selectedPointIndex===i?'selected-point':''].filter(Boolean).join(' '),currentAttr=i===activePlotIndex?' aria-current="step"':'';return `<div class="ffrp-point ${p.geo?'':'unresolved'} ${tr?'transfer-point':''} ${extraClass}" data-plot-index="${i}" data-point-index="${actualIndex}"${currentAttr} title="${p.declared||p.destinationOnly?'Selecionar referência geográfica':'Selecionar e posicionar a aeronave neste ponto'}"><span class="ffrp-point-index">${i+1}</span><div class="ffrp-point-main"><strong>${esc(p.ident)} ${kind}${tr?'<em class="ffrp-route-kind transfer">TRANSFERÊNCIA</em>':''}</strong><span>${esc(meta)}${tr?` · ${esc(tr.type)}`:''}</span></div><span class="ffrp-point-source">${esc(p.geo?.source||'sem coordenada')}${tr?` · limite ${esc(tr.label)}`:''}</span></div>`}).join('');
     qsa('.ffrp-point',list).forEach(card=>card.addEventListener('click',()=>{const plotIndex=Number(card.dataset.plotIndex);if(Number.isFinite(plotIndex))model.selectedPointIndex=plotIndex;const raw=Number(card.dataset.pointIndex);if(!Number.isFinite(raw)||raw<0){renderModal(false);return;}const fractions=routeDistanceFractions(move),i=raw;model.syncTimeline=false;model.routeProgress=Math.min(timedLimit,Number.isFinite(fractions[i])?fractions[i]:(i/Math.max(1,move.length-1)));qs('#ffrpTimelineBtn')?.classList.remove('active');renderModal(false)}));
-    if(model.syncTimeline)requestAnimationFrame(()=>keepRoutePointVisible(list,activePlotIndex));
+    if(model.syncTimeline)requestAnimationFrame(()=>keepRoutePointVisible(list,activePlotIndex,progress));
     const unresolved=snap.points.filter(p=>!p.geo).map(p=>p.ident);qs('#ffrpUnresolved').innerHTML=unresolved.length?`<div class="ffrp-unresolved"><b>${unresolved.length} ponto(s) ainda sem coordenada</b>${unresolved.map(x=>`<code>${esc(x)}</code>`).join('')}<div style="margin-top:5px">Use <b>Atualizar NAVDB AISWEB</b> ou instale a <b>Base Nacional AISWEB</b> (XLSX/CSV) uma única vez.</div></div>`:'';
     const tailEl=qs('#ffrpTailNote');if(tailEl)tailEl.innerHTML=terminal.active?`<div class="ffrp-tail-note terminal"><b>Fechamento terminal por Ordem TER</b><br>A aeronave é encerrada visualmente em <b>${esc(terminal.destination?.ident||model.history?.ades||'ADES')}</b> por uma linha direta tracejada a partir de <b>${esc(terminal.from?.ident||'último ponto')}</b>. Este trecho é <b>derivado/não histórico</b>, não cria ETIM, STAR, CFL ou fixos intermediários.</div>`:terminal.visible?`<div class="ffrp-tail-note terminal pending"><b>Fechamento terminal previsto</b><br>A linha amarela tracejada liga <b>${esc(terminal.from?.ident||'último ponto')}</b> ao ADES <b>${esc(terminal.destination?.ident||model.history?.ades||'ADES')}</b> apenas como <b>referência espacial derivada</b>. Antes da Ordem TER a aeronave não percorre esse trecho; não há ETIM, STAR, CFL ou fixos intermediários inventados.</div>`:continuation.length?`<div class="ffrp-tail-note"><b>Continuação declarada sem ETIM</b><br>O histórico processado termina em <b>${esc(snap.points.at(-1)?.ident||'—')}</b>. A rota do FPL/CPL declara <b>${esc(continuation[0]?.airway||'ATS')} ${esc(continuation.at(-1)?.ident||'')}</b>; por isso o FlightFlow exibe <b>${continuation.map(p=>esc(p.ident)).join(' → ')}</b> usando coordenadas publicadas, mas não movimenta a aeronave nesses pontos sem ETIM.</div>`:destination?`<div class="ffrp-tail-note"><b>Trajeto terminal não especificado</b><br>O ADES <b>${esc(destination.ident)}</b> é mostrado como referência, sem inventar uma trajetória após o último ponto processado.</div>`:'';
     qs('#ffrpMapNote').textContent=terminal.active?'Ordem TER recebida: linha amarela tracejada = fechamento terminal derivado até o ADES. Sem ETIM, STAR ou fixos inventados.':terminal.visible?'Linha amarela tracejada = fechamento terminal previsto até o ADES. É somente referência espacial; a aeronave só percorre o trecho na Ordem TER.':unresolved.length?`Rota processada do histórico · ${unresolved.length} ponto(s) sem coordenada. As lacunas tracejadas indicam somente ausência de resolução geográfica.`:continuation.length?'Histórico processado em vermelho. A continuação azul tracejada usa somente fixos publicados da rota declarada e permanece sem ETIM. Passe o cursor ou selecione um ponto para detalhes.':'Histórico processado com coordenadas resolvidas localmente. Passe o cursor ou selecione um ponto para detalhes; o modo foco reduz informação secundária.';
