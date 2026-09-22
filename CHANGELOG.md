@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fechado tecnicamente o ciclo pós-aceitação dos PRs **#31–#34**: tipografia nativa sem fonte externa implícita, correção de cabeçalho/título longo do Quadro Atual, acompanhamento automático do waypoint atual no scroll da Rota Processada e proteção contra o cabeçalho sticky; baseline funcional `2d3ebd01b888f5760abe4ddd3d46ba287de0b782`, quality gate pós-merge **#124**, **698/698 Node + 108/108 Playwright**, sem `failed`/`flaky`/`retry`/`timeout`/`AssertionError`/`not ok`/`SPATIAL_EQ_DIAG`, housekeeping **#36** concluído; a aceitação humana avançou parcialmente, mas o reteste final pós-PR34 continua pendente antes de release;
+
 - fechado tecnicamente o ciclo visual dos PRs **#25–#29**: foco efetivo do Mapa, reforço de legibilidade, controles cartográficos claros no tema claro, modernização do Quadro Atual com cards e tipografia unificada, e estabilização determinística do contrato de contraste; baseline funcional `8cf3dcf13f22f707ec39e55a24022fb198e1a978`, quality gate pós-merge **#111**, **698/698 Node + 106/106 Playwright**, sem `failed`/`flaky`/`retry`/`timeout`/`AssertionError`/`not ok`/`SPATIAL_EQ_DIAG`, housekeeping **#31** concluído; revalidação humana final ainda pendente antes de release;
 
 - encerrada tecnicamente a rodada de remediação dos quatro achados da aceitação original pelos PRs **#20–#23**; baseline funcional pós-merge `cd4adf92d726ed3a2dea0fe4fa23744b41784b4f`, quality gate **#90** com **696/696 Node + 97/97 Playwright**, zero `failed`/`flaky`/`retry`/`TimeoutError`/`AssertionError`/`not ok`/`SPATIAL_EQ_DIAG`, e housekeeping **#24** com remoção da branch do PR23; a revalidação humana final permanece obrigatória antes de nova release;
