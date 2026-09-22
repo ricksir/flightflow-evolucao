@@ -189,3 +189,92 @@ test('PR39 reduz área morta superior sem comprimir controles em 1600x900', asyn
   expect(metrics.statusInside).toBe(true);
   expect(metrics.scrollWidth).toBeLessThanOrEqual(metrics.viewportWidth + 1);
 });
+
+
+test('PR40 integra a barra inferior sem caixas internos e preserva os controles', async ({ page }) => {
+  await page.setViewportSize({ width: 1600, height: 900 });
+  await page.goto('/index.html', { waitUntil: 'load' });
+
+  const overlayDemo = page.locator('#overlayDemoBtn');
+  if (await overlayDemo.isVisible()) await overlayDemo.click();
+  else await page.locator('#demoBtn').click();
+
+  await expect(page.locator('#scrubber')).toBeEnabled();
+  await page.locator('#restartBtn').click();
+  await expect(page.locator('#playBtn')).toHaveAttribute('title', /Reproduzir/);
+
+  const modes = [
+    { theme: 'light', palette: '' },
+    { theme: 'dark', palette: '' },
+    { theme: 'dark', palette: 'velox' },
+  ];
+
+  for (const mode of modes) {
+    await page.evaluate(mode => {
+      document.documentElement.dataset.theme = mode.theme;
+      if (mode.palette) document.documentElement.dataset.palette = mode.palette;
+      else delete document.documentElement.dataset.palette;
+    }, mode);
+    await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+
+    const metrics = await page.evaluate(() => {
+      const read = selector => {
+        const node = document.querySelector(selector);
+        const style = getComputedStyle(node);
+        const rect = node.getBoundingClientRect();
+        return {
+          border: parseFloat(style.borderTopWidth),
+          background: style.backgroundColor,
+          backgroundImage: style.backgroundImage,
+          width: rect.width,
+          height: rect.height,
+          pointerEvents: style.pointerEvents,
+        };
+      };
+
+      const transportStyle = getComputedStyle(document.querySelector('.transport'));
+      const timeStyle = getComputedStyle(document.querySelector('#currentTimeLabel'));
+      return {
+        left: read('.transport-left'),
+        scrubber: read('.scrubber-wrap'),
+        right: read('.transport-right'),
+        play: read('#playBtn'),
+        next: read('#nextBtn'),
+        speed: read('#speedSelect'),
+        transportBg: transportStyle.backgroundColor,
+        transportImage: transportStyle.backgroundImage,
+        timeColor: timeStyle.color,
+        scrollWidth: document.documentElement.scrollWidth,
+        viewportWidth: innerWidth,
+      };
+    });
+
+    for (const group of [metrics.left, metrics.scrubber, metrics.right]) {
+      expect(group.border).toBe(0);
+      expect(group.backgroundImage).toBe('none');
+      expect(group.background).toMatch(/rgba\(0, 0, 0, 0\)|transparent/);
+    }
+
+    expect(metrics.transportImage).toMatch(/linear-gradient/i);
+    expect(contrastRatio(metrics.timeColor, metrics.transportBg)).toBeGreaterThanOrEqual(4.5);
+    expect(metrics.play.width).toBeGreaterThanOrEqual(36);
+    expect(metrics.play.height).toBeGreaterThanOrEqual(36);
+    expect(metrics.next.width).toBeGreaterThanOrEqual(32);
+    expect(metrics.speed.height).toBeGreaterThanOrEqual(30);
+    expect(metrics.play.pointerEvents).not.toBe('none');
+    expect(metrics.next.pointerEvents).not.toBe('none');
+    expect(metrics.scrollWidth).toBeLessThanOrEqual(metrics.viewportWidth + 1);
+  }
+
+  const before = await page.locator('#scrubber').inputValue();
+  await page.locator('#nextBtn').click();
+  await expect.poll(() => page.locator('#scrubber').inputValue()).not.toBe(before);
+
+  await page.locator('#speedSelect').selectOption('2');
+  await expect(page.locator('#speedSelect')).toHaveValue('2');
+
+  await page.locator('#playBtn').click();
+  await expect(page.locator('#playBtn')).toHaveAttribute('title', /Pausar/);
+  await page.locator('#playBtn').click();
+  await expect(page.locator('#playBtn')).toHaveAttribute('title', /Reproduzir/);
+});
