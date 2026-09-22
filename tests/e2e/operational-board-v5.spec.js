@@ -29,7 +29,9 @@ test('Operational Board V5 mantém o quadro legível e moderno sem alterar a nav
       cardTransform: card ? getComputedStyle(card).transform : '',
       labelSize: label ? parseFloat(getComputedStyle(label).fontSize) : 0,
       valueSize: value ? parseFloat(getComputedStyle(value).fontSize) : 0,
+      eyebrowText: eyebrow ? eyebrow.textContent.trim() : '',
       eyebrowVisual: eyebrow ? getComputedStyle(eyebrow, '::after').content : '',
+      eyebrowAfterDisplay: eyebrow ? getComputedStyle(eyebrow, '::after').display : '',
       actionsBorderTop: actions ? getComputedStyle(actions).borderTopStyle : '',
       scrubberMax: Number(scrubber?.max || 0),
       eventCount,
@@ -45,7 +47,9 @@ test('Operational Board V5 mantém o quadro legível e moderno sem alterar a nav
   expect(result.cardTransform).toBe('none');
   expect(result.labelSize).toBeGreaterThanOrEqual(10);
   expect(result.valueSize).toBeGreaterThanOrEqual(12);
-  expect(result.eyebrowVisual).toContain('QUADRO OPERACIONAL');
+  expect(result.eyebrowText).toBe('QUADRO ATUAL');
+  expect(['none', 'normal', '""']).toContain(result.eyebrowVisual);
+  expect(result.eyebrowAfterDisplay).toBe('none');
   expect(result.actionsBorderTop).not.toBe('none');
   expect(result.scrubberMax).toBe(result.eventCount - 1);
   expect(result.v4Loaded).toBe(true);
