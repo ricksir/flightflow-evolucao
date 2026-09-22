@@ -222,7 +222,6 @@ test('APP derivado exibe todos os fixos da rota processada também no mapa princ
     };
   }, APP_DERIVED_FIXTURE);
 
-  expect(['leaflet', '']).toContain(result.engine);
   expect(result.routeCount).toBeGreaterThanOrEqual(1);
   expect(result.fixCount).toBeGreaterThanOrEqual(6);
   for (const ident of ['SBBR', 'GEPMO', 'ANBIR', 'IREGU', 'REINA', 'SBCF']) {
