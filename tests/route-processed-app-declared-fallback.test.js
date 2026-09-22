@@ -7,7 +7,7 @@ const vm = require('node:vm');
 const ROOT = path.resolve(__dirname, '..');
 const MODULE = path.join(ROOT, 'src', 'route', 'route-processed-v7412.js');
 
-const APP_FIXTURE = String.raw\`
+const APP_FIXTURE = String.raw`
 Indicativo do plano: TAM3720
 ADEP: SBBR
 ADES: SBCF
@@ -29,7 +29,7 @@ Estado: ATV Setor anterior: NUL NUL atual: DS REC NUL seguinte: DS REC NUL
 Conteúdo         :
 (DEPSBBR/SBBR058-TAM3720-SBBR1229-SBCF-DOF/260709)
 ############################################################
-\`;
+`;
 
 function loadRouteApi() {
   let source = fs.readFileSync(MODULE, 'utf8');
