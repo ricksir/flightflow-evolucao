@@ -1622,7 +1622,7 @@
   function routeDisplayContext(snapshot, progress=model.routeProgress) {
     const points=snapshot?.points||[];
     const continuation=declaredRouteContinuation(snapshot);
-    const destination=destinationRouteMarker(snapshot);
+    const destination=snapshot?.jurisdictionBoundaryFallback?null:destinationRouteMarker(snapshot);
     const plotPoints=points.concat(continuation).concat(destination?[destination]:[]);
     const move=movementPointsForProfile(snapshot);
     const fractions=routeDistanceFractions(move);
