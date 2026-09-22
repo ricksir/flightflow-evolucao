@@ -758,6 +758,17 @@
     }).filter(Boolean);
   }
 
+  function parseDeclaredSpeed(raw) {
+    const text=String(raw||'');
+    const match=text.match(/\bVelocidade\s*:\s*([NK]\d{4})\b/i)||text.match(/(?:-ROUTE|\bRota\s*:)\s*([NK]\d{4})\b/i);
+    if(!match)return {code:'',knots:null};
+    const code=norm(match[1]),value=Number(code.slice(1));
+    if(!Number.isFinite(value)||value<=0)return {code,knots:null};
+    if(code.startsWith('N'))return {code,knots:value};
+    if(code.startsWith('K'))return {code,knots:value/1.852};
+    return {code,knots:null};
+  }
+
   function parseHistory(text, sourceFile='') {
     const raw=String(text||'').replace(/\r\n?/g,'\n');
     const callsign=firstMatch(raw,[/Indicativo do plano\s*:\s*([A-Z0-9-]+)/i,/Indicativo\s*:\s*([A-Z0-9-]+)/i,/-ARCID\s+([A-Z0-9-]+)/i]);
@@ -804,7 +815,8 @@
       const fallback=declaredRouteFallbackSnapshot({route,adep,events});
       if(fallback)snapshots.push(fallback);
     }
-    return {sourceFile,callsign,adep,ades,idPlano,route,routeSegments,blocksCount:blocks.length,events,snapshots,raw};
+    const speed=parseDeclaredSpeed(raw);
+    return {sourceFile,callsign,adep,ades,idPlano,route,speedCode:speed.code,speedKts:speed.knots,routeSegments,blocksCount:blocks.length,events,snapshots,raw};
   }
 
   async function resolveIdent(ident) {
@@ -957,6 +969,10 @@
 
   function movementPointsForProfile(snapshot) {
     const base=movementPoints(snapshot);
+    if(snapshot?.declaredFallback){
+      const preview=declaredDestinationPreview(snapshot);
+      if(preview.visible)return base.concat(preview.destination);
+    }
     const closure=terminalClosureContext();
     const destination=terminalClosurePoint(snapshot);
     if(!closure||!destination)return base;
@@ -986,7 +1002,10 @@
 
   function routePlaybackLimit(snapshot,index=nativeEventIndex()) {
     const terminal=terminalClosureState(snapshot,index);
-    return terminal.active ? 1 : timedProgressLimit(snapshot);
+    if(terminal.active)return 1;
+    const profile=model.movementProfile||buildMovementProfile();
+    if(profile?.mode==='derived'&&profile.snapshot?.signature===snapshot?.signature)return 1;
+    return timedProgressLimit(snapshot);
   }
 
   function countResolvedGeos(snapshot){return (snapshot?.points||[]).filter(p=>p.geo&&Number.isFinite(Number(p.geo.lat))&&Number.isFinite(Number(p.geo.lon))).length}
@@ -1024,6 +1043,26 @@
     if(/RECEP(?:Ç|C)[AÃ]O DE MENSAGEM DEP/.test(op))return true;
     if(/OPERA(?:Ç|C)[AÃ]O\s*:\s*RECEP(?:Ç|C)[AÃ]O DE MENSAGEM DEP/.test(raw))return true;
     return false;
+  }
+
+  function isArrivalEvent(event) {
+    const text=movementEventText(event);
+    const msg=norm(event?.messageType||event?.snapshot?.messageType||'');
+    return msg==='ARR'||/RECEP(?:Ç|C)[AÃ]O DE MENSAGEM ARR|MENSAGEM ARR\b/.test(text);
+  }
+
+  function isArchiveEvent(event) {
+    const text=movementEventText(event);
+    const status=norm(event?.snapshot?.status||event?.sector?.state||'');
+    return status==='ARQUIVADO'||status==='ARQ'||/ARQUIV/.test(text);
+  }
+
+  function isJurisdictionEndEvent(event) {
+    if(isArrivalEvent(event)||isArchiveEvent(event))return false;
+    const text=movementEventText(event);
+    const status=norm(event?.snapshot?.status||event?.sector?.state||'');
+    if(status==='TERMINADO'||status==='TER'||status==='CANCELADO'||status==='CNL')return true;
+    return /EVENTO AUTOM[ÁA]TICO DE T[ÉE]RMINO|RECEP(?:Ç|C)[AÃ]O DE MENSAGEM (?:TTY )?CNL/.test(text);
   }
 
   function firstDepartureAnchor() {
@@ -1100,6 +1139,29 @@
     }
     if(total<=1e-12)return cumulative.map((_,i)=>i/Math.max(1,list.length-1));
     return cumulative.map(v=>clamp(v/total,0,1));
+  }
+
+  function routeDistanceProfileNm(points) {
+    const list=(points||[]).filter(p=>p?.geo&&Number.isFinite(Number(p.geo.lat))&&Number.isFinite(Number(p.geo.lon)));
+    if(!list.length)return {points:[],cumulativeNm:[],fractions:[],totalNm:0};
+    const toRad=value=>Number(value)*Math.PI/180;
+    const cumulativeNm=[0];let totalNm=0;
+    for(let i=1;i<list.length;i++){
+      const a=list[i-1].geo,b=list[i].geo;
+      const lat1=toRad(a.lat),lat2=toRad(b.lat),dLat=lat2-lat1,dLon=toRad(Number(b.lon)-Number(a.lon));
+      const h=Math.sin(dLat/2)**2+Math.cos(lat1)*Math.cos(lat2)*Math.sin(dLon/2)**2;
+      const d=3440.065*2*Math.asin(Math.min(1,Math.sqrt(Math.max(0,h))));
+      totalNm+=Number.isFinite(d)?d:0;cumulativeNm.push(totalNm);
+    }
+    const fractions=totalNm>1e-9?cumulativeNm.map(value=>clamp(value/totalNm,0,1)):cumulativeNm.map((_,i)=>i/Math.max(1,list.length-1));
+    return {points:list,cumulativeNm,fractions,totalNm};
+  }
+
+  function derivedProgressAtKey(key,depKey,totalDistanceNm,speedKts) {
+    if(!Number.isFinite(key)||!Number.isFinite(depKey)||!Number.isFinite(totalDistanceNm)||totalDistanceNm<=0||!Number.isFinite(speedKts)||speedKts<=0)return 0;
+    if(key<=depKey)return 0;
+    const flownNm=((key-depKey)/3600000)*speedKts;
+    return clamp(flownNm/totalDistanceNm,0,1);
   }
 
   function progressBetweenCanonicalPoints(canonical,fractions,aIndex,bIndex,localFraction=0) {
@@ -1197,6 +1259,59 @@
     const nativeEvents=window.__FlightFlowFirBridge?.state?.parsed?.events||model.history?.events||[];
     const nativeTotal=Math.max(nativeEvents.length,1);
     const dep=firstDepartureAnchor();
+
+    const declaredPreview=declaredDestinationPreview(master);
+    const speedKts=Number(model.history?.speedKts);
+    const derivedDistance=routeDistanceProfileNm(canonical);
+    const depKeyCandidate=Number.isFinite(dep?.key)?dep.key:null;
+    const canDerive=!!(master.declaredFallback&&declaredPreview.visible&&Number.isFinite(depKeyCandidate)&&Number.isFinite(speedKts)&&speedKts>0&&derivedDistance.totalNm>0);
+    if(canDerive){
+      const startNative=clamp(dep.index,0,nativeTotal-1);
+      const depKey=depKeyCandidate;
+      const terminal=terminalClosureContext();
+      const arrivalIndex=nativeEvents.findIndex((event,index)=>index>startNative&&isArrivalEvent(event));
+      const jurisdictionEndIndex=nativeEvents.findIndex((event,index)=>index>startNative&&isJurisdictionEndEvent(event));
+      const archiveIndex=nativeEvents.findIndex((event,index)=>index>startNative&&isArchiveEvent(event));
+      const derivedDurationMs=(derivedDistance.totalNm/speedKts)*3600000;
+      const derivedArrivalKey=depKey+derivedDurationMs;
+      let freezeProgress=null;
+      const targets=[];let previous=0;
+      for(let i=0;i<nativeTotal;i++){
+        const key=nativeEventTimeOrHistory(i,nativeEvents);
+        let target=0;
+        if(i<=startNative)target=0;
+        else if(terminal&&i>=terminal.nativeIndex)target=1;
+        else if(arrivalIndex>=0&&i>=arrivalIndex)target=1;
+        else if(jurisdictionEndIndex>=0&&i>=jurisdictionEndIndex){
+          if(freezeProgress==null){
+            const stopKey=nativeEventTimeOrHistory(jurisdictionEndIndex,nativeEvents);
+            freezeProgress=Number.isFinite(stopKey)?derivedProgressAtKey(stopKey,depKey,derivedDistance.totalNm,speedKts):previous;
+          }
+          target=freezeProgress;
+        }else if(archiveIndex>=0&&i>=archiveIndex){
+          target=previous;
+        }else target=derivedProgressAtKey(key,depKey,derivedDistance.totalNm,speedKts);
+        target=clamp(Math.max(previous,target),0,1);
+        targets.push(target);previous=target;
+      }
+      const milestones=canonical.map((_,pi)=>{
+        const goal=Number.isFinite(derivedDistance.fractions[pi])?derivedDistance.fractions[pi]:pi/Math.max(1,canonical.length-1);
+        let idx=targets.findIndex((value,eventIndex)=>eventIndex>=startNative&&value+1e-9>=goal);
+        if(idx<0)idx=nativeTotal-1;
+        return idx;
+      });
+      const endNative=targets.findIndex((value,index)=>index>startNative&&value>=.999999);
+      return {
+        mode:'derived',derived:true,source:'DEP + geometria publicada + velocidade declarada',
+        snapshot:master,departureSnapshot:master,points:canonical,distanceFractions:derivedDistance.fractions,
+        cumulativeDistanceNm:derivedDistance.cumulativeNm,totalDistanceNm:derivedDistance.totalNm,
+        speedCode:model.history?.speedCode||'',speedKts,startNative,departureKey:depKey,departureEvent:dep?.event||null,
+        derivedDurationMs,derivedArrivalKey,arrivalIndex,jurisdictionEndIndex,archiveIndex,
+        endNative:endNative>=0?endNative:nativeTotal-1,milestones,targets,
+        terminalClosure:terminal?{nativeIndex:terminal.nativeIndex,key:terminal.key,source:terminal.source}:null,
+      };
+    }
+
     const fallbackWindow=movementWindowForHistory();
     const startNative=dep?clamp(dep.index,0,nativeTotal-1):historyIndexToNativeIndex(fallbackWindow.start,nativeTotal);
     const depKey=Number.isFinite(dep?.key)?dep.key:nativeEventTimeOrHistory(startNative,nativeEvents);
@@ -1279,6 +1394,14 @@
     return out.sort((a,b)=>a.progress-b.progress||a.key-b.key||a.canonicalIndex-b.canonicalIndex);
   }
 
+  function derivedPointEntries(profile) {
+    if(profile?.mode!=='derived'||!Array.isArray(profile.points)||!Number.isFinite(profile.departureKey)||!Number.isFinite(profile.derivedDurationMs))return [];
+    return profile.points.map((point,index)=>{
+      const progress=Number.isFinite(profile.distanceFractions?.[index])?profile.distanceFractions[index]:index/Math.max(1,profile.points.length-1);
+      return {ident:point.ident,key:profile.departureKey+profile.derivedDurationMs*progress,progress,canonicalIndex:index,derived:true,pseudo:false};
+    }).filter((_,index)=>index>0);
+  }
+
   function transitionPlanForEvents(fromIndex,toIndex) {
     const prof=model.movementProfile||buildMovementProfile();
     const nativeEvents=window.__FlightFlowFirBridge?.state?.parsed?.events||model.history?.events||[];
@@ -1291,7 +1414,7 @@
     const keyForSnapshot=forward?toKey:fromKey;
     const snap=snapshotForMovementKey(keyForSnapshot,prof.departureKey,prof.departureSnapshot)||prof.snapshot;
     const canonical=prof.points||movementPoints(prof.snapshot||snap);
-    const entries=shiftedEtimEntries(snap,canonical,prof.departureKey);
+    const entries=prof.mode==='derived'?derivedPointEntries(prof):shiftedEtimEntries(snap,canonical,prof.departureKey);
     const loKey=Number.isFinite(fromKey)&&Number.isFinite(toKey)?Math.min(fromKey,toKey):null;
     const hiKey=Number.isFinite(fromKey)&&Number.isFinite(toKey)?Math.max(fromKey,toKey):null;
     const eps=1e-7;
@@ -2065,19 +2188,19 @@
 
   function renderModal(refreshRange=true) {
     ensureUi();if(!model.history||!model.resolvedSnapshots.length)return;
-    const idx=chooseSnapshotIndex();model.currentSnapshotIndex=idx;const snap=model.resolvedSnapshots[idx],continuation=declaredRouteContinuation(snap),destination=destinationRouteMarker(snap),terminal=terminalClosureState(snap),move=movementPointsForProfile(snap),timedLimit=timedProgressLimit(snap),playbackLimit=routePlaybackLimit(snap),timelineProgress=routePositionProgress(snap),requestedProgress=model.syncTimeline?timelineProgress:model.routeProgress,progress=Math.min(requestedProgress,terminal.active?1:timedLimit);if(model.syncTimeline)model.routeProgress=progress;const focusButton=qs('#ffrpFocusBtn');if(focusButton){focusButton.classList.toggle('active',model.focusMode);focusButton.setAttribute('aria-pressed',String(model.focusMode));}const legend=qs('#ffrpLegend');if(legend&&legend.open!==model.legendOpen)legend.open=model.legendOpen;
+    const idx=chooseSnapshotIndex();model.currentSnapshotIndex=idx;const snap=model.resolvedSnapshots[idx],continuation=declaredRouteContinuation(snap),destination=destinationRouteMarker(snap),terminal=terminalClosureState(snap),profile=model.movementProfile||buildMovementProfile(),derivedMode=profile?.mode==='derived'&&profile.snapshot?.signature===snap.signature,move=movementPointsForProfile(snap),timedLimit=timedProgressLimit(snap),playbackLimit=routePlaybackLimit(snap),timelineProgress=routePositionProgress(snap),requestedProgress=model.syncTimeline?timelineProgress:model.routeProgress,progress=Math.min(requestedProgress,derivedMode?playbackLimit:(terminal.active?1:timedLimit));if(model.syncTimeline)model.routeProgress=progress;const focusButton=qs('#ffrpFocusBtn');if(focusButton){focusButton.classList.toggle('active',model.focusMode);focusButton.setAttribute('aria-pressed',String(model.focusMode));}const legend=qs('#ffrpLegend');if(legend&&legend.open!==model.legendOpen)legend.open=model.legendOpen;
     qs('#ffrpTitle').textContent=`${model.history.callsign||'Plano'} · ${model.history.adep||'????'} → ${model.history.ades||'????'}`;qs('#ffrpSubtitle').textContent=snap.declaredFallback?`${model.sourceFile||'Histórico'} · rota declarada sem quadro PONTOS/ETIM · ${model.history.route||'—'}`:`${model.sourceFile||'Histórico'} · ${model.history.snapshots.length} quadro(s) de PONTOS · rota declarada: ${model.history.route||'—'}`;qs('#ffrpIdPlano').innerHTML=renderIdPlanoMarkup(model.history.idPlano);qs('#ffrpSnapTitle').textContent=`Quadro ${idx+1}/${model.resolvedSnapshots.length} · ${snap.operation||'rota processada'}`;
     const nev=nativeEventCount(),nei=clamp(nativeEventIndex(),0,Math.max(0,nev-1)),sel=qs('#ffrpEventSelect');if(sel){const sig=`${nev}|${model.history.callsign}`;if(sel.dataset.sig!==sig){sel.innerHTML=Array.from({length:nev},(_,i)=>`<option value="${i}">${esc(nativeEventLabel(i))}</option>`).join('');sel.dataset.sig=sig;}if(nev)sel.value=String(nei)}const terminalStatus=qs('#ffrpTerminalStatus');if(terminalStatus){if(terminal.visible){const ades=terminal.destination?.ident||model.history?.ades||'ADES',active=terminal.active;terminalStatus.hidden=false;terminalStatus.dataset.state=active?'active':'preview';terminalStatus.innerHTML=active?`<span class="ffrp-terminal-status-icon" aria-hidden="true">✓</span><strong>Destino alcançado por Ordem TER</strong><span class="ffrp-terminal-status-ades">· ${esc(ades)}</span>`:`<span class="ffrp-terminal-status-icon" aria-hidden="true">○</span><strong>Destino previsto</strong><span class="ffrp-terminal-status-ades">· ${esc(ades)}</span>`;terminalStatus.setAttribute('aria-label',active?`Destino alcançado por Ordem TER: ${ades}`:`Destino previsto: ${ades}. Referência espacial derivada; aguardando Ordem TER.`);terminalStatus.title=active?'Fechamento terminal ativo: a Ordem TER levou a aeronave ao ADES.':'Referência espacial derivada: a aeronave ainda não percorreu o trecho terminal.';}else{terminalStatus.hidden=true;terminalStatus.removeAttribute('data-state');terminalStatus.removeAttribute('aria-label');terminalStatus.removeAttribute('title');terminalStatus.textContent='';}}const evInfo=qs('#ffrpEventInfo');if(evInfo)evInfo.textContent=nev?`Evento ${nei+1}/${nev} · ${model.syncTimeline?'seguindo timeline':'controle manual'}`:'Timeline não disponível';
     const transfers=transferMarkersForSnapshot(snap),transferByPoint=new Map(transfers.map(t=>[t.pointIndex,t]));
     const displayContext=routeDisplayContext(snap,progress),plotPoints=displayContext.plotPoints,activePlotIndex=displayContext.focusPlotIndex;
     const list=qs('#ffrpRouteList');list.innerHTML=plotPoints.map((p,i)=>{const actualIndex=i<snap.points.length?i:-1,tr=actualIndex>=0?transferByPoint.get(actualIndex):null,kind=p.declared?'<em class="ffrp-route-kind declared">DECLARADA</em>':p.destinationOnly?'<em class="ffrp-route-kind destination">ADES</em>':/^[A-Z]{4}$/.test(p.ident)&&(i===0||i===snap.points.length-1)?'<em class="ffrp-route-kind airport">AERÓDROMO</em>':p.geo?.kind==='coordinate'?'<em class="ffrp-route-kind coord">COORD.</em>':'<em class="ffrp-route-kind">FIXO</em>',meta=p.declared?`ROTA ${p.airway||''} · SEM ETIM`:p.destinationOnly?(terminal.active?'FECHAMENTO TERMINAL DERIVADO · SEM ETIM':terminal.visible?'FECHAMENTO TERMINAL PREVISTO · SEM ETIM':'TRAJETO TERMINAL NÃO ESPECIFICADO'):[p.etim?`ETIM ${p.etim}${p.passed?'*':''}`:'',p.cfl?`CFL ${p.cfl}`:''].filter(Boolean).join(' · ')||'Sem ETIM/CFL',extraClass=[p.declared?'declared-point':p.destinationOnly?(terminal.active?'destination-point terminal-point':terminal.visible?'destination-point terminal-point pending-terminal-point':'destination-point'):'',i===activePlotIndex?'active-point':'',model.selectedPointIndex===i?'selected-point':''].filter(Boolean).join(' '),currentAttr=i===activePlotIndex?' aria-current="step"':'';return `<div class="ffrp-point ${p.geo?'':'unresolved'} ${tr?'transfer-point':''} ${extraClass}" data-plot-index="${i}" data-point-index="${actualIndex}"${currentAttr} title="${p.declared||p.destinationOnly?'Selecionar referência geográfica':'Selecionar e posicionar a aeronave neste ponto'}"><span class="ffrp-point-index">${i+1}</span><div class="ffrp-point-main"><strong>${esc(p.ident)} ${kind}${tr?'<em class="ffrp-route-kind transfer">TRANSFERÊNCIA</em>':''}</strong><span>${esc(meta)}${tr?` · ${esc(tr.type)}`:''}</span></div><span class="ffrp-point-source">${esc(p.geo?.source||'sem coordenada')}${tr?` · limite ${esc(tr.label)}`:''}</span></div>`}).join('');
-    qsa('.ffrp-point',list).forEach(card=>card.addEventListener('click',()=>{const plotIndex=Number(card.dataset.plotIndex);if(Number.isFinite(plotIndex))model.selectedPointIndex=plotIndex;const raw=Number(card.dataset.pointIndex);if(!Number.isFinite(raw)||raw<0){renderModal(false);return;}const fractions=routeDistanceFractions(move),i=raw;model.syncTimeline=false;model.routeProgress=Math.min(timedLimit,Number.isFinite(fractions[i])?fractions[i]:(i/Math.max(1,move.length-1)));qs('#ffrpTimelineBtn')?.classList.remove('active');renderModal(false)}));
+    qsa('.ffrp-point',list).forEach(card=>card.addEventListener('click',()=>{const plotIndex=Number(card.dataset.plotIndex);if(Number.isFinite(plotIndex))model.selectedPointIndex=plotIndex;const raw=Number(card.dataset.pointIndex);if(!Number.isFinite(raw)||raw<0){renderModal(false);return;}const fractions=routeDistanceFractions(move),i=raw;model.syncTimeline=false;model.routeProgress=Math.min(derivedMode?playbackLimit:timedLimit,Number.isFinite(fractions[i])?fractions[i]:(i/Math.max(1,move.length-1)));qs('#ffrpTimelineBtn')?.classList.remove('active');renderModal(false)}));
     if(model.syncTimeline)requestAnimationFrame(()=>keepRoutePointVisible(list,activePlotIndex,progress));
     const unresolved=snap.points.filter(p=>!p.geo).map(p=>p.ident);qs('#ffrpUnresolved').innerHTML=unresolved.length?`<div class="ffrp-unresolved"><b>${unresolved.length} ponto(s) ainda sem coordenada</b>${unresolved.map(x=>`<code>${esc(x)}</code>`).join('')}<div style="margin-top:5px">Use <b>Atualizar NAVDB AISWEB</b> ou instale a <b>Base Nacional AISWEB</b> (XLSX/CSV) uma única vez.</div></div>`:'';
     const tailEl=qs('#ffrpTailNote');if(tailEl)tailEl.innerHTML=terminal.active?`<div class="ffrp-tail-note terminal"><b>Fechamento terminal por Ordem TER</b><br>A aeronave é encerrada visualmente em <b>${esc(terminal.destination?.ident||model.history?.ades||'ADES')}</b> por uma linha direta tracejada a partir de <b>${esc(terminal.from?.ident||'último ponto')}</b>. Este trecho é <b>derivado/não histórico</b>, não cria ETIM, STAR, CFL ou fixos intermediários.</div>`:terminal.visible?`<div class="ffrp-tail-note terminal pending"><b>Fechamento terminal previsto</b><br>A linha amarela tracejada liga <b>${esc(terminal.from?.ident||'último ponto')}</b> ao ADES <b>${esc(terminal.destination?.ident||model.history?.ades||'ADES')}</b> apenas como <b>referência espacial derivada</b>. Antes da Ordem TER a aeronave não percorre esse trecho; não há ETIM, STAR, CFL ou fixos intermediários inventados.</div>`:continuation.length?`<div class="ffrp-tail-note"><b>Continuação declarada sem ETIM</b><br>O histórico processado termina em <b>${esc(snap.points.at(-1)?.ident||'—')}</b>. A rota do FPL/CPL declara <b>${esc(continuation[0]?.airway||'ATS')} ${esc(continuation.at(-1)?.ident||'')}</b>; por isso o FlightFlow exibe <b>${continuation.map(p=>esc(p.ident)).join(' → ')}</b> usando coordenadas publicadas, mas não movimenta a aeronave nesses pontos sem ETIM.</div>`:destination?`<div class="ffrp-tail-note"><b>Trajeto terminal não especificado</b><br>${snap.declaredFallback?`A linha azul tracejada liga <b>${esc((declaredDestinationPreview(snap).from||snap.points.at(-1))?.ident||'último ponto')}</b> ao ADES <b>${esc(destination.ident)}</b> somente como referência da rota planejada. Não cria ETIM, STAR, CFL ou passagem histórica.`:`O ADES <b>${esc(destination.ident)}</b> é mostrado como referência, sem inventar uma trajetória após o último ponto processado.`}</div>`:'';
     qs('#ffrpMapNote').textContent=terminal.active?'Ordem TER recebida: linha amarela tracejada = fechamento terminal derivado até o ADES. Sem ETIM, STAR ou fixos inventados.':terminal.visible?'Linha amarela tracejada = fechamento terminal previsto até o ADES. É somente referência espacial; a aeronave só percorre o trecho na Ordem TER.':unresolved.length?`Rota processada do histórico · ${unresolved.length} ponto(s) sem coordenada. As lacunas tracejadas indicam somente ausência de resolução geográfica.`:continuation.length?'Histórico processado em vermelho. A continuação azul tracejada usa somente fixos publicados da rota declarada e permanece sem ETIM. Passe o cursor ou selecione um ponto para detalhes.':snap.declaredFallback&&destination?'Rota declarada em azul tracejado. O último trecho até o ADES é apenas referência espacial planejada, sem ETIM ou passagem histórica inventados.':'Histórico processado com coordenadas resolvidas localmente. Passe o cursor ou selecione um ponto para detalhes; o modo foco reduz informação secundária.';
     const fractions=routeDistanceFractions(move);let seg=0;for(let i=0;i<fractions.length-1;i++){if(progress+1e-9>=fractions[i]&&progress<=fractions[i+1]+1e-9){seg=i;break;}if(progress>fractions[i+1])seg=i+1;}seg=Math.min(seg,Math.max(0,move.length-2));const a=move[seg],z=move[Math.min(move.length-1,seg+1)],fa=Number(fractions[seg]||0),fb=Number(fractions[Math.min(move.length-1,seg+1)]||1),fixProgress=Math.round(fb>fa?clamp((progress-fa)/(fb-fa),0,1)*100:100);const hud=qs('#ffrpMapHud');if(hud){const dep=model.movementProfile?.departureKey,dd=Number.isFinite(dep)?new Date(dep):null,depTxt=dd?`${String(dd.getUTCHours()).padStart(2,'0')}:${String(dd.getUTCMinutes()).padStart(2,'0')}:${String(dd.getUTCSeconds()).padStart(2,'0')}`:'—',lastTimed=[...snap.points].reverse().find(p=>Number.isFinite(p.etimKey));hud.innerHTML=`<div class="ffrp-map-hud-card compact"><strong>${esc(model.history.callsign||'AERONAVE')} · ${Math.round(progress*100)}% · ${esc(a?.ident||'—')} → ${esc(z?.ident||'—')}</strong><span>${esc(flightLevelLabel(a)||'FL —')} · ${fixProgress}% do trecho · DEP ${esc(depTxt)}${lastTimed?` · último ETIM ${esc(lastTimed.ident)}`:''}${continuation.length?` · ${continuation.length} fixos s/ ETIM até ${esc(continuation.at(-1).ident)}`:''}</span></div>`;}
-    renderMap(snap,progress);const range=qs('#ffrpRange');if(range){range.max=String(Math.max(0,Math.round(playbackLimit*1000)));range.value=String(Math.min(Number(range.max),Math.round(progress*1000)));}qs('#ffrpTime').textContent=terminal.active?`${Math.round(progress*100)}% · fechamento terminal / Ordem TER · quadro ${idx+1}/${model.resolvedSnapshots.length}`:snap.declaredFallback?`${Math.round(progress*100)}% · rota declarada · sem ETIM histórico · quadro ${idx+1}/${model.resolvedSnapshots.length}`:`${Math.round(progress*100)}% · limite ETIM · quadro ${idx+1}/${model.resolvedSnapshots.length}`;updateOpenBadge();
+    renderMap(snap,progress);const range=qs('#ffrpRange');if(range){range.max=String(Math.max(0,Math.round(playbackLimit*1000)));range.value=String(Math.min(Number(range.max),Math.round(progress*1000)));}qs('#ffrpTime').textContent=terminal.active?`${Math.round(progress*100)}% · fechamento terminal / Ordem TER · quadro ${idx+1}/${model.resolvedSnapshots.length}`:derivedMode?`${Math.round(progress*100)}% · posição derivada por DEP + rota/velocidade · sem ETIM histórico · quadro ${idx+1}/${model.resolvedSnapshots.length}`:snap.declaredFallback?`${Math.round(progress*100)}% · rota declarada · sem ETIM histórico · quadro ${idx+1}/${model.resolvedSnapshots.length}`:`${Math.round(progress*100)}% · limite ETIM · quadro ${idx+1}/${model.resolvedSnapshots.length}`;updateOpenBadge();
   }
 
   function updateOpenBadge() {
