@@ -6955,3 +6955,110 @@ html[data-theme="dark"][data-palette="velox"] .tab-panel[data-panel="data"] .fie
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
+
+/* ==========================================================================
+   FlightFlow Evolução — PR38 Collapsible Mission Rail
+   Recolhe somente o rail no desktop para devolver largura real ao mapa/painéis.
+   Não altera shell vertical, transportes, timeline, rota ou lógica ATS.
+   ========================================================================== */
+
+.evo-rail-toggle {
+  display: none;
+}
+
+@media (min-width: 901px) {
+  .evo-rail-toggle {
+    display: inline-grid;
+    place-items: center;
+    align-self: center;
+    width: calc(100% - 4px);
+    min-height: 30px;
+    padding: 0;
+    border: 1px solid rgba(139,201,219,.16);
+    border-radius: 7px;
+    background: rgba(255,255,255,.025);
+    color: #9fc3ce;
+    font: 800 18px/1 var(--ff-font-sans);
+    cursor: pointer;
+  }
+
+  .evo-rail-toggle:hover {
+    border-color: rgba(67,191,220,.30);
+    background: rgba(67,191,220,.07);
+    color: #effcff;
+  }
+
+  .evo-rail-toggle:focus-visible {
+    outline: 2px solid var(--evo-mission-rail-accent);
+    outline-offset: 2px;
+  }
+
+  html[data-theme="light"]:not([data-palette="velox"]) .evo-rail-toggle {
+    border-color: rgba(27,105,128,.20);
+    background: rgba(255,255,255,.44);
+    color: #285968;
+  }
+
+  .app.evo-rail-collapsed {
+    grid-template-columns: calc(52px + var(--evo-frame-rail-gutter)) minmax(0,1fr);
+  }
+
+  .app.evo-rail-collapsed .evo-rail {
+    padding-inline: 4px;
+    gap: 6px;
+  }
+
+  .app.evo-rail-collapsed .evo-rail-name,
+  .app.evo-rail-collapsed .evo-rail-edition,
+  .app.evo-rail-collapsed .evo-rail-phase,
+  .app.evo-rail-collapsed .evo-rail-section,
+  .app.evo-rail-collapsed .evo-rail-version,
+  .app.evo-rail-collapsed .evo-rail-item > span:last-child {
+    display: none;
+  }
+
+  .app.evo-rail-collapsed .evo-rail-brand {
+    padding-bottom: 6px;
+  }
+
+  .app.evo-rail-collapsed .evo-rail-mark {
+    width: 34px;
+    height: 34px;
+  }
+
+  .app.evo-rail-collapsed .evo-rail-nav {
+    align-items: center;
+    gap: 3px;
+  }
+
+  .app.evo-rail-collapsed .evo-rail-item {
+    width: 40px;
+    min-height: 42px;
+    padding: 4px;
+  }
+
+  .app.evo-rail-collapsed .evo-rail-icon {
+    width: 30px;
+    height: 30px;
+    margin: auto;
+  }
+
+  .app.evo-rail-collapsed .evo-rail-foot {
+    min-height: 1px;
+    margin-top: auto;
+    padding: 0;
+  }
+
+  .app.evo-rail-collapsed .evo-rail-feedback {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+  }
+}
