@@ -7070,6 +7070,10 @@ html[data-theme="dark"][data-palette="velox"] .tab-panel[data-panel="data"] .fie
    ========================================================================== */
 
 @media (min-width: 1181px) {
+  html[data-font-layout="normal"] {
+    --topbar-h: 52px;
+  }
+
   .app {
     row-gap: 3px;
   }
