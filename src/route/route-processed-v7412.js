@@ -2246,13 +2246,35 @@
   }
 
   function rawHistoryFromApp() {
+    const looksLikeHistory=value=>!!(value && /PONTOS\s*:|HIST.RICO DE PLANOS|OPERA/i.test(value));
+    const values=[];
     const candidates=['#originalFullText','#historyOriginalText','#rawHistory','#originalHistory'];
     for(const sel of candidates){
       const el=qs(sel); if(!el) continue;
       const value=('value' in el && typeof el.value==='string' ? el.value : el.textContent)||'';
-      if(value && /PONTOS\s*:|HIST.RICO DE PLANOS|OPERA/i.test(value)) return value;
+      if(looksLikeHistory(value)) values.push(String(value));
     }
-    return '';
+
+    // O parser principal já mantém uma cópia normalizada do histórico completo.
+    // Históricos APP podem renderizar a aba "Histórico original" de forma diferente
+    // dos históricos ACC/RPL; usar também esta fonte evita depender da estrutura DOM.
+    const parsed=window.__FlightFlowFirBridge?.state?.parsed;
+    const parsedRaw=String(parsed?.rawText||'');
+    if(looksLikeHistory(parsedRaw)) values.push(parsedRaw);
+
+    // Compatibilidade defensiva: se rawText não estiver disponível, os rawBlock dos
+    // eventos ainda preservam Rota/ADEP/ADES suficientes para a reconstrução espacial.
+    if(!looksLikeHistory(parsedRaw) && Array.isArray(parsed?.events)){
+      const blocks=parsed.events.map(event=>String(event?.rawBlock||'').trim()).filter(Boolean);
+      if(blocks.length){
+        const rebuilt=blocks.join('\n\n############################################################\n\n');
+        if(looksLikeHistory(rebuilt)) values.push(rebuilt);
+      }
+    }
+
+    // Prefere a representação mais completa. Durante troca de arquivo, o mecanismo
+    // pending/fingerprint já impede reutilizar o histórico anterior.
+    return values.sort((a,b)=>b.length-a.length)[0]||'';
   }
 
   function sourceNameFromApp() {
