@@ -51,6 +51,13 @@ test('Rota Processada acompanha o waypoint atual no scroll ao avançar pelas set
     model.passiveBusy = true;
 
     const total = bridge.state.parsed.events.length;
+    const baseProfile = model.movementProfile || api.buildMovementProfile();
+    model.movementProfile = {
+      ...baseProfile,
+      targets: Array.from({ length: total }, (_, index) =>
+        total > 1 ? index / (total - 1) : 0),
+    };
+
     const snapshot = model.resolvedSnapshots.at(-1);
     let targetEvent = total - 1;
     let targetPoint = 0;
