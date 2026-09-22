@@ -104,3 +104,54 @@ test('PR20 preserva teclado e sincroniza o rail quando o inspector muda de aba',
   await expect(page.locator('[data-panel="data"]')).toHaveClass(/\bactive\b/);
   await expectActive(page, '#fieldsGrid', 'Quadro');
 });
+
+
+test('PR38 recolhe e expande o Mission Rail com ganho real de área útil', async ({ page }) => {
+  await openReadyApp(page);
+
+  const toggle = page.locator('.evo-rail-toggle');
+  await expect(toggle).toHaveCount(1);
+  await expect(toggle).toHaveAttribute('aria-expanded', 'true');
+  await expect(toggle).toHaveAttribute('aria-label', 'Recolher barra lateral');
+
+  const read = () => page.evaluate(() => {
+    const rail = document.querySelector('.evo-rail');
+    const workspace = document.querySelector('.workspace-card');
+    const label = document.querySelector('.evo-rail-item.active > span:last-child');
+    const icon = document.querySelector('.evo-rail-item.active .evo-rail-icon');
+    return {
+      collapsed: document.querySelector('.app')?.classList.contains('evo-rail-collapsed'),
+      railWidth: rail?.getBoundingClientRect().width || 0,
+      workspaceWidth: workspace?.getBoundingClientRect().width || 0,
+      labelDisplay: label ? getComputedStyle(label).display : '',
+      iconWidth: icon?.getBoundingClientRect().width || 0,
+      scrollWidth: document.documentElement.scrollWidth,
+      viewportWidth: innerWidth,
+    };
+  });
+
+  const before = await read();
+  expect(before.collapsed).toBe(false);
+
+  await toggle.focus();
+  await page.keyboard.press('Enter');
+  await expect(page.locator('.app')).toHaveClass(/evo-rail-collapsed/);
+  await expect(toggle).toHaveAttribute('aria-expanded', 'false');
+  await expect(toggle).toHaveAttribute('aria-label', 'Expandir barra lateral');
+  await expect(page.locator('.evo-rail-item.active')).toHaveAttribute('aria-label', 'Operação');
+
+  const collapsed = await read();
+  expect(collapsed.railWidth).toBeLessThan(before.railWidth - 20);
+  expect(collapsed.workspaceWidth).toBeGreaterThan(before.workspaceWidth + 20);
+  expect(collapsed.labelDisplay).toBe('none');
+  expect(collapsed.iconWidth).toBeGreaterThanOrEqual(28);
+  expect(collapsed.scrollWidth).toBeLessThanOrEqual(collapsed.viewportWidth + 1);
+
+  await toggle.click();
+  await expect(page.locator('.app')).not.toHaveClass(/evo-rail-collapsed/);
+  await expect(toggle).toHaveAttribute('aria-expanded', 'true');
+
+  const restored = await read();
+  expect(Math.abs(restored.railWidth - before.railWidth)).toBeLessThanOrEqual(1);
+  expect(Math.abs(restored.workspaceWidth - before.workspaceWidth)).toBeLessThanOrEqual(1);
+});
