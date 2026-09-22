@@ -92,7 +92,7 @@ test('histórico APP sem PONTOS exibe rota declarada UZ35 e seus fixos no mapa',
 });
 
 
-const APP_NO_EXPANDABLE_ROUTE = String.raw\`
+const APP_NO_EXPANDABLE_ROUTE = String.raw`
 Indicativo do plano: PSFBU
 ADEP: SBBR
 ADES: SBGO
@@ -114,7 +114,7 @@ Estado: TER Setor anterior: NUL NUL atual: T4 NUL NUL seguinte: T4 NUL NUL
 Conteúdo         :
 (FPVD/CNL PSFBU SBBR SBGO)
 ############################################################
-\`;
+`;
 
 test('troca para APP sem rota expansível não conserva a Rota Processada do plano anterior', async ({ page }) => {
   await page.goto('/index.html', { waitUntil: 'load' });
