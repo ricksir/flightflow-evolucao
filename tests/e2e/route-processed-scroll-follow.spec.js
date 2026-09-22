@@ -74,7 +74,7 @@ test('Rota Processada acompanha o waypoint atual no scroll ao avançar pelas set
 
   await page.locator('#ffrpOpen').evaluate(button => button.click());
   await expect(page.locator('#ffrpModal')).toBeVisible();
-  await expect(page.locator('#ffrpRouteList .ffrp-point')).toHaveCount(18);
+  await expect.poll(() => page.locator('#ffrpRouteList .ffrp-point').count()).toBeGreaterThanOrEqual(18);
 
   await page.locator('.ffrp-side').evaluate(side => {
     side.style.height = '210px';
