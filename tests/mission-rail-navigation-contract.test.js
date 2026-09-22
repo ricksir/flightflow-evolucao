@@ -74,3 +74,24 @@ test('PR25 exige modo de foco perceptível para a ação Mapa', () => {
   assert.ok(source.includes('html[data-rail-view="map"] .inspector-card'));
   assert.ok(source.includes('grid-template-columns: minmax(0,1fr) 0'));
 });
+
+
+test('PR38 mantém recolhimento do rail isolado da lógica operacional', () => {
+  assert.equal(typeof RailNavigation.applyCollapsedState, 'function');
+  assert.equal(typeof RailNavigation.ensureCollapseControl, 'function');
+  assert.ok(MODULE_SOURCE.includes('evo-rail-toggle'));
+  assert.ok(MODULE_SOURCE.includes('evo-rail-collapsed'));
+  assert.ok(MODULE_SOURCE.includes("aria-expanded"));
+  assert.equal(MODULE_SOURCE.includes('localStorage'), false);
+
+  const start = CSS.indexOf('FlightFlow Evolução — PR38 Collapsible Mission Rail');
+  assert.ok(start >= 0);
+  const source = CSS.slice(start);
+  assert.ok(source.includes('.app.evo-rail-collapsed'));
+  assert.ok(source.includes('grid-template-columns: calc(52px + var(--evo-frame-rail-gutter))'));
+  assert.ok(source.includes('.evo-rail-toggle:focus-visible'));
+
+  for (const token of ['goTo(', 'buildTimeline(', 'routeProgress', 'movementProfile', 'terminalClosureState(']) {
+    assert.equal(MODULE_SOURCE.includes(token), false, 'recolhimento do rail não deve tocar em ' + token);
+  }
+});
