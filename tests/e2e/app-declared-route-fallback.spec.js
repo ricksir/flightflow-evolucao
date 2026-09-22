@@ -28,13 +28,25 @@ test('histórico APP sem PONTOS exibe rota declarada UZ35 e seus fixos no mapa',
   await page.goto('/index.html', { waitUntil: 'load' });
   await expect.poll(() => page.evaluate(() => Boolean(window.FlightFlowRouteProcessedV7412))).toBe(true);
 
-  const result = await page.evaluate(async fixture => {
+  await page.evaluate(fixture => {
+    const original = document.querySelector('#originalFullText');
+    const selected = document.querySelector('#selectedFileLabel');
+    if (!original || !selected) throw new Error('ponte de histórico do FlightFlow indisponível');
+    if ('value' in original) original.value = fixture;
+    original.textContent = fixture;
+    selected.textContent = 'TAM3720APP-fixture.txt';
+  }, APP_FIXTURE);
+
+  await expect.poll(() => page.evaluate(() =>
+    window.FlightFlowRouteProcessedV7412?.getModel?.().history?.callsign || ''
+  )).toBe('TAM3720');
+
+  const result = await page.evaluate(() => {
     const api = window.FlightFlowRouteProcessedV7412;
-    const history = await api.analyzeText(fixture, 'TAM3720APP-fixture.txt');
     const model = api.getModel();
     const snapshot = model.resolvedSnapshots[0];
     return {
-      historyLoaded: Boolean(history),
+      historyLoaded: Boolean(model.history),
       declaredFallback: Boolean(snapshot?.declaredFallback),
       ids: snapshot?.points?.map(point => point.ident) || [],
       geos: snapshot?.points?.map(point => ({
@@ -46,7 +58,7 @@ test('histórico APP sem PONTOS exibe rota declarada UZ35 e seus fixos no mapa',
       mainBadge: document.querySelector('#ffrpMainBadge')?.textContent || '',
       mainBadgeHidden: document.querySelector('#ffrpMainBadge')?.hidden ?? true,
     };
-  }, APP_FIXTURE);
+  });
 
   expect(result.historyLoaded).toBe(true);
   expect(result.declaredFallback).toBe(true);
