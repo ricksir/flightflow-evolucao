@@ -90,3 +90,63 @@ test('histórico APP sem PONTOS exibe rota declarada UZ35 e seus fixos no mapa',
   expect(visual.pointCount).toBeGreaterThanOrEqual(6);
   expect(visual.routeCards.join(' ')).not.toMatch(/ETIM\s+\d/);
 });
+
+
+const APP_NO_EXPANDABLE_ROUTE = String.raw`
+Indicativo do plano: PSFBU
+ADEP: SBBR
+ADES: SBGO
+
+############################################################
+OPERAÇÃO : Criação por Mensagem Automática (TTY)
+data:   09/07/2026      hora:   12:42:10      posição: SPA01      ambiente: OpA
+Estado: PRE Setor anterior: NUL NUL atual: T4 NUL NUL seguinte: T4 NUL NUL
+Indicativo       : PSFBU
+ADEP             : SBBR
+ADES             : SBGO
+IDPLANO          : PLFWLN99
+Rota             : DCT
+
+############################################################
+OPERAÇÃO : Recepção de Mensagem TTY CNL
+data:   09/07/2026      hora:   12:48:36      posição: SPA01      ambiente: OpA
+Estado: TER Setor anterior: NUL NUL atual: T4 NUL NUL seguinte: T4 NUL NUL
+Conteúdo         :
+(FPVD/CNL PSFBU SBBR SBGO)
+############################################################
+`;
+
+test('troca para APP sem rota expansível não conserva a Rota Processada do plano anterior', async ({ page }) => {
+  await page.goto('/index.html', { waitUntil: 'load' });
+  await expect.poll(() => page.evaluate(() => Boolean(window.FlightFlowRouteProcessedV7412))).toBe(true);
+
+  const result = await page.evaluate(async ({ valid, unsupported }) => {
+    const api = window.FlightFlowRouteProcessedV7412;
+    await api.analyzeText(valid, 'TAM3720APP-fixture.txt');
+    const before = {
+      callsign: api.getModel().history?.callsign || '',
+      snapshots: api.getModel().resolvedSnapshots.length,
+    };
+
+    const returned = await api.analyzeText(unsupported, 'PSFBUAPP-fixture.txt');
+    const model = api.getModel();
+    return {
+      before,
+      returnedNull: returned === null,
+      historyLoaded: Boolean(model.history),
+      snapshots: model.resolvedSnapshots.length,
+      movementProfile: Boolean(model.movementProfile),
+      openHidden: Boolean(document.querySelector('#ffrpOpen')?.hidden),
+      processedMetadata: Boolean(window.__FlightFlowFirBridge?.state?.geo?.ffrpProcessedRoute),
+    };
+  }, { valid: APP_FIXTURE, unsupported: APP_NO_EXPANDABLE_ROUTE });
+
+  expect(result.before.callsign).toBe('TAM3720');
+  expect(result.before.snapshots).toBeGreaterThan(0);
+  expect(result.returnedNull).toBe(true);
+  expect(result.historyLoaded).toBe(false);
+  expect(result.snapshots).toBe(0);
+  expect(result.movementProfile).toBe(false);
+  expect(result.openHidden).toBe(true);
+  expect(result.processedMetadata).toBe(false);
+});

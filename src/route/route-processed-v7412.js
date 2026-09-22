@@ -2075,7 +2075,7 @@
   async function analyzeText(text, sourceFile='histórico.txt') {
     ensureUi(); seedEmbeddedBase();
     const history=parseHistory(text,sourceFile);
-    if(!history.snapshots.length){toast('Não encontrei blocos PONTOS/ETIM nem uma rota declarada expansível no arquivo carregado.', 'warn');return null;}
+    if(!history.snapshots.length){clearRouteModel({clearNativeRoute:false});toast('Não encontrei blocos PONTOS/ETIM nem uma rota declarada expansível no arquivo carregado.', 'warn');return null;}
     clearNativeLayers();model.lastNativeIndex=-1;
     model.history=history;model.sourceFile=sourceFile;model.lastSourceLabel=sourceFile;model.routeProgress=0;model.useFinalSnapshot=false;model.syncTimeline=true;
     model.resolvedSnapshots=await resolveAllSnapshots(history);
