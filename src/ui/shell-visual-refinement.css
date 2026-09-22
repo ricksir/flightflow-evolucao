@@ -7181,6 +7181,13 @@ html[data-theme="dark"][data-palette="velox"] .tab-panel[data-panel="data"] .fie
    PR46 — evita colisão visual entre marcos densos da timeline inferior.
    Apenas apresentação: alterna os rótulos em duas faixas verticais.
    ========================================================================== */
+.evo-transport-marker b {
+  top: 0 !important;
+  padding-inline: 3px;
+  font-size: 8px;
+  letter-spacing: .02em;
+}
+
 .evo-transport-marker:nth-child(even) b {
-  top: -16px !important;
+  top: -12px !important;
 }
