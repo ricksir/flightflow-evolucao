@@ -7095,6 +7095,13 @@ html[data-theme="dark"][data-palette="velox"] .tab-panel[data-panel="data"] .fie
   }
 
   .scene-status {
+    flex-wrap: nowrap;
     gap: 3px;
+  }
+
+  .scene-status .evo-status-kicker {
+    flex: 0 0 auto;
+    margin: 0 2px 0 0;
+    white-space: nowrap;
   }
 }
