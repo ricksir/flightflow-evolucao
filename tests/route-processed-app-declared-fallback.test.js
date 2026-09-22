@@ -111,3 +111,53 @@ test('fallback APP permanece espacial e não move aeronave sem ETIM histórico',
     'nenhum ponto declarado pode receber chave temporal sintética'
   );
 });
+
+
+function loadRawHistoryBridge({ domValue = '', parsed = null } = {}) {
+  let source = fs.readFileSync(MODULE, 'utf8');
+  const initMarker = "  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(init,0),{once:true});else setTimeout(init,0);\n})();";
+  assert.ok(source.includes(initMarker), 'bootstrap conhecido da Rota Processada deve permanecer localizável');
+  source = source.replace(
+    initMarker,
+    "  window.__rawHistoryFromAppForTest=rawHistoryFromApp;\n  window.FlightFlowRouteProcessedV7412=publicApi();\n})();"
+  );
+
+  const fakeNode = domValue
+    ? { value: domValue, textContent: domValue }
+    : null;
+  const sandbox = {
+    console,
+    document: { querySelector: () => fakeNode },
+    __FlightFlowFirBridge: { state: { parsed } },
+  };
+  sandbox.window = sandbox;
+  vm.createContext(sandbox);
+  vm.runInContext(source, sandbox, { filename: MODULE });
+  return sandbox.__rawHistoryFromAppForTest;
+}
+
+test('ponte APP usa rawText do parser principal quando a aba original não fornece o histórico', () => {
+  const read = loadRawHistoryBridge({ parsed: { rawText: APP_FIXTURE, events: [] } });
+  assert.equal(read(), APP_FIXTURE);
+});
+
+test('ponte APP reconstrói o histórico pelos rawBlock quando rawText não está disponível', () => {
+  const blockA = `OPERAÇÃO : Criação por Mensagem Automática (TTY)
+data: 09/07/2026 hora: 12:05:05 posição: SPA01 ambiente: OpA
+ADEP : SBBR
+ADES : SBCF
+Rota : GEPMO UZ35 REINA`;
+  const blockB = `OPERAÇÃO : Recepção de Mensagem DEP
+data: 09/07/2026 hora: 12:29:11 posição: SPA01 ambiente: OpA
+Conteúdo : (DEPSBBR/SBBR058-TAM3720-SBBR1229-SBCF-DOF/260709)`;
+  const read = loadRawHistoryBridge({ parsed: { events: [{ rawBlock: blockA }, { rawBlock: blockB }] } });
+  const value = read();
+  assert.match(value, /Rota\s*:\s*GEPMO UZ35 REINA/);
+  assert.match(value, /Recepção de Mensagem DEP/);
+});
+
+test('ponte prefere a representação completa quando DOM e parser possuem cópias diferentes', () => {
+  const partial = 'OPERAÇÃO : Evento parcial';
+  const read = loadRawHistoryBridge({ domValue: partial, parsed: { rawText: APP_FIXTURE, events: [] } });
+  assert.equal(read(), APP_FIXTURE);
+});
