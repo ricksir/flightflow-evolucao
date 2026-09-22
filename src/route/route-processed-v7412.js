@@ -758,6 +758,17 @@
     }).filter(Boolean);
   }
 
+  function parseDeclaredSpeed(raw) {
+    const text=String(raw||'');
+    const match=text.match(/\bVelocidade\s*:\s*([NK]\d{4})\b/i)||text.match(/(?:-ROUTE|\bRota\s*:)\s*([NK]\d{4})\b/i);
+    if(!match)return {code:'',knots:null};
+    const code=norm(match[1]),value=Number(code.slice(1));
+    if(!Number.isFinite(value)||value<=0)return {code,knots:null};
+    if(code.startsWith('N'))return {code,knots:value};
+    if(code.startsWith('K'))return {code,knots:value/1.852};
+    return {code,knots:null};
+  }
+
   function parseHistory(text, sourceFile='') {
     const raw=String(text||'').replace(/\r\n?/g,'\n');
     const callsign=firstMatch(raw,[/Indicativo do plano\s*:\s*([A-Z0-9-]+)/i,/Indicativo\s*:\s*([A-Z0-9-]+)/i,/-ARCID\s+([A-Z0-9-]+)/i]);
@@ -804,7 +815,8 @@
       const fallback=declaredRouteFallbackSnapshot({route,adep,events});
       if(fallback)snapshots.push(fallback);
     }
-    return {sourceFile,callsign,adep,ades,idPlano,route,routeSegments,blocksCount:blocks.length,events,snapshots,raw};
+    const speed=parseDeclaredSpeed(raw);
+    return {sourceFile,callsign,adep,ades,idPlano,route,speedCode:speed.code,speedKts:speed.knots,routeSegments,blocksCount:blocks.length,events,snapshots,raw};
   }
 
   async function resolveIdent(ident) {
