@@ -281,3 +281,102 @@ test('APP sem ETIM avança pela rota derivada após DEP e congela no TER da juri
   await expect.poll(() => page.locator('#ffrpRange').evaluate(input => Number(input.value))).toBeGreaterThan(0);
   await expect(page.locator('#ffrpRouteList .ffrp-point.active-point')).not.toContainText('SBBR');
 });
+
+
+test('controles da Rota Processada navegam evento a evento e sincronizam progresso APP derivado', async ({ page }) => {
+  await page.goto('/index.html', { waitUntil: 'load' });
+  await expect.poll(() => page.evaluate(() => Boolean(window.FlightFlowRouteProcessedV7412 && window.FlightParser))).toBe(true);
+
+  const setup = await page.evaluate(async fixture => {
+    const api = window.FlightFlowRouteProcessedV7412;
+    const bridge = window.__FlightFlowFirBridge;
+    const parsed = window.FlightParser.parseHistoryText(fixture, { includeRawText: true });
+    bridge.state.parsed = parsed;
+    bridge.state.index = 0;
+    bridge.state.geo.eventRoutes = [];
+    if (bridge.state.motion) {
+      bridge.state.motion.currentProgress = 0;
+      bridge.state.motion.targetProgress = 0;
+      bridge.state.motion.velocity = 0;
+      bridge.state.motion.initialized = true;
+    }
+
+    await api.analyzeText(fixture, 'TAM3720APP-event-navigation-e2e.txt');
+    api.applyProcessedRouteToFlightFlow();
+
+    const model = api.getModel();
+    model.lastNativeIndex = -1;
+    const depIndex = parsed.events.findIndex(event => event.messageType === 'DEP');
+    const transferIndex = parsed.events.findIndex(event => event.messageType === 'ACP');
+    const terIndex = parsed.events.findIndex(event => /Término/i.test(event.operation));
+
+    return {
+      eventCount: parsed.events.length,
+      depIndex,
+      transferIndex,
+      terIndex,
+      depTarget: bridge.state.geo.eventRoutes?.[depIndex]?.target,
+      transferTarget: bridge.state.geo.eventRoutes?.[transferIndex]?.target,
+      terTarget: bridge.state.geo.eventRoutes?.[terIndex]?.target,
+    };
+  }, APP_DERIVED_FIXTURE);
+
+  expect(setup.eventCount).toBeGreaterThanOrEqual(5);
+  expect(setup.depIndex).toBe(1);
+  expect(setup.transferIndex).toBeGreaterThan(setup.depIndex);
+  expect(setup.terIndex).toBeGreaterThan(setup.transferIndex);
+  expect(setup.depTarget).toBe(0);
+  expect(setup.transferTarget).toBeGreaterThan(0);
+  expect(setup.terTarget).toBeGreaterThan(setup.transferTarget);
+  expect(setup.terTarget).toBeLessThan(1);
+
+  await page.locator('#ffrpOpen').click();
+  await expect(page.locator('#ffrpModal')).toBeVisible();
+  await expect(page.locator('#ffrpEventSelect')).toHaveValue('0');
+  await expect(page.locator('#ffrpRange')).toHaveValue('0');
+  await expect(page.locator('#ffrpRouteList .ffrp-point.active-point')).toContainText('SBBR');
+
+  await page.locator('#ffrpNextEvent').click();
+  await expect.poll(() => page.evaluate(() => window.__FlightFlowFirBridge?.state?.index)).toBe(setup.depIndex);
+  await expect(page.locator('#ffrpEventSelect')).toHaveValue(String(setup.depIndex));
+  await expect.poll(() => page.evaluate(() => Number(window.__FlightFlowFirBridge?.state?.motion?.targetProgress ?? -1))).toBe(0);
+  await expect.poll(() => page.locator('#ffrpRange').evaluate(input => Number(input.value))).toBe(0);
+  await expect(page.locator('#ffrpRouteList .ffrp-point.active-point')).toContainText('SBBR');
+
+  await page.locator('#ffrpNextEvent').click();
+  await expect.poll(() => page.evaluate(() => window.__FlightFlowFirBridge?.state?.index)).toBe(setup.transferIndex);
+  await expect(page.locator('#ffrpEventSelect')).toHaveValue(String(setup.transferIndex));
+  await expect.poll(() => page.evaluate(() => Number(window.__FlightFlowFirBridge?.state?.motion?.targetProgress || 0))).toBeGreaterThan(0);
+  await expect.poll(() => page.evaluate(() => Number(window.__FlightFlowFirBridge?.state?.motion?.currentProgress || 0)), { timeout: 5000 }).toBeGreaterThan(0);
+  await expect.poll(() => page.evaluate(expected => {
+    const target = Number(window.__FlightFlowFirBridge?.state?.motion?.targetProgress || 0);
+    return Math.abs(target - expected);
+  }, setup.transferTarget)).toBeLessThan(0.000001);
+  await expect.poll(() => page.locator('#ffrpRange').evaluate((input, expected) =>
+    Math.abs(Number(input.value) - expected * 1000), setup.transferTarget)).toBeLessThan(2);
+
+  await page.locator('#ffrpEventSelect').selectOption(String(setup.terIndex));
+  await expect.poll(() => page.evaluate(() => window.__FlightFlowFirBridge?.state?.index)).toBe(setup.terIndex);
+  await expect(page.locator('#ffrpEventSelect')).toHaveValue(String(setup.terIndex));
+  await expect.poll(() => page.evaluate(expected => {
+    const target = Number(window.__FlightFlowFirBridge?.state?.motion?.targetProgress || 0);
+    return Math.abs(target - expected);
+  }, setup.terTarget)).toBeLessThan(0.000001);
+  await expect.poll(() => page.evaluate(previous => Number(window.__FlightFlowFirBridge?.state?.motion?.currentProgress || 0) - previous, setup.transferTarget), { timeout: 5000 }).toBeGreaterThan(0);
+  await expect.poll(() => page.locator('#ffrpRange').evaluate((input, expected) =>
+    Math.abs(Number(input.value) - expected * 1000), setup.terTarget)).toBeLessThan(2);
+  await expect(page.locator('#ffrpRouteList .ffrp-point.active-point')).not.toContainText('SBBR');
+
+  await page.locator('#ffrpPrevEvent').click();
+  await expect.poll(() => page.evaluate(() => window.__FlightFlowFirBridge?.state?.index)).toBe(setup.transferIndex);
+  await expect(page.locator('#ffrpEventSelect')).toHaveValue(String(setup.transferIndex));
+  await expect.poll(() => page.evaluate(expected => {
+    const target = Number(window.__FlightFlowFirBridge?.state?.motion?.targetProgress || 0);
+    return Math.abs(target - expected);
+  }, setup.transferTarget)).toBeLessThan(0.000001);
+  await expect.poll(() => page.evaluate(previous => previous - Number(window.__FlightFlowFirBridge?.state?.motion?.currentProgress || 0), setup.terTarget), { timeout: 5000 }).toBeGreaterThan(0);
+  await expect.poll(() => page.locator('#ffrpRange').evaluate((input, expected) =>
+    Math.abs(Number(input.value) - expected * 1000), setup.transferTarget)).toBeLessThan(2);
+
+  await expect(page.locator('#ffrpEventInfo')).toContainText(`Evento ${setup.transferIndex + 1}/${setup.eventCount}`);
+});
