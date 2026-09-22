@@ -1,21 +1,21 @@
 # Roadmap técnico — FlightFlow Evolução
 
-> Estado revisado em **21/09/2026**, após o fechamento técnico dos refinamentos visuais até o **PR29**.
+> Estado revisado em **22/09/2026**, após o fechamento técnico dos refinamentos de aceitação até o **PR34**.
 
 ## Estado atual
 
-A rodada principal de evolução visual e os refinamentos derivados das aceitações humanas estão tecnicamente concluídos até o PR29. O baseline funcional certificado é:
+A rodada principal de evolução visual e os refinamentos derivados das aceitações humanas estão tecnicamente concluídos até o PR34. O baseline funcional certificado é:
 
-`8cf3dcf13f22f707ec39e55a24022fb198e1a978`
+`2d3ebd01b888f5760abe4ddd3d46ba287de0b782`
 
 Certificação pós-merge atual:
 
-- quality gate **#111**: sucesso;
+- quality gate **#124**: sucesso;
 - **698/698** testes Node;
-- **106/106** testes Playwright;
+- **108/108** testes Playwright;
 - zero `failed`, `flaky`, `retry`, `timeout`, `AssertionError`, `SPATIAL_EQ_DIAG` e `not ok`;
-- housekeeping **#31**: sucesso;
-- branches temporárias do PR28/PR29 removidas.
+- housekeeping **#36**: sucesso;
+- branch temporária do PR34 removida.
 
 Baseline histórico V11: `a27ffee33577d88536a3828f9f3cca97b47fc898`, workflow #59, **675/675 Node + 79/79 Playwright**.
 
@@ -57,7 +57,13 @@ Baseline histórico V11: `a27ffee33577d88536a3828f9f3cca97b47fc898`, workflow #5
 - [x] PR #28 — Quadro Atual modernizado e alinhado a Alterações;
 - [x] PR #29 — contrato visual de tema estabilizado sem mudança de produto;
 - [x] quality gate #111 verde no pós-merge do PR29;
-- [x] housekeeping #31 e remoção das branches temporárias.
+- [x] housekeeping #31 e remoção das branches temporárias;
+- [x] PR #31 — tipografia nativa sem dependência externa;
+- [x] PR #32 — cabeçalho do Quadro Atual sem duplicação/colisão;
+- [x] PR #33 — sidebar da Rota Processada acompanha o waypoint atual;
+- [x] PR #34 — card ativo protegido contra o cabeçalho sticky;
+- [x] quality gate #124 verde no pós-merge do PR34;
+- [x] housekeeping #36 e remoção da branch temporária.
 
 ## Rodada de fechamento
 
@@ -69,7 +75,7 @@ Baseline histórico V11: `a27ffee33577d88536a3828f9f3cca97b47fc898`, workflow #5
 
 ### 2. Revalidação manual final — pendente
 
-Reexecutar `docs/MANUAL-ACCEPTANCE.md` no `main` pós-PR29, com histórico representativo, e registrar o resultado. A aceitação anterior encontrou os quatro achados já corrigidos e não equivale à aprovação do estado atual.
+Reexecutar `docs/MANUAL-ACCEPTANCE.md` no `main` pós-PR34, com histórico representativo, e registrar o resultado. A validação humana já identificou e direcionou PR32–PR34, mas ainda falta o reteste final do candidato atual. A aceitação anterior encontrou os quatro achados já corrigidos e não equivale à aprovação do estado atual.
 
 Obrigatório antes de nova release:
 
@@ -79,7 +85,8 @@ Obrigatório antes de nova release:
 - [ ] validar temas claro, escuro e Dashboard moderno;
 - [ ] validar TAM3774 e o fechamento terminal pré-TER/TER;
 - [ ] validar Próximo/Anterior/timeline/scrubber/teclado/autoplay;
-- [ ] validar Rota Processada, STRIP e FPV;
+- [ ] validar Rota Processada, inclusive scroll automático do ponto atual e cabeçalho sticky;
+- [ ] validar STRIP e FPV;
 - [ ] registrar divergências com screenshot/vídeo quando existirem.
 
 ### 3. Próxima release — somente após aceitação
