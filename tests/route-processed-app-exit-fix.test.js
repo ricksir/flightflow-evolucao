@@ -119,9 +119,14 @@ test('base offline contém MILIX na coordenada publicada e perfil derivado termi
   assert.equal(profile.mode, 'derived');
   assert.equal(profile.speedKts, 465);
   assert.ok(profile.totalDistanceNm > 58 && profile.totalDistanceNm < 60);
-  assert.equal(profile.targets[1], 0, 'no DEP a aeronave ainda está no ADEP');
-  assert.ok(profile.targets[2] > 0 && profile.targets[2] < 1, 'ACP deve mostrar avanço rumo ao Fixo Saída');
-  assert.equal(profile.targets[3], 1, 'quando o término local ocorre após a passagem estimada do limite, permanece no Fixo Saída');
-  assert.equal(profile.targets[4], 1, 'arquivamento posterior não cria novo deslocamento');
+  const depIndex = history.events.findIndex(event => /Mensagem DEP/i.test(event.operation));
+  const acpIndex = history.events.findIndex(event => /Mensagem ACP/i.test(event.operation));
+  const terIndex = history.events.findIndex(event => /Término/i.test(event.operation));
+  const archiveIndex = history.events.findIndex(event => /Arquivamento/i.test(event.operation));
+  assert.ok(depIndex >= 0 && acpIndex > depIndex && terIndex > acpIndex && archiveIndex > terIndex);
+  assert.equal(profile.targets[depIndex], 0, 'no DEP a aeronave ainda está no ADEP');
+  assert.ok(profile.targets[acpIndex] > 0 && profile.targets[acpIndex] < 1, 'ACP deve mostrar avanço rumo ao Fixo Saída');
+  assert.equal(profile.targets[terIndex], 1, 'quando o término local ocorre após a passagem estimada do limite, permanece no Fixo Saída');
+  assert.equal(profile.targets[archiveIndex], 1, 'arquivamento posterior não cria novo deslocamento');
   assert.equal(api.timedProgressLimit(snapshot), 0, 'ETO Saída jamais vira ETIM histórico');
 });
