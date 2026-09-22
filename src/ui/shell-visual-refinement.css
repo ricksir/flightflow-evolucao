@@ -6857,9 +6857,9 @@ h3,
 .tab-panel[data-panel="data"] .fields-grid .field-card.changed,
 .tab-panel[data-panel="data"] .fields-grid .field-card.changed:hover {
   border-color: #d6b45b !important;
-  background:
-    linear-gradient(135deg,rgba(214,164,42,.15),rgba(214,164,42,.055) 58%,transparent 86%),
-    #fff9e8 !important;
+  background-color: #fff7df !important;
+  background-image:
+    linear-gradient(135deg,rgba(214,164,42,.15),rgba(214,164,42,.055) 58%,transparent 86%) !important;
   box-shadow:
     inset 3px 0 #c18d19,
     inset 0 1px rgba(255,255,255,.84),
@@ -6876,15 +6876,15 @@ h3,
   margin: 0 0 7px;
   padding: 3px 7px;
   flex: 0 0 auto;
-  opacity: .92;
+  opacity: .78;
 }
 
 html[data-theme="dark"] .tab-panel[data-panel="data"] .fields-grid .field-card.changed,
 html[data-theme="dark"] .tab-panel[data-panel="data"] .fields-grid .field-card.changed:hover {
   border-color: rgba(232,177,66,.58) !important;
-  background:
-    linear-gradient(135deg,rgba(232,177,66,.15),rgba(232,177,66,.06) 60%,transparent 88%),
-    #29291f !important;
+  background-color: #2d2a1f !important;
+  background-image:
+    linear-gradient(135deg,rgba(232,177,66,.15),rgba(232,177,66,.06) 60%,transparent 88%) !important;
   box-shadow:
     inset 3px 0 #e0a43a,
     inset 0 1px rgba(255,255,255,.035),
@@ -6894,9 +6894,9 @@ html[data-theme="dark"] .tab-panel[data-panel="data"] .fields-grid .field-card.c
 html[data-theme="dark"][data-palette="velox"] .tab-panel[data-panel="data"] .fields-grid .field-card.changed,
 html[data-theme="dark"][data-palette="velox"] .tab-panel[data-panel="data"] .fields-grid .field-card.changed:hover {
   border-color: rgba(215,163,60,.62) !important;
-  background:
-    linear-gradient(135deg,rgba(215,163,60,.14),rgba(215,163,60,.055) 60%,transparent 88%),
-    #28352e !important;
+  background-color: #2d382c !important;
+  background-image:
+    linear-gradient(135deg,rgba(215,163,60,.14),rgba(215,163,60,.055) 60%,transparent 88%) !important;
   box-shadow:
     inset 3px 0 #d7a33c,
     inset 0 1px rgba(255,255,255,.03),
