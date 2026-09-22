@@ -159,7 +159,7 @@ test('troca para APP sem rota expansível não conserva a Rota Processada do pla
 
 
 const APP_DERIVED_FIXTURE = APP_FIXTURE
-  .replace('Indicativo       : TAM3720\\nADEP', 'Indicativo       : TAM3720\\nVelocidade       : N0450\\nADEP')
+  .replace('Indicativo       : TAM3720\nADEP', 'Indicativo       : TAM3720\nVelocidade       : N0450\nADEP')
   + String.raw`
 OPERAÇÃO : Recepção de Mensagem ACP
 data:   09/07/2026      hora:   12:35:08      posição: SPA01      ambiente: OpA
