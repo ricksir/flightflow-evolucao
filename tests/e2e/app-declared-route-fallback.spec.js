@@ -599,3 +599,48 @@ test('selecionar novo APP mantém a Rota Processada atual até Ler e iniciar', a
     openHidden: true,
   });
 });
+
+
+test('reler o mesmo APP com outro nome reconstrói a Rota Processada', async ({ page }) => {
+  await page.goto('/index.html', { waitUntil: 'load' });
+  await expect.poll(() => page.evaluate(() => Boolean(window.__FlightFlowFirBridge && window.FlightFlowRouteProcessedV7412))).toBe(true);
+
+  await page.locator('#fileInput').setInputFiles({
+    name: 'TAM3720APP-original.txt',
+    mimeType: 'text/plain',
+    buffer: Buffer.from(APP_DERIVED_FIXTURE, 'utf8'),
+  });
+  await page.locator('#readStartBtn').click();
+
+  await expect(page.locator('#callsignTitle')).toHaveText('TAM3720');
+  await expect.poll(() => page.evaluate(() =>
+    window.FlightFlowRouteProcessedV7412?.getModel?.().history?.callsign || ''
+  )).toBe('TAM3720');
+  await expect(page.locator('#ffrpOpen')).toBeVisible();
+
+  await page.locator('#fileInput').setInputFiles({
+    name: 'TAM3720APP-copia.txt',
+    mimeType: 'text/plain',
+    buffer: Buffer.from(APP_DERIVED_FIXTURE, 'utf8'),
+  });
+  await expect(page.locator('#selectedFileLabel')).toContainText('TAM3720APP-copia.txt');
+  await page.locator('#readStartBtn').click();
+
+  await expect(page.locator('#callsignTitle')).toHaveText('TAM3720');
+  await expect(page.locator('#selectedFileLabel')).toContainText('TAM3720APP-copia.txt');
+  await expect.poll(() => page.evaluate(() => {
+    const state = window.__FlightFlowFirBridge?.state;
+    const model = window.FlightFlowRouteProcessedV7412?.getModel?.();
+    return {
+      routeCallsign: model?.history?.callsign || '',
+      routeModelLoaded: Boolean(model?.history),
+      processedMetadata: Boolean(state?.geo?.ffrpProcessedRoute),
+      openHidden: Boolean(document.querySelector('#ffrpOpen')?.hidden),
+    };
+  })).toEqual({
+    routeCallsign: 'TAM3720',
+    routeModelLoaded: true,
+    processedMetadata: true,
+    openHidden: false,
+  });
+});
