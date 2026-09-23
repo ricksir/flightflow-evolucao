@@ -582,4 +582,20 @@ test('selecionar novo APP mantém a Rota Processada atual até Ler e iniciar', a
     processedMetadata: true,
     openHidden: false,
   });
+
+  await page.locator('#readStartBtn').click();
+  await expect(page.locator('#callsignTitle')).toHaveText('PSFBU');
+  await expect.poll(() => page.evaluate(() => {
+    const state = window.__FlightFlowFirBridge?.state;
+    const model = window.FlightFlowRouteProcessedV7412?.getModel?.();
+    return {
+      routeModelLoaded: Boolean(model?.history),
+      processedMetadata: Boolean(state?.geo?.ffrpProcessedRoute),
+      openHidden: Boolean(document.querySelector('#ffrpOpen')?.hidden),
+    };
+  })).toEqual({
+    routeModelLoaded: false,
+    processedMetadata: false,
+    openHidden: true,
+  });
 });
