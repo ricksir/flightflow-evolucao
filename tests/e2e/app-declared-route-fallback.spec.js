@@ -888,3 +888,48 @@ test('selecionar novo APP não interrompe autoplay já em andamento', async ({ p
     processedMetadata: true,
   });
 });
+
+
+test('Home e End mantêm APP atual navegável durante seleção pendente', async ({ page }) => {
+  await page.goto('/index.html', { waitUntil: 'load' });
+  await expect.poll(() => page.evaluate(() => Boolean(window.__FlightFlowFirBridge && window.FlightFlowRouteProcessedV7412))).toBe(true);
+
+  await page.locator('#fileInput').setInputFiles({
+    name: 'TAM3720APP-active-home-end.txt',
+    mimeType: 'text/plain',
+    buffer: Buffer.from(APP_DERIVED_FIXTURE, 'utf8'),
+  });
+  await page.locator('#readStartBtn').click();
+  await expect(page.locator('#callsignTitle')).toHaveText('TAM3720');
+  await expect(page.locator('.timeline-item')).toHaveCount(5);
+
+  await page.locator('#fileInput').setInputFiles({
+    name: 'PSFBUAPP-pending-home-end.txt',
+    mimeType: 'text/plain',
+    buffer: Buffer.from(APP_NO_EXPANDABLE_ROUTE, 'utf8'),
+  });
+  await expect(page.locator('#selectedFileLabel')).toContainText('PSFBUAPP-pending-home-end.txt');
+  await expect(page.locator('#callsignTitle')).toHaveText('TAM3720');
+
+  await page.keyboard.press('End');
+  await expect.poll(() => page.evaluate(() => window.__FlightFlowFirBridge?.state?.index)).toBe(4);
+  await expect(page.locator('#scrubber')).toHaveValue('4');
+  await expect.poll(() => page.evaluate(() =>
+    Number(window.__FlightFlowFirBridge?.state?.motion?.targetProgress || 0)
+  )).toBeGreaterThan(0);
+
+  await page.keyboard.press('Home');
+  await expect.poll(() => page.evaluate(() => window.__FlightFlowFirBridge?.state?.index)).toBe(0);
+  await expect(page.locator('#scrubber')).toHaveValue('0');
+  await expect.poll(() => page.evaluate(() =>
+    Number(window.__FlightFlowFirBridge?.state?.motion?.targetProgress ?? -1)
+  )).toBe(0);
+
+  await expect.poll(() => page.evaluate(() => ({
+    routeCallsign: window.FlightFlowRouteProcessedV7412?.getModel?.().history?.callsign || '',
+    processedMetadata: Boolean(window.__FlightFlowFirBridge?.state?.geo?.ffrpProcessedRoute),
+  }))).toEqual({
+    routeCallsign: 'TAM3720',
+    processedMetadata: true,
+  });
+});
