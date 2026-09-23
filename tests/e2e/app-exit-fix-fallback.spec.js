@@ -159,3 +159,89 @@ test('Fixo Saída APP limita também a rota exibida no mapa principal', async ({
   expect(visual.labels.some(label => label.includes('MILIX'))).toBe(true);
   expect(visual.labels.some(label => label.includes('KMCO'))).toBe(false);
 });
+
+
+test('controles da Rota Processada navegam GLO7634 até o Fixo Saída sem alcançar o ADES', async ({ page }) => {
+  await page.goto('/index.html', { waitUntil: 'load' });
+  await expect.poll(() => page.evaluate(() => Boolean(window.FlightFlowRouteProcessedV7412 && window.FlightParser))).toBe(true);
+
+  const setup = await page.evaluate(async fixture => {
+    const api = window.FlightFlowRouteProcessedV7412;
+    const bridge = window.__FlightFlowFirBridge;
+    const parsed = window.FlightParser.parseHistoryText(fixture, { includeRawText: true });
+    bridge.state.parsed = parsed;
+    bridge.state.index = 0;
+    bridge.state.geo.eventRoutes = [];
+    if (bridge.state.motion) {
+      bridge.state.motion.currentProgress = 0;
+      bridge.state.motion.targetProgress = 0;
+      bridge.state.motion.velocity = 0;
+      bridge.state.motion.initialized = true;
+    }
+
+    await api.analyzeText(fixture, 'GLO7634APP-event-navigation-fixture.txt');
+    api.applyProcessedRouteToFlightFlow();
+
+    const model = api.getModel();
+    model.lastNativeIndex = -1;
+    const depIndex = parsed.events.findIndex(event => event.messageType === 'DEP');
+    const acpIndex = parsed.events.findIndex(event => event.messageType === 'ACP');
+    const terIndex = parsed.events.findIndex(event => /Término/i.test(event.operation));
+
+    return {
+      eventCount: parsed.events.length,
+      depIndex,
+      acpIndex,
+      terIndex,
+      depTarget: bridge.state.geo.eventRoutes?.[depIndex]?.target,
+      acpTarget: bridge.state.geo.eventRoutes?.[acpIndex]?.target,
+      terTarget: bridge.state.geo.eventRoutes?.[terIndex]?.target,
+    };
+  }, GLO7634_APP);
+
+  expect(setup.depIndex).toBe(1);
+  expect(setup.acpIndex).toBeGreaterThan(setup.depIndex);
+  expect(setup.terIndex).toBeGreaterThan(setup.acpIndex);
+  expect(setup.depTarget).toBe(0);
+  expect(setup.acpTarget).toBeGreaterThan(0);
+  expect(setup.acpTarget).toBeLessThan(1);
+  expect(setup.terTarget).toBe(1);
+
+  await page.locator('#ffrpOpen').click();
+  await expect(page.locator('#ffrpModal')).toBeVisible();
+  await expect(page.locator('#ffrpEventSelect')).toHaveValue('0');
+  await expect(page.locator('#ffrpRange')).toHaveValue('0');
+  await expect(page.locator('#ffrpRouteList .ffrp-point.active-point')).toContainText('SBBR');
+
+  await page.locator('#ffrpNextEvent').click();
+  await expect.poll(() => page.evaluate(() => window.__FlightFlowFirBridge?.state?.index)).toBe(setup.depIndex);
+  await expect.poll(() => page.evaluate(() => Number(window.__FlightFlowFirBridge?.state?.motion?.targetProgress ?? -1))).toBe(0);
+  await expect.poll(() => page.locator('#ffrpRange').evaluate(input => Number(input.value))).toBe(0);
+  await expect(page.locator('#ffrpRouteList .ffrp-point.active-point')).toContainText('SBBR');
+
+  await page.locator('#ffrpNextEvent').click();
+  await expect.poll(() => page.evaluate(() => window.__FlightFlowFirBridge?.state?.index)).toBe(setup.acpIndex);
+  await expect.poll(() => page.evaluate(expected => {
+    const target = Number(window.__FlightFlowFirBridge?.state?.motion?.targetProgress || 0);
+    return Math.abs(target - expected);
+  }, setup.acpTarget)).toBeLessThan(0.000001);
+  await expect.poll(() => page.locator('#ffrpRange').evaluate((input, expected) =>
+    Math.abs(Number(input.value) - expected * 1000), setup.acpTarget)).toBeLessThan(2);
+
+  await page.locator('#ffrpEventSelect').selectOption(String(setup.terIndex));
+  await expect.poll(() => page.evaluate(() => window.__FlightFlowFirBridge?.state?.index)).toBe(setup.terIndex);
+  await expect.poll(() => page.evaluate(() => Number(window.__FlightFlowFirBridge?.state?.motion?.targetProgress || 0))).toBe(1);
+  await expect.poll(() => page.locator('#ffrpRange').evaluate(input => Number(input.value))).toBe(1000);
+  await expect(page.locator('#ffrpRouteList .ffrp-point.active-point')).toContainText('MILIX');
+  await expect(page.locator('#ffrpRouteList')).not.toContainText('KMCO');
+
+  await page.locator('#ffrpPrevEvent').click();
+  await expect.poll(() => page.evaluate(() => window.__FlightFlowFirBridge?.state?.index)).toBe(setup.acpIndex);
+  await expect.poll(() => page.evaluate(expected => {
+    const target = Number(window.__FlightFlowFirBridge?.state?.motion?.targetProgress || 0);
+    return Math.abs(target - expected);
+  }, setup.acpTarget)).toBeLessThan(0.000001);
+  await expect.poll(() => page.locator('#ffrpRange').evaluate((input, expected) =>
+    Math.abs(Number(input.value) - expected * 1000), setup.acpTarget)).toBeLessThan(2);
+  await expect(page.locator('#ffrpEventInfo')).toContainText('Evento ' + (setup.acpIndex + 1) + '/' + setup.eventCount);
+});
