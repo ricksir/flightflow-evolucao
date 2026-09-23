@@ -744,3 +744,62 @@ test('teclado mantém APP atual navegável durante seleção pendente', async ({
     processedMetadata: true,
   });
 });
+
+
+test('timeline e scrubber mantêm APP atual navegável durante seleção pendente', async ({ page }) => {
+  await page.goto('/index.html', { waitUntil: 'load' });
+  await expect.poll(() => page.evaluate(() => Boolean(window.__FlightFlowFirBridge && window.FlightFlowRouteProcessedV7412))).toBe(true);
+
+  await page.locator('#fileInput').setInputFiles({
+    name: 'TAM3720APP-active-timeline.txt',
+    mimeType: 'text/plain',
+    buffer: Buffer.from(APP_DERIVED_FIXTURE, 'utf8'),
+  });
+  await page.locator('#readStartBtn').click();
+  await expect(page.locator('#callsignTitle')).toHaveText('TAM3720');
+  await expect(page.locator('.timeline-item')).toHaveCount(5);
+
+  await page.locator('#nextBtn').click();
+  await page.locator('#nextBtn').click();
+  await expect.poll(() => page.evaluate(() => window.__FlightFlowFirBridge?.state?.index)).toBe(2);
+  await expect.poll(() => page.evaluate(() =>
+    Number(window.__FlightFlowFirBridge?.state?.motion?.targetProgress || 0)
+  )).toBeGreaterThan(0);
+
+  await page.locator('#fileInput').setInputFiles({
+    name: 'PSFBUAPP-pending-timeline.txt',
+    mimeType: 'text/plain',
+    buffer: Buffer.from(APP_NO_EXPANDABLE_ROUTE, 'utf8'),
+  });
+  await expect(page.locator('#selectedFileLabel')).toContainText('PSFBUAPP-pending-timeline.txt');
+  await expect(page.locator('#callsignTitle')).toHaveText('TAM3720');
+
+  await page.locator('.tab[data-tab="timeline"]').click();
+  await expect(page.locator('[data-panel="timeline"]')).toHaveClass(/active/);
+  await page.locator('.timeline-item[data-event-index="1"]').click();
+
+  await expect.poll(() => page.evaluate(() => window.__FlightFlowFirBridge?.state?.index)).toBe(1);
+  await expect(page.locator('#scrubber')).toHaveValue('1');
+  await expect.poll(() => page.evaluate(() =>
+    Number(window.__FlightFlowFirBridge?.state?.motion?.targetProgress ?? -1)
+  )).toBe(0);
+
+  await page.locator('#scrubber').evaluate(input => {
+    input.value = '2';
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+  });
+
+  await expect.poll(() => page.evaluate(() => window.__FlightFlowFirBridge?.state?.index)).toBe(2);
+  await expect(page.locator('.timeline-item.active')).toHaveAttribute('data-event-index', '2');
+  await expect.poll(() => page.evaluate(() =>
+    Number(window.__FlightFlowFirBridge?.state?.motion?.targetProgress || 0)
+  )).toBeGreaterThan(0);
+
+  await expect.poll(() => page.evaluate(() => ({
+    routeCallsign: window.FlightFlowRouteProcessedV7412?.getModel?.().history?.callsign || '',
+    processedMetadata: Boolean(window.__FlightFlowFirBridge?.state?.geo?.ffrpProcessedRoute),
+  }))).toEqual({
+    routeCallsign: 'TAM3720',
+    processedMetadata: true,
+  });
+});
