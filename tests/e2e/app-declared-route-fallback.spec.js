@@ -380,3 +380,59 @@ test('controles da Rota Processada navegam evento a evento e sincronizam progres
 
   await expect(page.locator('#ffrpEventInfo')).toContainText(`Evento ${setup.transferIndex + 1}/${setup.eventCount}`);
 });
+
+
+test('PSFBU sem DEP permanece sem movimento ao navegar até o CNL', async ({ page }) => {
+  await page.goto('/index.html', { waitUntil: 'load' });
+  await expect.poll(() => page.evaluate(() => Boolean(window.FlightFlowRouteProcessedV7412 && window.FlightParser))).toBe(true);
+
+  const result = await page.evaluate(async fixture => {
+    const api = window.FlightFlowRouteProcessedV7412;
+    const bridge = window.__FlightFlowFirBridge;
+    const parsed = window.FlightParser.parseHistoryText(fixture, { includeRawText: true });
+    const depIndex = parsed.events.findIndex(event => event.messageType === 'DEP');
+    const cnlIndex = parsed.events.findIndex(event =>
+      event.messageType === 'CNL' || /CNL/i.test(String(event.operation || '') + ' ' + String(event.content || event.rawBlock || ''))
+    );
+
+    bridge.state.parsed = parsed;
+    bridge.state.index = 0;
+    bridge.state.geo.eventRoutes = [];
+    if (bridge.state.motion) {
+      bridge.state.motion.currentProgress = 0;
+      bridge.state.motion.targetProgress = 0;
+      bridge.state.motion.velocity = 0;
+      bridge.state.motion.initialized = true;
+    }
+
+    const returned = await api.analyzeText(fixture, 'PSFBUAPP-no-dep-motion-fixture.txt');
+    const jumped = api.jumpToFlightEvent(cnlIndex);
+    await new Promise(resolve => setTimeout(resolve, 120));
+
+    return {
+      depIndex,
+      cnlIndex,
+      jumped,
+      currentIndex: bridge.state.index,
+      currentProgress: Number(bridge.state.motion?.currentProgress || 0),
+      targetProgress: Number(bridge.state.motion?.targetProgress || 0),
+      velocity: Number(bridge.state.motion?.velocity || 0),
+      returnedNull: returned === null,
+      historyLoaded: Boolean(api.getModel().history),
+      openHidden: Boolean(document.querySelector('#ffrpOpen')?.hidden),
+      processedMetadata: Boolean(bridge.state.geo?.ffrpProcessedRoute),
+    };
+  }, APP_NO_EXPANDABLE_ROUTE);
+
+  expect(result.depIndex).toBe(-1);
+  expect(result.cnlIndex).toBeGreaterThanOrEqual(0);
+  expect(result.jumped).toBe(true);
+  expect(result.currentIndex).toBe(result.cnlIndex);
+  expect(result.currentProgress).toBe(0);
+  expect(result.targetProgress).toBe(0);
+  expect(result.velocity).toBe(0);
+  expect(result.returnedNull).toBe(true);
+  expect(result.historyLoaded).toBe(false);
+  expect(result.openHidden).toBe(true);
+  expect(result.processedMetadata).toBe(false);
+});
