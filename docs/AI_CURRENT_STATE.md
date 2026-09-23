@@ -2,7 +2,7 @@
 
 > Checkpoint técnico para continuidade entre conversas/agentes.
 >
-> Atualizado em **22/09/2026**, após o fechamento técnico da rodada final dos PRs **#36–#41 e #43**.
+> Atualizado em **23/09/2026**, após o fechamento técnico da rodada APP dos PRs **#54–#68**.
 >
 > **Fase atual: REVALIDAÇÃO HUMANA FINAL e preparação de release, sem abertura automática de V12.**
 
@@ -12,8 +12,12 @@
 - Branch principal: `main`.
 - Repositório estável/fechado anterior: `ricksir/flightflow-ats` — **não alterar nesta linha de trabalho**.
 - Baseline de origem da evolução: `b2bb9acc03096beeebbd36098b8008ef81639df8`.
-- Baseline funcional certificado mais recente:
+- Baseline funcional com quality gate **pós-merge** explicitamente registrado:
   `28b572f25527628f5db110f2f2765010b6f772ba`.
+- Topo de `main` após o merge do PR **#68**:
+  `5bdc468eee11824662f2185fc729e2ef297c6d7e`.
+- Último gate integral auditado antes desse merge: PR **#68**, run **#227**, com **133/133 Playwright** e zero `failed`, `flaky`, `retry`, `timeout`, `AssertionError`, `not ok` e `SPATIAL_EQ_DIAG`.
+- No momento desta atualização, ainda não havia workflow pós-merge associado ao SHA `5bdc468eee11824662f2185fc729e2ef297c6d7e`.
 - Baseline histórico V11:
   `a27ffee33577d88536a3828f9f3cca97b47fc898`.
 - O topo real de `main` pode conter commits exclusivamente documentais posteriores; sempre conferir o SHA atual antes de escrever.
@@ -22,6 +26,32 @@
 - A próxima release **não deve ser publicada** antes da aceitação manual registrada.
 
 ## 2. Certificação atual
+
+### Rodada APP e troca de sessão — PRs #54 a #68
+
+A rodada APP foi conduzida em PRs curtos, preservando as fronteiras temporal e espacial existentes:
+
+- PRs **#54–#55** — TAM3720: proteção dos fixos da rota derivada no mapa principal e navegação evento a evento da Rota Processada;
+- PRs **#56–#57** — GLO7634: APP limitado a **SBBR → MILIX**, com MILIX como Fixo Saída e sem extensão operacional até KMCO;
+- PRs **#58–#59** — PSFBU: regra **SEM DEP = SEM MOVIMENTO** e reset espacial completo ao trocar de um APP em movimento para um histórico sem DEP;
+- PRs **#60–#62** — troca de histórico: seleção `pending` preserva a sessão/Rota Processada atual até `Ler e iniciar`; ativação `source` limpa a sessão antiga; releitura do mesmo APP com outro nome é determinística; cursores voláteis não fazem parte da identidade estável da sessão;
+- PRs **#63–#68** — equivalência durante `pending`: sessão atual continua navegável por Anterior/Próximo, ArrowLeft/ArrowRight, timeline, scrubber, autoplay, autoplay já em andamento e Home/End.
+
+Contratos APP protegidos:
+
+- **TAM3720** — sem quadro PONTOS/ETIM, usa DEP + rota publicada + velocidade para posição derivada; não fabricar ETIM;
+- **GLO7634** — ETO/Fixo Saída não é ETIM; TER encerra a jurisdição em MILIX e não leva a aeronave a KMCO;
+- **PSFBU** — sem DEP, a aeronave permanece na posição inicial mesmo com CNL/TER;
+- selecionar arquivo novo **não** encerra a sessão atual; a troca real ocorre somente em `Ler e iniciar`;
+- ao confirmar a nova leitura, o fluxo nativo interrompe playback anterior e inicia a nova sessão sem resíduos;
+- `goTo()` e `buildTimeline()` permaneceram intactos durante esta rodada.
+
+Fechamento observado:
+
+- `main` pós-PR68: `5bdc468eee11824662f2185fc729e2ef297c6d7e`;
+- run **#227** no head do PR68: sucesso, **133/133 Playwright**, contadores críticos em zero;
+- PR **#46** permanece aberta e **fora** da sequência APP; trata apenas colisão visual dos marcos da timeline inferior;
+- nenhuma tag/release foi criada e nenhuma V12 foi iniciada.
 
 ### Fechamento técnico mais recente — PRs #36 a #41 e #43
 
@@ -197,15 +227,16 @@ ETIM é alias visual/operacional. A abreviação normativa usada na MCA 100-27/2
 
 - V11 preservada e fronteiras temporal/espacial mantidas;
 - PRs #36–#41 e #43 concluíram a rodada final de remediação visual/funcional em mudanças curtas e isoladas;
-- Rota Processada, Dados do Plano, Mission Rail, shell superior e Temporal Deck possuem regressões específicas;
-- quality gate pós-merge #149 verde no baseline funcional `28b572f25527628f5db110f2f2765010b6f772ba`;
-- log bruto auditado com **699/699 Node + 115/115 Playwright** e contadores críticos em zero;
-- housekeeping #44 concluído;
-- nenhum PR aberto no fechamento.
+- PRs #54–#68 adicionaram/certificaram os contratos APP de rota derivada, Fixo Saída, ausência de movimento sem DEP, isolamento entre sessões e equivalência de navegação durante `pending`;
+- Rota Processada, Dados do Plano, Mission Rail, shell superior, Temporal Deck e fluxos APP possuem regressões específicas;
+- quality gate pós-merge #149 permanece como último gate pós-merge explicitamente registrado do baseline `28b572f25527628f5db110f2f2765010b6f772ba`;
+- run #227 do head do PR68 ficou verde com **133/133 Playwright** e contadores críticos em zero antes do merge para `5bdc468eee11824662f2185fc729e2ef297c6d7e`;
+- housekeeping histórico #44 concluído;
+- PR #46 permanece aberta e fora da rodada APP.
 
 ### Humano — revalidação final pendente
 
-A automação **não substitui** a aceitação visual/operacional. É necessário reexecutar `docs/MANUAL-ACCEPTANCE.md` sobre o `main` pós-PR43. O reteste prioritário deve cobrir: Rota Processada em progresso intermediário e avançado; Dados do Plano com campos atualizados; Mission Rail expandido/recolhido; dashboard completo após a compactação superior; e barra inferior contínua nos temas claro, escuro e Velox.
+A automação **não substitui** a aceitação visual/operacional. É necessário reexecutar `docs/MANUAL-ACCEPTANCE.md` sobre o `main` pós-PR68. O reteste prioritário deve cobrir: Rota Processada em progresso intermediário e avançado; Dados do Plano com campos atualizados; Mission Rail expandido/recolhido; dashboard completo após a compactação superior; barra inferior contínua nos temas claro, escuro e Velox; e os cenários APP TAM3720, GLO7634 e PSFBU, incluindo troca de arquivo em estado `pending`.
 
 Até essa revalidação:
 
