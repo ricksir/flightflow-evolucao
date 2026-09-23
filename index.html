@@ -6375,12 +6375,14 @@ html[data-theme="dark"] .secure-storage-stat{background:rgba(255,255,255,.025)}
 
   function distributeEventTargets(parsed,route,bounds) {
     const events=parsed.events||[];
+    const hasDeparture=events.some(event=>String(event?.messageType||'').toUpperCase()==='DEP');
     const classes=events.map(classifyAircraftEvent);
     const counts={};classes.forEach(c=>counts[c]=(counts[c]||0)+1);const seen={};let previous=0;
     const interval=(a,b,c)=>{seen[c]=(seen[c]||0)+1;const n=counts[c]||1;const r=n<=1?.55:(seen[c]-1)/(n-1);return a+(b-a)*r;};
     events.forEach((event,index)=>{
       const c=classes[index];let target=0;
-      if(c==='planning')target=bounds.standDeparture;
+      if(!hasDeparture)target=bounds.standDeparture;
+      else if(c==='planning')target=bounds.standDeparture;
       else if(c==='preactive')target=interval(bounds.standDeparture,bounds.pushEnd,c);
       else if(c==='pushback')target=interval(bounds.standDeparture,bounds.taxiStart,c);
       else if(c==='taxi_departure')target=interval(bounds.taxiStart,bounds.holding,c);
@@ -6447,6 +6449,7 @@ html[data-theme="dark"] .secure-storage-stat{background:rgba(255,255,255,.025)}
   function redistributeSyntheticRouteTargets(parsed) {
     const events = (parsed && parsed.events) || [];
     if (!events.length) return;
+    const hasDeparture = events.some(event => String(event?.messageType || '').toUpperCase() === 'DEP');
     const classes = events.map(classifyAircraftEvent);
     const counts = {};
     classes.forEach(c => counts[c] = (counts[c] || 0) + 1);
@@ -6464,7 +6467,8 @@ html[data-theme="dark"] .secure-storage-stat{background:rgba(255,255,255,.025)}
       const bounds = approximateBoundsForSyntheticRoute(routeInfo.points);
       const c = classes[index];
       let target = 0;
-      if (c === 'planning') target = bounds.standDeparture;
+      if (!hasDeparture) target = bounds.standDeparture;
+      else if (c === 'planning') target = bounds.standDeparture;
       else if (c === 'preactive') target = interval(bounds.standDeparture, bounds.pushEnd, c);
       else if (c === 'pushback') target = interval(bounds.standDeparture, bounds.taxiStart, c);
       else if (c === 'taxi_departure') target = interval(bounds.taxiStart, bounds.holding, c);
