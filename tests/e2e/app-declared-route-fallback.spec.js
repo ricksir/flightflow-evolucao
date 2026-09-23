@@ -384,55 +384,75 @@ test('controles da Rota Processada navegam evento a evento e sincronizam progres
 
 test('PSFBU sem DEP permanece sem movimento ao navegar até o CNL', async ({ page }) => {
   await page.goto('/index.html', { waitUntil: 'load' });
-  await expect.poll(() => page.evaluate(() => Boolean(window.FlightFlowRouteProcessedV7412 && window.FlightParser))).toBe(true);
+  await expect.poll(() => page.evaluate(() => Boolean(window.__FlightFlowFirBridge && window.FlightFlowRouteProcessedV7412))).toBe(true);
 
-  const result = await page.evaluate(async fixture => {
-    const api = window.FlightFlowRouteProcessedV7412;
-    const bridge = window.__FlightFlowFirBridge;
-    const parsed = window.FlightParser.parseHistoryText(fixture, { includeRawText: true });
-    const depIndex = parsed.events.findIndex(event => event.messageType === 'DEP');
-    const cnlIndex = parsed.events.findIndex(event =>
-      event.messageType === 'CNL' || /CNL/i.test(String(event.operation || '') + ' ' + String(event.content || event.rawBlock || ''))
-    );
+  await page.locator('#fileInput').setInputFiles({
+    name: 'PSFBUAPP-no-dep.txt',
+    mimeType: 'text/plain',
+    buffer: Buffer.from(APP_NO_EXPANDABLE_ROUTE, 'utf8'),
+  });
+  await expect(page.locator('#readStartBtn')).toBeEnabled();
+  await page.locator('#readStartBtn').click();
 
-    bridge.state.parsed = parsed;
-    bridge.state.index = 0;
-    bridge.state.geo.eventRoutes = [];
-    if (bridge.state.motion) {
-      bridge.state.motion.currentProgress = 0;
-      bridge.state.motion.targetProgress = 0;
-      bridge.state.motion.velocity = 0;
-      bridge.state.motion.initialized = true;
-    }
+  await expect(page.locator('#callsignTitle')).toHaveText('PSFBU');
+  await expect(page.locator('#selectedFileLabel')).toContainText('PSFBUAPP-no-dep.txt');
+  await expect(page.locator('#scrubber')).toBeEnabled();
+  await expect(page.locator('.timeline-item')).toHaveCount(2);
+  await expect(page.locator('#frameCounter')).toContainText('1 / 2');
+  await expect(page.locator('#scrubber')).toHaveValue('0');
 
-    const returned = await api.analyzeText(fixture, 'PSFBUAPP-no-dep-motion-fixture.txt');
-    const jumped = api.jumpToFlightEvent(cnlIndex);
-    await new Promise(resolve => setTimeout(resolve, 120));
-
+  await expect.poll(() => page.evaluate(() => {
+    const state = window.__FlightFlowFirBridge?.state;
+    const model = window.FlightFlowRouteProcessedV7412?.getModel?.();
     return {
-      depIndex,
-      cnlIndex,
-      jumped,
-      currentIndex: bridge.state.index,
-      currentProgress: Number(bridge.state.motion?.currentProgress || 0),
-      targetProgress: Number(bridge.state.motion?.targetProgress || 0),
-      velocity: Number(bridge.state.motion?.velocity || 0),
-      returnedNull: returned === null,
-      historyLoaded: Boolean(api.getModel().history),
+      index: state?.index,
+      currentProgress: Number(state?.motion?.currentProgress || 0),
+      targetProgress: Number(state?.motion?.targetProgress || 0),
+      velocity: Number(state?.motion?.velocity || 0),
+      routeModelLoaded: Boolean(model?.history),
+      processedMetadata: Boolean(state?.geo?.ffrpProcessedRoute),
       openHidden: Boolean(document.querySelector('#ffrpOpen')?.hidden),
-      processedMetadata: Boolean(bridge.state.geo?.ffrpProcessedRoute),
     };
-  }, APP_NO_EXPANDABLE_ROUTE);
+  })).toEqual({
+    index: 0,
+    currentProgress: 0,
+    targetProgress: 0,
+    velocity: 0,
+    routeModelLoaded: false,
+    processedMetadata: false,
+    openHidden: true,
+  });
 
-  expect(result.depIndex).toBe(-1);
-  expect(result.cnlIndex).toBeGreaterThanOrEqual(0);
-  expect(result.jumped).toBe(true);
-  expect(result.currentIndex).toBe(result.cnlIndex);
-  expect(result.currentProgress).toBe(0);
-  expect(result.targetProgress).toBe(0);
-  expect(result.velocity).toBe(0);
-  expect(result.returnedNull).toBe(true);
-  expect(result.historyLoaded).toBe(false);
-  expect(result.openHidden).toBe(true);
-  expect(result.processedMetadata).toBe(false);
+  await page.locator('#nextBtn').click();
+  await expect(page.locator('#scrubber')).toHaveValue('1');
+  await expect(page.locator('#frameCounter')).toContainText('2 / 2');
+  await expect(page.locator('.timeline-item.active')).toHaveAttribute('data-event-index', '1');
+
+  await page.waitForTimeout(500);
+
+  const afterCnl = await page.evaluate(() => {
+    const state = window.__FlightFlowFirBridge?.state;
+    const model = window.FlightFlowRouteProcessedV7412?.getModel?.();
+    return {
+      index: state?.index,
+      currentProgress: Number(state?.motion?.currentProgress || 0),
+      targetProgress: Number(state?.motion?.targetProgress || 0),
+      velocity: Number(state?.motion?.velocity || 0),
+      messageType: state?.parsed?.events?.[state.index]?.messageType || '',
+      hasDep: Boolean(state?.parsed?.events?.some?.(event => event.messageType === 'DEP')),
+      routeModelLoaded: Boolean(model?.history),
+      processedMetadata: Boolean(state?.geo?.ffrpProcessedRoute),
+      openHidden: Boolean(document.querySelector('#ffrpOpen')?.hidden),
+    };
+  });
+
+  expect(afterCnl.index).toBe(1);
+  expect(afterCnl.messageType).toBe('CNL');
+  expect(afterCnl.hasDep).toBe(false);
+  expect(afterCnl.currentProgress).toBe(0);
+  expect(afterCnl.targetProgress).toBe(0);
+  expect(afterCnl.velocity).toBe(0);
+  expect(afterCnl.routeModelLoaded).toBe(false);
+  expect(afterCnl.processedMetadata).toBe(false);
+  expect(afterCnl.openHidden).toBe(true);
 });
