@@ -7175,3 +7175,24 @@ html[data-theme="dark"][data-palette="velox"] .tab-panel[data-panel="data"] .fie
     background: transparent;
   }
 }
+
+
+/* ==========================================================================
+   PR70 — evita colisão visual entre marcos DEP densos da timeline inferior.
+   Todos os ticks permanecem; rótulos DEP redundantes alternam visibilidade.
+   ========================================================================== */
+.evo-transport-marker-dep:nth-child(even) b {
+  display: none;
+}
+
+/* DEP pode ocorrer em rajadas muito próximas. Em cada faixa, os rótulos
+   alternam o lado da haste para não se sobreporem, sem mover os marcos. */
+.evo-transport-marker-dep:nth-child(4n + 1) b,
+.evo-transport-marker-dep:nth-child(4n + 2) b {
+  transform: translate(-100%,-100%);
+}
+
+.evo-transport-marker-dep:nth-child(4n + 3) b,
+.evo-transport-marker-dep:nth-child(4n + 4) b {
+  transform: translate(0,-100%);
+}
