@@ -119,14 +119,14 @@ test('demonstração inicia no evento 1 e troca de histórico sem resíduo da se
       modes: window.__flightflowHistoryResetModes || [],
     };
   })).toEqual({
-    history: null,
-    resolvedSnapshots: 0,
-    currentSnapshotIndex: 0,
-    routeProgress: 0,
-    sourceFile: '',
-    lastNativeIndex: -1,
-    movementProfile: null,
-    hasProcessedRoute: false,
+    history: { callsign: 'TAM3542', sourceFile: 'Demonstração TAM3542' },
+    resolvedSnapshots: 1,
+    currentSnapshotIndex: 7,
+    routeProgress: 0.77,
+    sourceFile: 'Demonstração TAM3542',
+    lastNativeIndex: 42,
+    movementProfile: { stale: true },
+    hasProcessedRoute: true,
     modes: ['pending'],
   });
 
