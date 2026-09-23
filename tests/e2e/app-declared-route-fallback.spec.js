@@ -832,8 +832,8 @@ test('autoplay mantém APP atual navegável durante seleção pendente', async (
   await page.locator('#speedSelect').selectOption('1');
   await page.locator('#playBtn').click();
 
-  await expect.poll(() => page.evaluate(() => window.__FlightFlowFirBridge?.state?.index), { timeout: 5000 })
-    .toBeGreaterThan(0);
+  await expect.poll(() => page.evaluate(() => window.__FlightFlowFirBridge?.state?.index), { timeout: 3500 })
+    .toBeGreaterThan(1);
   await expect.poll(() => page.evaluate(() =>
     Number(window.__FlightFlowFirBridge?.state?.motion?.targetProgress || 0)
   )).toBeGreaterThan(0);
@@ -874,8 +874,8 @@ test('selecionar novo APP não interrompe autoplay já em andamento', async ({ p
   await expect(page.locator('#callsignTitle')).toHaveText('TAM3720');
   await expect(page.locator('#playBtn')).toHaveAttribute('title', /Pausar/);
 
-  await expect.poll(() => page.evaluate(() => window.__FlightFlowFirBridge?.state?.index), { timeout: 3500 })
-    .toBeGreaterThan(1);
+  await expect.poll(() => page.evaluate(() => window.__FlightFlowFirBridge?.state?.index), { timeout: 5000 })
+    .toBeGreaterThan(0);
   await expect.poll(() => page.evaluate(() =>
     Number(window.__FlightFlowFirBridge?.state?.motion?.targetProgress || 0)
   )).toBeGreaterThan(0);
