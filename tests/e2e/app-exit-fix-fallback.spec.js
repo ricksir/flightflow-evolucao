@@ -106,3 +106,56 @@ test('APP complexo usa Fixo Saída como limite operacional e não traça linha a
   await expect(page.locator('#ffrpMapNote')).toContainText('Fixo Saída MILIX');
   await expect(page.locator('#ffrpMapNote')).toContainText('não é convertido em ETIM');
 });
+
+
+test('Fixo Saída APP limita também a rota exibida no mapa principal', async ({ page }) => {
+  await page.goto('/index.html', { waitUntil: 'load' });
+  await expect.poll(() => page.evaluate(() => Boolean(window.FlightFlowRouteProcessedV7412 && window.FlightParser))).toBe(true);
+
+  const visual = await page.evaluate(async fixture => {
+    const api = window.FlightFlowRouteProcessedV7412;
+    const bridge = window.__FlightFlowFirBridge;
+    const parsed = window.FlightParser.parseHistoryText(fixture, { includeRawText: true });
+    bridge.state.parsed = parsed;
+    bridge.state.index = parsed.events.findIndex(event => event.messageType === 'ACP');
+    bridge.state.geo.eventRoutes = [];
+
+    await api.analyzeText(fixture, 'GLO7634APP-main-map-fixture.txt');
+    api.setFixesVisible(true);
+    api.applyProcessedRouteToFlightFlow();
+
+    const model = api.getModel();
+    const engine = bridge.realMapState?.engine || '';
+    const vector = document.querySelector('#ffrpVectorFixLayer');
+    const vectorTitles = Array.from(vector?.querySelectorAll('.ffrp-vfix title') || [])
+      .map(node => node.textContent || '');
+    const nativeFixes = model.nativeFixLayer?.getLayers?.() || [];
+    const nativeRoutes = model.nativeMapLayer?.getLayers?.() || [];
+    const nativeTitles = nativeFixes.map(layer => {
+      const content = layer.getTooltip?.()?.getContent?.();
+      return typeof content === 'string' ? content : String(content || '');
+    });
+
+    return {
+      engine,
+      routeCount: engine === 'leaflet'
+        ? nativeRoutes.length
+        : (vector?.querySelectorAll('.ffrp-vroute-declared').length || 0),
+      fixCount: engine === 'leaflet'
+        ? nativeFixes.length
+        : (vector?.querySelectorAll('.ffrp-vfix').length || 0),
+      labels: engine === 'leaflet' ? nativeTitles : vectorTitles,
+      text: engine === 'leaflet' ? nativeTitles.join(' ') : (vector?.textContent || ''),
+      movementIds: api.movementPointsForProfile(model.resolvedSnapshots[0]).map(point => point.ident),
+    };
+  }, GLO7634_APP);
+
+  expect(visual.routeCount).toBeGreaterThanOrEqual(1);
+  expect(visual.fixCount).toBeGreaterThanOrEqual(2);
+  expect(visual.movementIds).toEqual(['SBBR', 'MILIX']);
+  expect(visual.text).toContain('SBBR');
+  expect(visual.text).toContain('MILIX');
+  expect(visual.text).not.toContain('KMCO');
+  expect(visual.labels.some(label => label.includes('MILIX'))).toBe(true);
+  expect(visual.labels.some(label => label.includes('KMCO'))).toBe(false);
+});
