@@ -644,3 +644,54 @@ test('reler o mesmo APP com outro nome reconstrói a Rota Processada', async ({ 
     openHidden: false,
   });
 });
+
+
+test('APP atual continua navegável enquanto novo arquivo aguarda Ler e iniciar', async ({ page }) => {
+  await page.goto('/index.html', { waitUntil: 'load' });
+  await expect.poll(() => page.evaluate(() => Boolean(window.__FlightFlowFirBridge && window.FlightFlowRouteProcessedV7412))).toBe(true);
+
+  await page.locator('#fileInput').setInputFiles({
+    name: 'TAM3720APP-active.txt',
+    mimeType: 'text/plain',
+    buffer: Buffer.from(APP_DERIVED_FIXTURE, 'utf8'),
+  });
+  await page.locator('#readStartBtn').click();
+  await expect(page.locator('#callsignTitle')).toHaveText('TAM3720');
+
+  await page.locator('#nextBtn').click();
+  await page.locator('#nextBtn').click();
+  await expect.poll(() => page.evaluate(() => window.__FlightFlowFirBridge?.state?.index)).toBe(2);
+  await expect.poll(() => page.evaluate(() =>
+    Number(window.__FlightFlowFirBridge?.state?.motion?.targetProgress || 0)
+  )).toBeGreaterThan(0);
+
+  await page.locator('#fileInput').setInputFiles({
+    name: 'PSFBUAPP-pending-navigation.txt',
+    mimeType: 'text/plain',
+    buffer: Buffer.from(APP_NO_EXPANDABLE_ROUTE, 'utf8'),
+  });
+  await expect(page.locator('#selectedFileLabel')).toContainText('PSFBUAPP-pending-navigation.txt');
+  await expect(page.locator('#callsignTitle')).toHaveText('TAM3720');
+  await expect(page.locator('#ffrpOpen')).toBeVisible();
+
+  await page.locator('#prevBtn').click();
+  await expect.poll(() => page.evaluate(() => window.__FlightFlowFirBridge?.state?.index)).toBe(1);
+  await expect.poll(() => page.evaluate(() =>
+    Number(window.__FlightFlowFirBridge?.state?.motion?.targetProgress ?? -1)
+  )).toBe(0);
+
+  await expect.poll(() => page.evaluate(() => ({
+    routeCallsign: window.FlightFlowRouteProcessedV7412?.getModel?.().history?.callsign || '',
+    processedMetadata: Boolean(window.__FlightFlowFirBridge?.state?.geo?.ffrpProcessedRoute),
+  }))).toEqual({
+    routeCallsign: 'TAM3720',
+    processedMetadata: true,
+  });
+
+  await page.locator('#nextBtn').click();
+  await expect.poll(() => page.evaluate(() => window.__FlightFlowFirBridge?.state?.index)).toBe(2);
+  await expect.poll(() => page.evaluate(() =>
+    Number(window.__FlightFlowFirBridge?.state?.motion?.targetProgress || 0)
+  )).toBeGreaterThan(0);
+  await expect(page.locator('#callsignTitle')).toHaveText('TAM3720');
+});
