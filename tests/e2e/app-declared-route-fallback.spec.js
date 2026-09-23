@@ -537,3 +537,49 @@ test('troca real de APP em movimento para PSFBU sem DEP zera estado espacial ant
   });
   expect(stable).toEqual({ currentProgress: 0, targetProgress: 0, velocity: 0 });
 });
+
+
+test('selecionar novo APP mantém a Rota Processada atual até Ler e iniciar', async ({ page }) => {
+  await page.goto('/index.html', { waitUntil: 'load' });
+  await expect.poll(() => page.evaluate(() => Boolean(window.__FlightFlowFirBridge && window.FlightFlowRouteProcessedV7412))).toBe(true);
+
+  await page.locator('#fileInput').setInputFiles({
+    name: 'TAM3720APP-current.txt',
+    mimeType: 'text/plain',
+    buffer: Buffer.from(APP_DERIVED_FIXTURE, 'utf8'),
+  });
+  await expect(page.locator('#readStartBtn')).toBeEnabled();
+  await page.locator('#readStartBtn').click();
+
+  await expect(page.locator('#callsignTitle')).toHaveText('TAM3720');
+  await expect.poll(() => page.evaluate(() =>
+    window.FlightFlowRouteProcessedV7412?.getModel?.().history?.callsign || ''
+  )).toBe('TAM3720');
+  await expect(page.locator('#ffrpOpen')).toBeVisible();
+
+  await page.locator('#fileInput').setInputFiles({
+    name: 'PSFBUAPP-pending.txt',
+    mimeType: 'text/plain',
+    buffer: Buffer.from(APP_NO_EXPANDABLE_ROUTE, 'utf8'),
+  });
+
+  await expect(page.locator('#selectedFileLabel')).toContainText('PSFBUAPP-pending.txt');
+  await expect(page.locator('#readStartBtn')).toBeEnabled();
+
+  await expect(page.locator('#callsignTitle')).toHaveText('TAM3720');
+  await expect.poll(() => page.evaluate(() => {
+    const state = window.__FlightFlowFirBridge?.state;
+    const model = window.FlightFlowRouteProcessedV7412?.getModel?.();
+    return {
+      routeCallsign: model?.history?.callsign || '',
+      routeModelLoaded: Boolean(model?.history),
+      processedMetadata: Boolean(state?.geo?.ffrpProcessedRoute),
+      openHidden: Boolean(document.querySelector('#ffrpOpen')?.hidden),
+    };
+  })).toEqual({
+    routeCallsign: 'TAM3720',
+    routeModelLoaded: true,
+    processedMetadata: true,
+    openHidden: false,
+  });
+});
