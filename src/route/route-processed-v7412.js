@@ -2516,10 +2516,10 @@
         model.pendingReset=false;model.pendingOldHistoryFingerprint='';clearRouteModel({clearNativeRoute:true});return;
       }
       if(mode==='source'||mode==='combined'){
-        // 'source' é emitido antes de prepareOriginalHistory() no FlightFlow original.
-        // Se houve 'pending', mantemos a fingerprint antiga até #originalFullText mudar.
-        // Se o texto novo já estiver presente (ou não houve pending), o agendador o
-        // reconhecerá imediatamente pela diferença de fingerprint.
+        // A nova fonte já foi confirmada pelo usuário. O restante de setActiveSource()
+        // atualiza state.parsed e #originalFullText de forma síncrona antes deste timer,
+        // então a mesma fingerprint também precisa poder ser reanalisada.
+        model.pendingReset=false;model.pendingOldHistoryFingerprint='';
         clearRouteModel({clearNativeRoute:true});setTimeout(()=>scheduleAnalyzeFromApp(80),0);return;
       }
       const old=rawHistoryFromApp();model.pendingOldHistoryFingerprint=historyFingerprint(old);model.pendingReset=true;clearRouteModel({clearNativeRoute:true});
@@ -2540,7 +2540,7 @@
         const text=rawHistoryFromApp();
         if(text){
           const name=sourceNameFromApp();const token=appHistoryToken(text,name);
-          if(model.history && name && model.sourceFile && name!==model.sourceFile){
+          if(!model.pendingReset && model.history && name && model.sourceFile && name!==model.sourceFile){
             model.pendingOldHistoryFingerprint=historyFingerprint(text);model.pendingReset=true;clearRouteModel({clearNativeRoute:false});
           }
           if(model.pendingReset && historyFingerprint(text)===model.pendingOldHistoryFingerprint){/* aguarda o novo histórico */}
