@@ -447,7 +447,7 @@ test('PSFBU sem DEP permanece sem movimento ao navegar até o CNL', async ({ pag
   });
 
   expect(afterCnl.index).toBe(1);
-  expect(afterCnl.messageType).toBe('CNL');
+  expect(afterCnl.messageType).toBe('FPVD/CNL');
   expect(afterCnl.hasDep).toBe(false);
   expect(afterCnl.currentProgress).toBe(0);
   expect(afterCnl.targetProgress).toBe(0);
