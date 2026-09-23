@@ -456,3 +456,86 @@ test('PSFBU sem DEP permanece sem movimento ao navegar até o CNL', async ({ pag
   expect(afterCnl.processedMetadata).toBe(false);
   expect(afterCnl.openHidden).toBe(true);
 });
+
+
+test('troca real de APP em movimento para PSFBU sem DEP zera estado espacial anterior', async ({ page }) => {
+  await page.goto('/index.html', { waitUntil: 'load' });
+  await expect.poll(() => page.evaluate(() => Boolean(window.__FlightFlowFirBridge && window.FlightFlowRouteProcessedV7412))).toBe(true);
+
+  await page.locator('#fileInput').setInputFiles({
+    name: 'TAM3720APP-before-PSFBU.txt',
+    mimeType: 'text/plain',
+    buffer: Buffer.from(APP_DERIVED_FIXTURE, 'utf8'),
+  });
+  await expect(page.locator('#readStartBtn')).toBeEnabled();
+  await page.locator('#readStartBtn').click();
+
+  await expect(page.locator('#callsignTitle')).toHaveText('TAM3720');
+  await expect(page.locator('.timeline-item')).toHaveCount(5);
+  await expect.poll(() => page.evaluate(() =>
+    Boolean(window.__FlightFlowFirBridge?.state?.geo?.ffrpProcessedRoute)
+  )).toBe(true);
+
+  await page.locator('#nextBtn').click();
+  await expect(page.locator('#scrubber')).toHaveValue('1');
+  await page.locator('#nextBtn').click();
+  await expect(page.locator('#scrubber')).toHaveValue('2');
+
+  await expect.poll(() => page.evaluate(() => window.__FlightFlowFirBridge?.state?.index)).toBe(2);
+
+  await expect.poll(() => page.evaluate(() =>
+    Number(window.__FlightFlowFirBridge?.state?.motion?.targetProgress || 0)
+  )).toBeGreaterThan(0);
+  await expect.poll(() => page.evaluate(() =>
+    Number(window.__FlightFlowFirBridge?.state?.motion?.currentProgress || 0)
+  ), { timeout: 5000 }).toBeGreaterThan(0);
+
+  await page.locator('#fileInput').setInputFiles({
+    name: 'PSFBUAPP-after-moving-plan.txt',
+    mimeType: 'text/plain',
+    buffer: Buffer.from(APP_NO_EXPANDABLE_ROUTE, 'utf8'),
+  });
+  await expect(page.locator('#readStartBtn')).toBeEnabled();
+  await page.locator('#readStartBtn').click();
+
+  await expect(page.locator('#callsignTitle')).toHaveText('PSFBU');
+  await expect(page.locator('.timeline-item')).toHaveCount(2);
+  await expect(page.locator('#scrubber')).toHaveValue('0');
+
+  await expect.poll(() => page.evaluate(() => {
+    const state = window.__FlightFlowFirBridge?.state;
+    const model = window.FlightFlowRouteProcessedV7412?.getModel?.();
+    return {
+      index: state?.index,
+      currentProgress: Number(state?.motion?.currentProgress || 0),
+      targetProgress: Number(state?.motion?.targetProgress || 0),
+      velocity: Number(state?.motion?.velocity || 0),
+      callsign: state?.parsed?.flight?.callsign || state?.parsed?.callsign || '',
+      hasDep: Boolean(state?.parsed?.events?.some?.(event => event.messageType === 'DEP')),
+      routeModelLoaded: Boolean(model?.history),
+      processedMetadata: Boolean(state?.geo?.ffrpProcessedRoute),
+      openHidden: Boolean(document.querySelector('#ffrpOpen')?.hidden),
+    };
+  })).toEqual({
+    index: 0,
+    currentProgress: 0,
+    targetProgress: 0,
+    velocity: 0,
+    callsign: 'PSFBU',
+    hasDep: false,
+    routeModelLoaded: false,
+    processedMetadata: false,
+    openHidden: true,
+  });
+
+  await page.waitForTimeout(500);
+  const stable = await page.evaluate(() => {
+    const motion = window.__FlightFlowFirBridge?.state?.motion;
+    return {
+      currentProgress: Number(motion?.currentProgress || 0),
+      targetProgress: Number(motion?.targetProgress || 0),
+      velocity: Number(motion?.velocity || 0),
+    };
+  });
+  expect(stable).toEqual({ currentProgress: 0, targetProgress: 0, velocity: 0 });
+});
