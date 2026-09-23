@@ -2508,7 +2508,9 @@
     document.addEventListener('flightflow:history-session-reset',event=>{
       const mode=event?.detail?.mode||'';
       if(mode==='pending'){
-        const old=rawHistoryFromApp();model.pendingOldHistoryFingerprint=historyFingerprint(old);model.pendingReset=true;clearRouteModel({clearNativeRoute:true});return;
+        // Selecionar um arquivo ainda não troca a sessão ativa: preserve a rota
+        // corrente até o usuário confirmar a leitura em "Ler e iniciar".
+        const old=rawHistoryFromApp();model.pendingOldHistoryFingerprint=historyFingerprint(old);model.pendingReset=true;return;
       }
       if(mode==='empty'){
         model.pendingReset=false;model.pendingOldHistoryFingerprint='';clearRouteModel({clearNativeRoute:true});return;
@@ -2518,7 +2520,7 @@
         // Se houve 'pending', mantemos a fingerprint antiga até #originalFullText mudar.
         // Se o texto novo já estiver presente (ou não houve pending), o agendador o
         // reconhecerá imediatamente pela diferença de fingerprint.
-        clearRouteModel({clearNativeRoute:false});setTimeout(()=>scheduleAnalyzeFromApp(80),0);return;
+        clearRouteModel({clearNativeRoute:true});setTimeout(()=>scheduleAnalyzeFromApp(80),0);return;
       }
       const old=rawHistoryFromApp();model.pendingOldHistoryFingerprint=historyFingerprint(old);model.pendingReset=true;clearRouteModel({clearNativeRoute:true});
     });
