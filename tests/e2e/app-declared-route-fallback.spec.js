@@ -803,3 +803,46 @@ test('timeline e scrubber mantêm APP atual navegável durante seleção pendent
     processedMetadata: true,
   });
 });
+
+
+test('autoplay mantém APP atual navegável durante seleção pendente', async ({ page }) => {
+  await page.goto('/index.html', { waitUntil: 'load' });
+  await expect.poll(() => page.evaluate(() => Boolean(window.__FlightFlowFirBridge && window.FlightFlowRouteProcessedV7412))).toBe(true);
+
+  await page.locator('#fileInput').setInputFiles({
+    name: 'TAM3720APP-active-autoplay.txt',
+    mimeType: 'text/plain',
+    buffer: Buffer.from(APP_DERIVED_FIXTURE, 'utf8'),
+  });
+  await page.locator('#readStartBtn').click();
+  await expect(page.locator('#callsignTitle')).toHaveText('TAM3720');
+  await expect(page.locator('.timeline-item')).toHaveCount(5);
+
+  await page.locator('#nextBtn').click();
+  await expect.poll(() => page.evaluate(() => window.__FlightFlowFirBridge?.state?.index)).toBe(1);
+
+  await page.locator('#fileInput').setInputFiles({
+    name: 'PSFBUAPP-pending-autoplay.txt',
+    mimeType: 'text/plain',
+    buffer: Buffer.from(APP_NO_EXPANDABLE_ROUTE, 'utf8'),
+  });
+  await expect(page.locator('#selectedFileLabel')).toContainText('PSFBUAPP-pending-autoplay.txt');
+  await expect(page.locator('#callsignTitle')).toHaveText('TAM3720');
+
+  await page.locator('#speedSelect').selectOption('1');
+  await page.locator('#playBtn').click();
+
+  await expect.poll(() => page.evaluate(() => window.__FlightFlowFirBridge?.state?.index), { timeout: 3500 })
+    .toBeGreaterThan(1);
+  await expect.poll(() => page.evaluate(() =>
+    Number(window.__FlightFlowFirBridge?.state?.motion?.targetProgress || 0)
+  )).toBeGreaterThan(0);
+
+  await expect.poll(() => page.evaluate(() => ({
+    routeCallsign: window.FlightFlowRouteProcessedV7412?.getModel?.().history?.callsign || '',
+    processedMetadata: Boolean(window.__FlightFlowFirBridge?.state?.geo?.ffrpProcessedRoute),
+  }))).toEqual({
+    routeCallsign: 'TAM3720',
+    processedMetadata: true,
+  });
+});
