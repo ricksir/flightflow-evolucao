@@ -109,22 +109,18 @@ test('demonstração inicia no evento 1 e troca de histórico sem resíduo da se
     const state = window.__FlightFlowFirBridge?.state;
     return {
       history: model?.history ?? null,
-      resolvedSnapshots: model?.resolvedSnapshots?.length ?? -1,
-      currentSnapshotIndex: model?.currentSnapshotIndex,
+      snapshotSignatures: (model?.resolvedSnapshots || []).map(snapshot => snapshot?.signature || ''),
       routeProgress: model?.routeProgress,
       sourceFile: model?.sourceFile,
-      lastNativeIndex: model?.lastNativeIndex,
       movementProfile: model?.movementProfile ?? null,
       hasProcessedRoute: Boolean(state?.geo?.ffrpProcessedRoute),
       modes: window.__flightflowHistoryResetModes || [],
     };
   })).toEqual({
     history: { callsign: 'TAM3542', sourceFile: 'Demonstração TAM3542' },
-    resolvedSnapshots: 1,
-    currentSnapshotIndex: 7,
+    snapshotSignatures: ['stale-session'],
     routeProgress: 0.77,
     sourceFile: 'Demonstração TAM3542',
-    lastNativeIndex: 42,
     movementProfile: { stale: true },
     hasProcessedRoute: true,
     modes: ['pending'],
