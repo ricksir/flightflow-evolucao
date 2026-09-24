@@ -245,3 +245,59 @@ test('controles da Rota Processada navegam GLO7634 até o Fixo Saída sem alcan�
     Math.abs(Number(input.value) - expected * 1000), setup.acpTarget)).toBeLessThan(2);
   await expect(page.locator('#ffrpEventInfo')).toContainText('Evento ' + (setup.acpIndex + 1) + '/' + setup.eventCount);
 });
+
+
+test('auto-fit do GLO7634 APP enquadra somente SBBR → MILIX e ignora KMCO remoto', async ({ page }) => {
+  await page.goto('/index.html', { waitUntil: 'load' });
+  await expect.poll(() => page.evaluate(() => Boolean(window.FlightFlowRouteProcessedV7412 && window.FlightParser))).toBe(true);
+
+  const result = await page.evaluate(async fixture => {
+    const api = window.FlightFlowRouteProcessedV7412;
+    const bridge = window.__FlightFlowFirBridge;
+    const parsed = window.FlightParser.parseHistoryText(fixture, { includeRawText: true });
+    bridge.state.parsed = parsed;
+    bridge.state.index = 0;
+    bridge.state.geo.eventRoutes = [];
+
+    await api.analyzeText(fixture, 'GLO7634APP-fit-bounds.txt');
+    const model = api.getModel();
+    const snapshot = model.resolvedSnapshots[0];
+    api.applyProcessedRouteToFlightFlow({ fit: true });
+
+    const bounds = bridge.realMapState?.routeBounds;
+    const destination = api.destinationRouteMarker(snapshot);
+    const actual = snapshot.points.map(point => ({
+      ident: point.ident,
+      lat: Number(point.geo?.lat),
+      lon: Number(point.geo?.lon),
+    }));
+
+    return {
+      boundary: Boolean(snapshot.jurisdictionBoundaryFallback),
+      destination: destination ? {
+        ident: destination.ident,
+        lat: Number(destination.geo?.lat),
+        lon: Number(destination.geo?.lon),
+      } : null,
+      actual,
+      west: bounds?.getWest?.(),
+      east: bounds?.getEast?.(),
+      south: bounds?.getSouth?.(),
+      north: bounds?.getNorth?.(),
+      destinationInside: destination && bounds?.contains
+        ? bounds.contains([Number(destination.geo.lat), Number(destination.geo.lon)])
+        : null,
+      actualInside: bounds?.contains
+        ? actual.map(point => bounds.contains([point.lat, point.lon]))
+        : [],
+    };
+  }, GLO7634_APP);
+
+  expect(result.boundary).toBe(true);
+  expect(result.actual.map(point => point.ident)).toEqual(['SBBR', 'MILIX']);
+  expect(result.destination?.ident).toBe('KMCO');
+  expect(result.actualInside).toEqual([true, true]);
+  expect(result.destinationInside).toBe(false);
+  expect(Number(result.east) - Number(result.west)).toBeLessThan(3);
+  expect(Number(result.north) - Number(result.south)).toBeLessThan(3);
+});
