@@ -17,7 +17,7 @@
 - Topo de `main` após o merge do PR **#70**:
   `ff6f2e7a63e475ae80caa1a54b28e0eb2440eaf2`.
 - Último gate integral auditado antes desse merge: PR **#70**, run **#231**, com **134/134 Playwright** e zero `failed`, `flaky`, `retry`, `timeout`, `AssertionError`, `not ok` e `SPATIAL_EQ_DIAG`.
-- O workflow pós-merge **#232** foi iniciado no SHA `ff6f2e7a63e475ae80caa1a54b28e0eb2440eaf2`; seu resultado deve ser conferido antes de qualquer certificação adicional.
+- O workflow pós-merge **#232** no SHA `ff6f2e7a63e475ae80caa1a54b28e0eb2440eaf2` concluiu com sucesso: **134/134 Playwright** e zero `failed`, `flaky`, `retry`, `timeout`, `AssertionError`, `not ok` e `SPATIAL_EQ_DIAG` no log bruto.
 - Baseline histórico V11:
   `a27ffee33577d88536a3828f9f3cca97b47fc898`.
 - O topo real de `main` pode conter commits exclusivamente documentais posteriores; sempre conferir o SHA atual antes de escrever.
