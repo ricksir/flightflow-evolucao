@@ -70,6 +70,8 @@ test('histórico APP sem PONTOS exibe rota declarada UZ35 e seus fixos no mapa',
 
   await expect(page.locator('#ffrpSubtitle')).toContainText('sem quadro PONTOS/ETIM');
   await expect(page.locator('#ffrpTime')).toContainText('sem ETIM histórico');
+  await expect(page.locator('#ffrpTailNote')).toContainText('linha tracejada planejada');
+  await expect(page.locator('#ffrpTailNote')).not.toContainText('linha azul tracejada');
   await expect(page.locator('#ffrpRouteList .ffrp-point')).toHaveCount(6);
 
   for (const ident of ['SBBR', 'GEPMO', 'ANBIR', 'IREGU', 'REINA', 'SBCF']) {
