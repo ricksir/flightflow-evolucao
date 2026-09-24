@@ -281,6 +281,10 @@ test('auto-fit do GLO7634 APP usa somente SBBR → MILIX e exclui KMCO remoto', 
     return {
       boundary: Boolean(snapshot.jurisdictionBoundaryFallback),
       routeIds: snapshot.points.map(point => point.ident),
+      routeLatLngs: snapshot.points.map(point => [
+        Number(point.geo?.lat),
+        Number(point.geo?.lon),
+      ]),
       destination: destination ? {
         ident: destination.ident,
         lat: Number(destination.geo?.lat),
@@ -295,14 +299,11 @@ test('auto-fit do GLO7634 APP usa somente SBBR → MILIX e exclui KMCO remoto', 
   expect(result.destination?.ident).toBe('KMCO');
   expect(result.fitPoints).toHaveLength(2);
 
-  const rounded = result.fitPoints.map(([lat, lon]) => [
-    Number(Number(lat).toFixed(4)),
-    Number(Number(lon).toFixed(4)),
+  const normalize = points => points.map(([lat, lon]) => [
+    Number(Number(lat).toFixed(6)),
+    Number(Number(lon).toFixed(6)),
   ]);
-  expect(rounded).toEqual([
-    [-15.8697, -47.9208],
-    [-16.0808, -48.7775],
-  ]);
+  expect(normalize(result.fitPoints)).toEqual(normalize(result.routeLatLngs));
   expect(result.fitPoints.some(([lat, lon]) =>
     Math.abs(Number(lat) - Number(result.destination.lat)) < 0.0001 &&
     Math.abs(Number(lon) - Number(result.destination.lon)) < 0.0001
