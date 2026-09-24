@@ -1703,9 +1703,11 @@
       const q=bridge.projectGeo(Number(p.geo.lon),Number(p.geo.lat));
       const airport=/^[A-Z]{4}$/.test(p.ident)&&(i===0||i===snapshot.points.length-1);
       const state=pointDisplayState(context,i);
-      const cls=[airport?'airport':(p.geo.kind==='coordinate'?'coord':''),state.labelled?'labelled':'',state.current?'current':''].filter(Boolean).join(' ');
+      const duplicateAdepLabel=i===0&&norm(p.ident)===norm(model.history?.adep||'');
+      const showLabel=state.labelled&&!duplicateAdepLabel;
+      const cls=[airport?'airport':(p.geo.kind==='coordinate'?'coord':''),showLabel?'labelled':'',state.current?'current':''].filter(Boolean).join(' ');
       const meta=[shortEtim(p),flightLevelLabel(p)].filter(Boolean).join(' · ');
-      const label=state.labelled?`<text x="8" y="-6">${esc(p.ident)}</text>${meta?`<text class="meta" x="8" y="8">${esc(meta)}</text>`:''}`:'';
+      const label=showLabel?`<text x="8" y="-6">${esc(p.ident)}</text>${meta?`<text class="meta" x="8" y="8">${esc(meta)}</text>`:''}`:'';
       html+=`<g class="ffrp-vfix ${cls}" transform="translate(${Number(q.x).toFixed(2)} ${Number(q.y).toFixed(2)})"><title>${esc(p.ident)}${meta?` · ${esc(meta)}`:''}</title><circle r="${state.current?6:5}"/>${label}</g>`;
     });
     if(model.fixesVisible&&continuation.length){continuation.forEach(p=>{const q=pointXY(p);html+=`<g class="ffrp-vfix declared" transform="translate(${Number(q.x).toFixed(2)} ${Number(q.y).toFixed(2)})"><title>${esc(p.ident)} · rota declarada · sem ETIM/CFL</title><circle r="4.5"/></g>`;});}
@@ -1915,7 +1917,8 @@
           const mk=L.circleMarker([Number(p.geo.lat),Number(p.geo.lon)],{radius:state.current?6.5:(airport?5.5:4),color:state.current?'#18a0c4':state.selected?'#d59a20':destOnly?'#a66b00':declared?'#0d7084':airport?'#a66b00':'#07576a',dashArray:(declared||destOnly)?'4 3':null,weight:state.current||state.selected?3:1.8,fillColor:destOnly?'#fff1b9':declared?'#e7f6f9':airport?'#ffe59a':'#ffffff',fillOpacity:state.muted?.55:1,opacity:state.muted?.55:1,interactive:true});
           const meta=declared?`ROTA DECLARADA ${p.airway||''} · SEM ETIM`:destOnly?(terminal.active?'ADES · FECHAMENTO TERMINAL DERIVADO · SEM ETIM':terminal.visible?'ADES · FECHAMENTO TERMINAL PREVISTO · SEM ETIM':'ADES · TRAJETO TERMINAL NÃO ESPECIFICADO'):[p.etim?`ETIM ${p.etim}${p.passed?'*':''}`:'',p.cfl?`FL ${flightLevelLabel(p).replace(/^FL/,'')}`:''].filter(Boolean).join(' · ');
           const suffix=declared?'<br><small>rota declarada · sem ETIM</small>':destOnly?(terminal.active?'<br><small>fechamento terminal derivado · sem ETIM</small>':terminal.visible?'<br><small>fechamento terminal previsto · sem ETIM</small>':'<br><small>ADES · sem trajetória terminal</small>'):'';
-          const permanent=state.labelled;
+          const duplicateAdepLabel=i===0&&norm(p.ident)===norm(model.history?.adep||'');
+          const permanent=state.labelled&&!duplicateAdepLabel;
           const place=permanent?labelPlacementFor(rms.map,p,i,context.plotPoints.length,occupied):{direction:'top',offset:[0,-7]};
           mk.bindTooltip(mainFixLabelHtml(p)+suffix,{permanent,direction:place.direction,className:`ffrp-native-fix-label${permanent?'':' ffrp-native-fix-hover'}`,offset:place.offset,opacity:.98,interactive:false,sticky:!permanent});
           if(mk.bindPopup)mk.bindPopup(`<b>${esc(p.ident)}</b><br>${esc(meta||'Sem ETIM/CFL')}<br><small>${esc(p.geo.source||'')}</small>`);
