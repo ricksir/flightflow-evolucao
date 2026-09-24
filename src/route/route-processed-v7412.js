@@ -1853,6 +1853,16 @@
     if(!modal()?.hidden)renderModal();else updateOpenBadge();
   }
 
+  function nativeFitLatLngs(snapshot,destination=destinationRouteMarker(snapshot)) {
+    const movementLatLngs=movementPoints(snapshot).map(p=>[Number(p.geo.lat),Number(p.geo.lon)]);
+    // Em APP limitado por Fixo Saída, o ADES remoto pertence ao plano global,
+    // mas não ao trecho operacional exibido. O auto-fit deve enquadrar apenas
+    // o trecho sob jurisdição: GLO7634 = SBBR → MILIX, nunca SBBR → KMCO.
+    return snapshot?.jurisdictionBoundaryFallback
+      ? movementLatLngs
+      : movementLatLngs.concat(destination?.geo?[[Number(destination.geo.lat),Number(destination.geo.lon)]]:[]);
+  }
+
   function renderProcessedRouteOnNativeMap(snapshot,{fit=false}={}) {
     const bridge=window.__FlightFlowFirBridge;
     const badge=ensureMainBadge();
@@ -1917,12 +1927,7 @@
         });
       }
       if(model.handoffsVisible&&model.nativeTransferLayer){transferMarkersForSnapshot(snapshot).forEach(t=>{const icon=L.divIcon?L.divIcon({className:'',html:'<div class="ffrp-transfer-marker"><span>⇄</span></div>',iconSize:[20,20],iconAnchor:[10,10]}):null;let mk;if(icon&&L.marker)mk=L.marker([Number(t.point.geo.lat),Number(t.point.geo.lon)],{icon,keyboard:false,zIndexOffset:800});else mk=L.circleMarker([Number(t.point.geo.lat),Number(t.point.geo.lon)],{radius:7,color:'#6e3498',fillColor:'#8a48bd',fillOpacity:1,weight:2});mk.bindTooltip(`<b>TRANSFERÊNCIA ${esc(t.label)}</b><br>${esc(t.detail)}<br>Ponto: ${esc(t.point.ident)}`,{sticky:true,className:'ffrp-transfer-tip'});mk.addTo(model.nativeTransferLayer);});}
-      // Em APP limitado por Fixo Saída, o ADES remoto pertence ao plano global,
-      // mas não ao trecho operacional exibido. Não deixe esse ADES contaminar o
-      // auto-fit: GLO7634, por exemplo, deve enquadrar SBBR → MILIX, não SBBR → KMCO.
-      const fitLatLngs=snapshot.jurisdictionBoundaryFallback
-        ? movementLatLngs
-        : movementLatLngs.concat(destination?[[Number(destination.geo.lat),Number(destination.geo.lon)]]:[]);
+      const fitLatLngs=nativeFitLatLngs(snapshot,destination);
       const bounds=L.latLngBounds(fitLatLngs);rms.routeLatLngs=movementLatLngs;rms.routeBounds=bounds;suppressLegacyRouteVisuals(snapshot);if(fit&&!model.nativeFitDone&&bounds.isValid()){rms.map.fitBounds(bounds,{padding:[55,55],maxZoom:8,animate:false});model.nativeFitDone=true;}return true;
     }catch(err){console.warn('[FlightFlow route] camada nativa:',err);renderProcessedVectorFixes(snapshot);return false;}
   }
@@ -2614,7 +2619,7 @@
       applyProcessedRouteToFlightFlow,
       setFixesVisible:(value)=>{saveFixesVisiblePreference(value);const input=ensureFixesToggle();if(input)input.checked=!!model.fixesVisible;applyProcessedRouteToFlightFlow();return model.fixesVisible;},
       setHandoffsVisible:(value)=>{saveHandoffsVisiblePreference(value);const input=ensureHandoffsToggle();if(input)input.checked=!!model.handoffsVisible;applyProcessedRouteToFlightFlow();return model.handoffsVisible;},
-      movementPoints, movementPointsForProfile, pseudoDestinationTail, declaredRouteContinuation, destinationRouteMarker, isTerminalClosureEvent, terminalClosureContext, terminalClosurePoint, terminalClosureState, timedProgressLimit, routePlaybackLimit, transferMarkersForSnapshot, routeDisplayContext, pointDisplayState, nativeEventIndexForSnapshot, firstDepartureAnchor, buildMovementProfile, progressForNativeEventIndex, routeDistanceFractions, candidateProgressFromSnapshot, transitionPlanForEvents, transitionDurations,
+      movementPoints, movementPointsForProfile, nativeFitLatLngs, pseudoDestinationTail, declaredRouteContinuation, destinationRouteMarker, isTerminalClosureEvent, terminalClosureContext, terminalClosurePoint, terminalClosureState, timedProgressLimit, routePlaybackLimit, transferMarkersForSnapshot, routeDisplayContext, pointDisplayState, nativeEventIndexForSnapshot, firstDepartureAnchor, buildMovementProfile, progressForNativeEventIndex, routeDistanceFractions, candidateProgressFromSnapshot, transitionPlanForEvents, transitionDurations,
       officialSeed:OFFICIAL_SEED.map(x=>({...x})),
       collectMapObstacles,
       labelPlacementFor,
