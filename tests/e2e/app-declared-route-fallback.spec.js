@@ -220,6 +220,16 @@ test('APP derivado exibe todos os fixos da rota processada também no mapa princ
       const content = layer.getTooltip?.()?.getContent?.();
       return typeof content === 'string' ? content : String(content || '');
     });
+    const nativeAdepPermanent = nativeFixes.some(layer => {
+      const tooltip = layer.getTooltip?.();
+      const content = tooltip?.getContent?.();
+      const text = typeof content === 'string' ? content : String(content || '');
+      return text.includes('SBBR') && Boolean(tooltip?.options?.permanent);
+    });
+    const vectorAdepPermanent = Array.from(vector?.querySelectorAll('.ffrp-vfix') || []).some(node => {
+      const title = node.querySelector('title')?.textContent || '';
+      return title.includes('SBBR') && Boolean(node.querySelector('text'));
+    });
 
     return {
       engine,
@@ -231,11 +241,13 @@ test('APP derivado exibe todos os fixos da rota processada também no mapa princ
         : (vector?.querySelectorAll('.ffrp-vfix').length || 0),
       labels: engine === 'leaflet' ? nativeTitles : vectorTitles,
       text: engine === 'leaflet' ? nativeTitles.join(' ') : (vector?.textContent || ''),
+      adepPermanent: engine === 'leaflet' ? nativeAdepPermanent : vectorAdepPermanent,
     };
   }, APP_DERIVED_FIXTURE);
 
   expect(result.routeCount).toBeGreaterThanOrEqual(1);
   expect(result.fixCount).toBeGreaterThanOrEqual(6);
+  expect(result.adepPermanent).toBe(false);
   for (const ident of ['SBBR', 'GEPMO', 'ANBIR', 'IREGU', 'REINA', 'SBCF']) {
     expect(result.text).toContain(ident);
   }
