@@ -35,16 +35,23 @@ test('fechamento técnico não declara revalidação humana inexistente', () => 
   assert.ok(MANUAL.includes('revalidação humana final deste baseline permanece **PENDENTE**'));
   assert.ok(MANUAL.includes('**Resultado da aceitação:** [ ] APROVADO'));
   assert.ok(RELEASE.includes('revalidação humana do novo `main` ainda é necessária'));
+  assert.ok(RELEASE.includes('Baseline funcional atual — pós-PR70'));
+  assert.ok(RELEASE.includes('quality gate **#232**'));
+  assert.ok(RELEASE.includes('TAM3720, GLO7634 e PSFBU'));
   assert.ok(AI.includes('aceitação humana foi **parcial**'));
 });
 
 test('roadmap e changelog registram refinamentos concluídos e próximos passos', () => {
-  assert.ok(ROADMAP.includes('22/09/2026'));
+  assert.ok(ROADMAP.includes('24/09/2026'));
   assert.ok(ROADMAP.includes('Evolução visual V1–V11'));
   assert.ok(ROADMAP.includes('PR #31 — tipografia nativa'));
   assert.ok(ROADMAP.includes('PR #32 — cabeçalho do Quadro Atual'));
   assert.ok(ROADMAP.includes('PR #33 — sidebar da Rota Processada'));
   assert.ok(ROADMAP.includes('PR #34 — card ativo protegido'));
+  assert.ok(ROADMAP.includes('PR #70 — colisão visual dos marcos densos'));
+  assert.ok(ROADMAP.includes('TAM3720'));
+  assert.ok(ROADMAP.includes('GLO7634'));
+  assert.ok(ROADMAP.includes('PSFBU'));
   assert.ok(ROADMAP.includes('Não iniciar V12 automaticamente'));
   assert.ok(CHANGELOG.includes('PRs **#31–#34**'));
   assert.ok(CHANGELOG.includes('698/698 Node + 108/108 Playwright'));
