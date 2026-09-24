@@ -297,6 +297,16 @@
         filter:none;
       }
 
+      /* ADES apenas planejado: referência terminal, não trecho voado/confirmado. */
+      .ffrp-map .ffrp-declared-destination-preview,
+      #ffrpVectorFixLayer .ffrp-vroute-destination-preview{
+        stroke:#b77908;
+        stroke-width:2.4;
+        stroke-dasharray:3 10;
+        stroke-opacity:.72;
+        filter:none;
+      }
+
       /* Terminal: mesma geometria, duas leituras visuais distintas. */
       .ffrp-map .route-terminal,
       #ffrpVectorFixLayer .ffrp-vroute-terminal{
@@ -1693,9 +1703,11 @@
       const q=bridge.projectGeo(Number(p.geo.lon),Number(p.geo.lat));
       const airport=/^[A-Z]{4}$/.test(p.ident)&&(i===0||i===snapshot.points.length-1);
       const state=pointDisplayState(context,i);
-      const cls=[airport?'airport':(p.geo.kind==='coordinate'?'coord':''),state.labelled?'labelled':'',state.current?'current':''].filter(Boolean).join(' ');
+      const duplicateAdepLabel=i===0&&norm(p.ident)===norm(model.history?.adep||'');
+      const showLabel=state.labelled&&!duplicateAdepLabel;
+      const cls=[airport?'airport':(p.geo.kind==='coordinate'?'coord':''),showLabel?'labelled':'',state.current?'current':''].filter(Boolean).join(' ');
       const meta=[shortEtim(p),flightLevelLabel(p)].filter(Boolean).join(' · ');
-      const label=state.labelled?`<text x="8" y="-6">${esc(p.ident)}</text>${meta?`<text class="meta" x="8" y="8">${esc(meta)}</text>`:''}`:'';
+      const label=showLabel?`<text x="8" y="-6">${esc(p.ident)}</text>${meta?`<text class="meta" x="8" y="8">${esc(meta)}</text>`:''}`:'';
       html+=`<g class="ffrp-vfix ${cls}" transform="translate(${Number(q.x).toFixed(2)} ${Number(q.y).toFixed(2)})"><title>${esc(p.ident)}${meta?` · ${esc(meta)}`:''}</title><circle r="${state.current?6:5}"/>${label}</g>`;
     });
     if(model.fixesVisible&&continuation.length){continuation.forEach(p=>{const q=pointXY(p);html+=`<g class="ffrp-vfix declared" transform="translate(${Number(q.x).toFixed(2)} ${Number(q.y).toFixed(2)})"><title>${esc(p.ident)} · rota declarada · sem ETIM/CFL</title><circle r="4.5"/></g>`;});}
@@ -1847,7 +1859,7 @@
     ensureFixesToggle();ensureHandoffsToggle();
     if(!snapshot){if(badge)badge.hidden=true;renderProcessedVectorFixes(null);return false;}
     const unresolved=snapshot.points.filter(p=>!p.geo).length,continuation=declaredRouteContinuation(snapshot),destination=destinationRouteMarker(snapshot),terminal=terminalClosureState(snapshot);
-    if(badge){badge.hidden=false;badge.classList.toggle('warn',unresolved>0);badge.textContent=unresolved?`ROTA PROCESSADA · ${unresolved} SEM COORD.`:`ROTA PROCESSADA · ${snapshot.points.length}/${snapshot.points.length}${continuation.length?` · +${continuation.length} DECL.`:''}`;}
+    if(badge){badge.hidden=false;badge.classList.toggle('warn',unresolved>0);const plannedAdes=!!(snapshot.declaredFallback&&!snapshot.jurisdictionBoundaryFallback&&destination);const processedCount=movementPoints(snapshot).length;badge.textContent=unresolved?`ROTA PROCESSADA · ${unresolved} SEM COORD.`:plannedAdes?`ROTA PROCESSADA · ${processedCount} PONTOS + ADES`:`ROTA PROCESSADA · ${snapshot.points.length}/${snapshot.points.length}${continuation.length?` · +${continuation.length} DECL.`:''}`;}
     if(!snapshotIsComplete(snapshot))return false;
     const rms=bridge?.realMapState;
     try{
@@ -1873,7 +1885,7 @@
       const declaredPreview=declaredDestinationPreview(snapshot);
       if(declaredPreview.visible&&!terminal.visible){
         const declaredLatLngs=[[Number(declaredPreview.from.geo.lat),Number(declaredPreview.from.geo.lon)],[Number(declaredPreview.destination.geo.lat),Number(declaredPreview.destination.geo.lon)]];
-        const declared=L.polyline(declaredLatLngs,{className:'ffrp-native-declared-destination-preview',color:'#0d7084',weight:3,opacity:.82,dashArray:'8 7',lineCap:'round',lineJoin:'round',interactive:true});
+        const declared=L.polyline(declaredLatLngs,{className:'ffrp-native-declared-destination-preview',color:'#b77908',weight:2.4,opacity:.72,dashArray:'3 10',lineCap:'round',lineJoin:'round',interactive:true});
         declared.bindTooltip('Trecho planejado até o ADES · trajetória terminal não especificada · sem ETIM histórico',{sticky:true});declared.addTo(model.nativeMapLayer);
       }
       if(terminal.visible&&terminal.from?.geo&&terminal.destination?.geo){
@@ -1895,7 +1907,8 @@
           const mk=L.circleMarker([Number(p.geo.lat),Number(p.geo.lon)],{radius:state.current?6.5:(airport?5.5:4),color:state.current?'#18a0c4':state.selected?'#d59a20':destOnly?'#a66b00':declared?'#0d7084':airport?'#a66b00':'#07576a',dashArray:(declared||destOnly)?'4 3':null,weight:state.current||state.selected?3:1.8,fillColor:destOnly?'#fff1b9':declared?'#e7f6f9':airport?'#ffe59a':'#ffffff',fillOpacity:state.muted?.55:1,opacity:state.muted?.55:1,interactive:true});
           const meta=declared?`ROTA DECLARADA ${p.airway||''} · SEM ETIM`:destOnly?(terminal.active?'ADES · FECHAMENTO TERMINAL DERIVADO · SEM ETIM':terminal.visible?'ADES · FECHAMENTO TERMINAL PREVISTO · SEM ETIM':'ADES · TRAJETO TERMINAL NÃO ESPECIFICADO'):[p.etim?`ETIM ${p.etim}${p.passed?'*':''}`:'',p.cfl?`FL ${flightLevelLabel(p).replace(/^FL/,'')}`:''].filter(Boolean).join(' · ');
           const suffix=declared?'<br><small>rota declarada · sem ETIM</small>':destOnly?(terminal.active?'<br><small>fechamento terminal derivado · sem ETIM</small>':terminal.visible?'<br><small>fechamento terminal previsto · sem ETIM</small>':'<br><small>ADES · sem trajetória terminal</small>'):'';
-          const permanent=state.labelled;
+          const duplicateAdepLabel=i===0&&norm(p.ident)===norm(model.history?.adep||'');
+          const permanent=state.labelled&&!duplicateAdepLabel;
           const place=permanent?labelPlacementFor(rms.map,p,i,context.plotPoints.length,occupied):{direction:'top',offset:[0,-7]};
           mk.bindTooltip(mainFixLabelHtml(p)+suffix,{permanent,direction:place.direction,className:`ffrp-native-fix-label${permanent?'':' ffrp-native-fix-hover'}`,offset:place.offset,opacity:.98,interactive:false,sticky:!permanent});
           if(mk.bindPopup)mk.bindPopup(`<b>${esc(p.ident)}</b><br>${esc(meta||'Sem ETIM/CFL')}<br><small>${esc(p.geo.source||'')}</small>`);
@@ -2227,7 +2240,7 @@
     const tailEl=qs('#ffrpTailNote');if(tailEl)tailEl.innerHTML=terminal.active?`<div class="ffrp-tail-note terminal"><b>Fechamento terminal por Ordem TER</b><br>A aeronave é encerrada visualmente em <b>${esc(terminal.destination?.ident||model.history?.ades||'ADES')}</b> por uma linha direta tracejada a partir de <b>${esc(terminal.from?.ident||'último ponto')}</b>. Este trecho é <b>derivado/não histórico</b>, não cria ETIM, STAR, CFL ou fixos intermediários.</div>`:terminal.visible?`<div class="ffrp-tail-note terminal pending"><b>Fechamento terminal previsto</b><br>A linha amarela tracejada liga <b>${esc(terminal.from?.ident||'último ponto')}</b> ao ADES <b>${esc(terminal.destination?.ident||model.history?.ades||'ADES')}</b> apenas como <b>referência espacial derivada</b>. Antes da Ordem TER a aeronave não percorre esse trecho; não há ETIM, STAR, CFL ou fixos intermediários inventados.</div>`:continuation.length?`<div class="ffrp-tail-note"><b>Continuação declarada sem ETIM</b><br>O histórico processado termina em <b>${esc(snap.points.at(-1)?.ident||'—')}</b>. A rota do FPL/CPL declara <b>${esc(continuation[0]?.airway||'ATS')} ${esc(continuation.at(-1)?.ident||'')}</b>; por isso o FlightFlow exibe <b>${continuation.map(p=>esc(p.ident)).join(' → ')}</b> usando coordenadas publicadas, mas não movimenta a aeronave nesses pontos sem ETIM.</div>`:destination?`<div class="ffrp-tail-note"><b>Trajeto terminal não especificado</b><br>${snap.declaredFallback?`A linha azul tracejada liga <b>${esc((declaredDestinationPreview(snap).from||snap.points.at(-1))?.ident||'último ponto')}</b> ao ADES <b>${esc(destination.ident)}</b> somente como referência da rota planejada. Não cria ETIM, STAR, CFL ou passagem histórica.`:`O ADES <b>${esc(destination.ident)}</b> é mostrado como referência, sem inventar uma trajetória após o último ponto processado.`}</div>`:'';
     qs('#ffrpMapNote').textContent=snap.jurisdictionBoundaryFallback?`Trecho APP reconstruído do ADEP até o Fixo Saída ${snap.appExitFix||snap.points.at(-1)?.ident||'—'}. ETO Saída permanece dado planejado e não é convertido em ETIM.`:terminal.active?'Ordem TER recebida: linha amarela tracejada = fechamento terminal derivado até o ADES. Sem ETIM, STAR ou fixos inventados.':terminal.visible?'Linha amarela tracejada = fechamento terminal previsto até o ADES. É somente referência espacial; a aeronave só percorre o trecho na Ordem TER.':unresolved.length?`Rota processada do histórico · ${unresolved.length} ponto(s) sem coordenada. As lacunas tracejadas indicam somente ausência de resolução geográfica.`:continuation.length?'Histórico processado em vermelho. A continuação azul tracejada usa somente fixos publicados da rota declarada e permanece sem ETIM. Passe o cursor ou selecione um ponto para detalhes.':snap.declaredFallback&&destination?'Rota declarada em azul tracejado. O último trecho até o ADES é apenas referência espacial planejada, sem ETIM ou passagem histórica inventados.':'Histórico processado com coordenadas resolvidas localmente. Passe o cursor ou selecione um ponto para detalhes; o modo foco reduz informação secundária.';
     const fractions=routeDistanceFractions(move);let seg=0;for(let i=0;i<fractions.length-1;i++){if(progress+1e-9>=fractions[i]&&progress<=fractions[i+1]+1e-9){seg=i;break;}if(progress>fractions[i+1])seg=i+1;}seg=Math.min(seg,Math.max(0,move.length-2));const a=move[seg],z=move[Math.min(move.length-1,seg+1)],fa=Number(fractions[seg]||0),fb=Number(fractions[Math.min(move.length-1,seg+1)]||1),fixProgress=Math.round(fb>fa?clamp((progress-fa)/(fb-fa),0,1)*100:100);const hud=qs('#ffrpMapHud');if(hud){const dep=model.movementProfile?.departureKey,dd=Number.isFinite(dep)?new Date(dep):null,depTxt=dd?`${String(dd.getUTCHours()).padStart(2,'0')}:${String(dd.getUTCMinutes()).padStart(2,'0')}:${String(dd.getUTCSeconds()).padStart(2,'0')}`:'—',lastTimed=[...snap.points].reverse().find(p=>Number.isFinite(p.etimKey));hud.innerHTML=`<div class="ffrp-map-hud-card compact"><strong>${esc(model.history.callsign||'AERONAVE')} · ${Math.round(progress*100)}% · ${esc(a?.ident||'—')} → ${esc(z?.ident||'—')}</strong><span>${esc(flightLevelLabel(a)||'FL —')} · ${fixProgress}% do trecho · DEP ${esc(depTxt)}${lastTimed?` · último ETIM ${esc(lastTimed.ident)}`:''}${continuation.length?` · ${continuation.length} fixos s/ ETIM até ${esc(continuation.at(-1).ident)}`:''}</span></div>`;}
-    renderMap(snap,progress);const range=qs('#ffrpRange');if(range){range.max=String(Math.max(0,Math.round(playbackLimit*1000)));range.value=String(Math.min(Number(range.max),Math.round(progress*1000)));}qs('#ffrpTime').textContent=terminal.active?`${Math.round(progress*100)}% · fechamento terminal / Ordem TER · quadro ${idx+1}/${model.resolvedSnapshots.length}`:derivedMode?`${Math.round(progress*100)}% · posição derivada por DEP + rota/velocidade · sem ETIM histórico · quadro ${idx+1}/${model.resolvedSnapshots.length}`:snap.declaredFallback?`${Math.round(progress*100)}% · rota declarada · sem ETIM histórico · quadro ${idx+1}/${model.resolvedSnapshots.length}`:`${Math.round(progress*100)}% · limite ETIM · quadro ${idx+1}/${model.resolvedSnapshots.length}`;updateOpenBadge();
+    renderMap(snap,progress);const range=qs('#ffrpRange');if(range){range.max=String(Math.max(0,Math.round(playbackLimit*1000)));range.value=String(Math.min(Number(range.max),Math.round(progress*1000)));}const freezeIndex=Number(profile?.jurisdictionEndIndex);const frozenDerived=derivedMode&&Number.isInteger(freezeIndex)&&freezeIndex>=0&&nei>=freezeIndex&&!terminal.active;const freezeEvent=frozenDerived?(window.__FlightFlowFirBridge?.state?.parsed?.events||model.history?.events||[])[freezeIndex]:null;const freezeTime=freezeEvent?.time||String(freezeEvent?.timestamp||'').split(/\s+/).pop()||'';qs('#ffrpTime').textContent=terminal.active?`${Math.round(progress*100)}% · fechamento terminal / Ordem TER · quadro ${idx+1}/${model.resolvedSnapshots.length}`:frozenDerived?`${Math.round(progress*100)}% · posição congelada no TER${freezeTime?` ${freezeTime}`:''} · sem ETIM histórico · quadro ${idx+1}/${model.resolvedSnapshots.length}`:derivedMode?`${Math.round(progress*100)}% · posição derivada por DEP + rota/velocidade · sem ETIM histórico · quadro ${idx+1}/${model.resolvedSnapshots.length}`:snap.declaredFallback?`${Math.round(progress*100)}% · rota declarada · sem ETIM histórico · quadro ${idx+1}/${model.resolvedSnapshots.length}`:`${Math.round(progress*100)}% · limite ETIM · quadro ${idx+1}/${model.resolvedSnapshots.length}`;updateOpenBadge();
   }
 
   function updateOpenBadge() {
