@@ -1857,7 +1857,7 @@
     ensureFixesToggle();ensureHandoffsToggle();
     if(!snapshot){if(badge)badge.hidden=true;renderProcessedVectorFixes(null);return false;}
     const unresolved=snapshot.points.filter(p=>!p.geo).length,continuation=declaredRouteContinuation(snapshot),destination=destinationRouteMarker(snapshot),terminal=terminalClosureState(snapshot);
-    if(badge){badge.hidden=false;badge.classList.toggle('warn',unresolved>0);badge.textContent=unresolved?`ROTA PROCESSADA · ${unresolved} SEM COORD.`:`ROTA PROCESSADA · ${snapshot.points.length}/${snapshot.points.length}${continuation.length?` · +${continuation.length} DECL.`:''}`;}
+    if(badge){badge.hidden=false;badge.classList.toggle('warn',unresolved>0);const plannedAdes=!!(snapshot.declaredFallback&&!snapshot.jurisdictionBoundaryFallback&&destination);badge.textContent=unresolved?`ROTA PROCESSADA · ${unresolved} SEM COORD.`:plannedAdes?`ROTA PROCESSADA · ${snapshot.points.length} PONTOS + ADES`:`ROTA PROCESSADA · ${snapshot.points.length}/${snapshot.points.length}${continuation.length?` · +${continuation.length} DECL.`:''}`;}
     if(!snapshotIsComplete(snapshot))return false;
     const rms=bridge?.realMapState;
     try{
