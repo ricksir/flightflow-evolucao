@@ -1,36 +1,32 @@
 # Release Readiness — FlightFlow Evolução
 
-> **Status:** a release `v0.2.0` já foi publicada. A linha atual `main` / `0.2.1-dev` contém a evolução visual até a **V11** e os refinamentos pós-aceitação até o **PR34**. Uma **revalidação humana final registrada** continua obrigatória antes de qualquer nova release.
+> **Status:** a release `v0.2.0` já foi publicada. A linha atual `main` / `0.2.1-dev` contém a evolução visual até a **V11**, os refinamentos de aceitação até o **PR70** e os contratos APP/sessão consolidados. Uma **revalidação humana final registrada** continua obrigatória antes de qualquer nova release.
 
 Este documento define quando o FlightFlow ATS pode ser considerado pronto para uma versão estável.
 
 
 
-## Candidato técnico atual — pós-PR34
+## Baseline funcional atual — pós-PR70
 
 Baseline funcional certificado:
 
-`2d3ebd01b888f5760abe4ddd3d46ba287de0b782`
+`ff6f2e7a63e475ae80caa1a54b28e0eb2440eaf2`
 
 Evidência automatizada pós-merge:
 
-- quality gate **#124**: sucesso;
-- **698/698 Node**;
-- **108/108 Playwright**;
-- zero `failed`, `flaky`, `retry`, `timeout`, `AssertionError`, `not ok` e `SPATIAL_EQ_DIAG`;
-- housekeeping **#36**: sucesso.
+- quality gate **#232**: sucesso;
+- **134/134 Playwright**;
+- zero `failed`, `flaky`, `retry`, `timeout`, `AssertionError`, `not ok` e `SPATIAL_EQ_DIAG` no log bruto;
+- housekeeping **#70**: sucesso.
 
-A rodada mais recente corrigiu, sem alterar os contratos temporais/espaciais:
+PRs documentais posteriores não alteram esse baseline funcional; qualquer candidato de release deve ser novamente certificado no SHA efetivamente escolhido.
 
-- PR #25 — foco visual real do Mapa;
-- PR #26 — reforço de legibilidade do dashboard;
-- PR #27 — controles cartográficos claros no tema claro;
-- PR #28 — unificação visual do Quadro Atual com Alterações e modernização tipográfica;
-- PR #29 — estabilidade determinística do contrato de contraste durante troca de tema;
-- PR #31 — tipografia nativa entregue sem dependência externa;
-- PR #32 — cabeçalho do Quadro Atual sem duplicação/colisão;
-- PR #33 — acompanhamento automático do ponto atual no scroll da Rota Processada;
-- PR #34 — proteção do card ativo contra o cabeçalho sticky da sidebar.
+A rodada de fechamento acumulou, sem alterar os contratos temporais/espaciais protegidos:
+
+- PRs #25–#34 — foco do Mapa, legibilidade, tema claro, Quadro Atual, tipografia e acompanhamento da Rota Processada;
+- PRs #36–#40 — progresso/scroll da Rota Processada, Dados do Plano, Mission Rail recolhível, compactação do shell e Temporal Deck contínuo;
+- PRs #54–#68 — TAM3720, GLO7634, PSFBU, isolamento entre sessões e equivalência de navegação durante seleção `pending`;
+- PR #70 — correção da colisão visual dos marcos densos da timeline inferior, preservando todos os ticks.
 
 A revalidação humana do novo `main` ainda é necessária antes de uma release.
 
@@ -127,7 +123,7 @@ Esses casos estão em `tests/real-plan-route-regressions.test.js` e testes relac
 
 ## Aceitação manual antes da versão estável
 
-A automação não substitui a validação do produto com históricos representativos. Para o candidato pós-PR34, reexecutar integralmente `docs/MANUAL-ACCEPTANCE.md` e registrar o SHA testado, navegador, resoluções e históricos utilizados. A execução anterior identificou os quatro achados já remediados; ela não deve ser reutilizada como aprovação do estado atual. Antes de criar a versão estável, executar e registrar:
+A automação não substitui a validação do produto com históricos representativos. Para o baseline funcional pós-PR70 e o `main` documentalmente sincronizado, reexecutar integralmente `docs/MANUAL-ACCEPTANCE.md` e registrar o SHA testado, navegador, resoluções e históricos utilizados. A execução anterior e os gates automatizados não devem ser reutilizados como aprovação humana do estado atual. Antes de criar a versão estável, executar e registrar:
 
 - [ ] carregar pelo menos um histórico real representativo sem erro fatal;
 - [ ] validar DEP e evolução temporal;
@@ -137,6 +133,8 @@ A automação não substitui a validação do produto com históricos representa
 - [ ] validar autoplay;
 - [ ] confirmar que a aeronave passa pelos fixos esperados;
 - [ ] trocar de histórico e confirmar que não há resíduo de rota/eventos anteriores;
+- [ ] validar seleção `pending` e confirmar que a sessão ativa permanece navegável até `Ler e iniciar`;
+- [ ] validar TAM3720, GLO7634 e PSFBU conforme os contratos do roteiro manual;
 - [ ] validar origem, destino e último fixo;
 - [ ] validar STRIP e painéis operacionais usados no fluxo normal;
 - [ ] executar `npm run check` no commit candidato;
