@@ -84,13 +84,25 @@ test('histórico APP sem PONTOS exibe rota declarada UZ35 e seus fixos no mapa',
     const mapText = document.querySelector('#ffrpMap')?.textContent || '';
     const routeCards = Array.from(document.querySelectorAll('#ffrpRouteList .ffrp-point'))
       .map(node => node.textContent || '');
-    return { declared, historical, pointCount, destinationPreview, mapText, routeCards };
+    const preview = document.querySelector('#ffrpMap .ffrp-declared-destination-preview');
+    const regularDeclared = document.querySelector('#ffrpMap .route-declared:not(.ffrp-declared-destination-preview)');
+    const previewStyle = preview ? getComputedStyle(preview) : null;
+    const declaredStyle = regularDeclared ? getComputedStyle(regularDeclared) : null;
+    return {
+      declared, historical, pointCount, destinationPreview, mapText, routeCards,
+      previewStroke: previewStyle?.stroke || '',
+      previewDash: previewStyle?.strokeDasharray || '',
+      declaredStroke: declaredStyle?.stroke || '',
+      declaredDash: declaredStyle?.strokeDasharray || '',
+    };
   });
 
   expect(visual.declared).toBeGreaterThanOrEqual(1);
   expect(visual.historical).toBe(0);
   expect(visual.pointCount).toBeGreaterThanOrEqual(6);
   expect(visual.destinationPreview).toBe(1);
+  expect(visual.previewStroke).not.toBe(visual.declaredStroke);
+  expect(visual.previewDash).not.toBe(visual.declaredDash);
   for (const ident of ['SBBR', 'GEPMO', 'ANBIR', 'IREGU', 'REINA', 'SBCF']) {
     expect(visual.mapText).toContain(ident);
   }
