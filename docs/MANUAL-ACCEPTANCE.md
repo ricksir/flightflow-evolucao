@@ -6,7 +6,7 @@ Este roteiro valida em navegador real a linha visual **V1–V11**, os contratos 
 >
 > Baseline atual pós-PR70: `ff6f2e7a63e475ae80caa1a54b28e0eb2440eaf2`.
 >
-> Último gate integral auditado antes do merge: PR #70, run #231, com **134/134 Playwright**, sem `failed`, `flaky`, `retry`, `timeout`, `AssertionError`, `not ok` ou `SPATIAL_EQ_DIAG`. O gate pós-merge deve ser conferido antes de qualquer release.
+> Gate pós-merge #232 no SHA `ff6f2e7a63e475ae80caa1a54b28e0eb2440eaf2`: **134/134 Playwright**, sem `failed`, `flaky`, `retry`, `timeout`, `AssertionError`, `not ok` ou `SPATIAL_EQ_DIAG` no log bruto.
 >
 > A revalidação humana final deste baseline permanece **PENDENTE**; este roteiro deve ser reexecutado sobre a `main` pós-PR70 antes de qualquer nova release.
 
