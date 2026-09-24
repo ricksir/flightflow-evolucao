@@ -245,3 +245,65 @@ test('controles da Rota Processada navegam GLO7634 até o Fixo Saída sem alcan�
     Math.abs(Number(input.value) - expected * 1000), setup.acpTarget)).toBeLessThan(2);
   await expect(page.locator('#ffrpEventInfo')).toContainText('Evento ' + (setup.acpIndex + 1) + '/' + setup.eventCount);
 });
+
+
+test('auto-fit do GLO7634 APP usa somente SBBR → MILIX e exclui KMCO remoto', async ({ page }) => {
+  await page.goto('/index.html', { waitUntil: 'load' });
+  await expect.poll(() => page.evaluate(() => Boolean(window.FlightFlowRouteProcessedV7412 && window.FlightParser))).toBe(true);
+
+  const result = await page.evaluate(async fixture => {
+    const api = window.FlightFlowRouteProcessedV7412;
+    const bridge = window.__FlightFlowFirBridge;
+    const parsed = window.FlightParser.parseHistoryText(fixture, { includeRawText: true });
+    bridge.state.parsed = parsed;
+    bridge.state.index = 0;
+    bridge.state.geo.eventRoutes = [];
+
+    await api.analyzeText(fixture, 'GLO7634APP-fit-bounds.txt');
+    const model = api.getModel();
+    const snapshot = model.resolvedSnapshots[0];
+
+    // Resolve o ADES global para garantir que ele existe e ainda assim seja
+    // deliberadamente excluído dos pontos entregues ao fitBounds.
+    model.embedded.set('KMCO', {
+      ident: 'KMCO',
+      lat: 28.4294,
+      lon: -81.3090,
+      kind: 'airport',
+      source: 'fixture KMCO'
+    });
+
+    const destination = api.destinationRouteMarker(snapshot);
+    const fitPoints = api.nativeFitLatLngs(snapshot, destination);
+
+    return {
+      boundary: Boolean(snapshot.jurisdictionBoundaryFallback),
+      routeIds: snapshot.points.map(point => point.ident),
+      routeLatLngs: snapshot.points.map(point => [
+        Number(point.geo?.lat),
+        Number(point.geo?.lon),
+      ]),
+      destination: destination ? {
+        ident: destination.ident,
+        lat: Number(destination.geo?.lat),
+        lon: Number(destination.geo?.lon),
+      } : null,
+      fitPoints,
+    };
+  }, GLO7634_APP);
+
+  expect(result.boundary).toBe(true);
+  expect(result.routeIds).toEqual(['SBBR', 'MILIX']);
+  expect(result.destination?.ident).toBe('KMCO');
+  expect(result.fitPoints).toHaveLength(2);
+
+  const normalize = points => points.map(([lat, lon]) => [
+    Number(Number(lat).toFixed(6)),
+    Number(Number(lon).toFixed(6)),
+  ]);
+  expect(normalize(result.fitPoints)).toEqual(normalize(result.routeLatLngs));
+  expect(result.fitPoints.some(([lat, lon]) =>
+    Math.abs(Number(lat) - Number(result.destination.lat)) < 0.0001 &&
+    Math.abs(Number(lon) - Number(result.destination.lon)) < 0.0001
+  )).toBe(false);
+});
