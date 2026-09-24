@@ -262,6 +262,16 @@ test('auto-fit do GLO7634 APP enquadra somente SBBR → MILIX e ignora KMCO remo
     await api.analyzeText(fixture, 'GLO7634APP-fit-bounds.txt');
     const model = api.getModel();
     const snapshot = model.resolvedSnapshots[0];
+
+    // Força um ADES remoto resolvido para reproduzir o caso visual real:
+    // o plano global conhece KMCO, mas o trecho APP continua limitado a MILIX.
+    model.embedded.set('KMCO', {
+      ident: 'KMCO',
+      lat: 28.4294,
+      lon: -81.3090,
+      kind: 'airport',
+      source: 'fixture KMCO'
+    });
     api.applyProcessedRouteToFlightFlow({ fit: true });
 
     const bounds = bridge.realMapState?.routeBounds;
