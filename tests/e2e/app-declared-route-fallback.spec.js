@@ -84,13 +84,25 @@ test('histórico APP sem PONTOS exibe rota declarada UZ35 e seus fixos no mapa',
     const mapText = document.querySelector('#ffrpMap')?.textContent || '';
     const routeCards = Array.from(document.querySelectorAll('#ffrpRouteList .ffrp-point'))
       .map(node => node.textContent || '');
-    return { declared, historical, pointCount, destinationPreview, mapText, routeCards };
+    const preview = document.querySelector('#ffrpMap .ffrp-declared-destination-preview');
+    const regularDeclared = document.querySelector('#ffrpMap .route-declared:not(.ffrp-declared-destination-preview)');
+    const previewStyle = preview ? getComputedStyle(preview) : null;
+    const declaredStyle = regularDeclared ? getComputedStyle(regularDeclared) : null;
+    return {
+      declared, historical, pointCount, destinationPreview, mapText, routeCards,
+      previewStroke: previewStyle?.stroke || '',
+      previewDash: previewStyle?.strokeDasharray || '',
+      declaredStroke: declaredStyle?.stroke || '',
+      declaredDash: declaredStyle?.strokeDasharray || '',
+    };
   });
 
   expect(visual.declared).toBeGreaterThanOrEqual(1);
   expect(visual.historical).toBe(0);
   expect(visual.pointCount).toBeGreaterThanOrEqual(6);
   expect(visual.destinationPreview).toBe(1);
+  expect(visual.previewStroke).not.toBe(visual.declaredStroke);
+  expect(visual.previewDash).not.toBe(visual.declaredDash);
   for (const ident of ['SBBR', 'GEPMO', 'ANBIR', 'IREGU', 'REINA', 'SBCF']) {
     expect(visual.mapText).toContain(ident);
   }
@@ -208,6 +220,16 @@ test('APP derivado exibe todos os fixos da rota processada também no mapa princ
       const content = layer.getTooltip?.()?.getContent?.();
       return typeof content === 'string' ? content : String(content || '');
     });
+    const nativeAdepPermanent = nativeFixes.some(layer => {
+      const tooltip = layer.getTooltip?.();
+      const content = tooltip?.getContent?.();
+      const text = typeof content === 'string' ? content : String(content || '');
+      return text.includes('SBBR') && Boolean(tooltip?.options?.permanent);
+    });
+    const vectorAdepPermanent = Array.from(vector?.querySelectorAll('.ffrp-vfix') || []).some(node => {
+      const title = node.querySelector('title')?.textContent || '';
+      return title.includes('SBBR') && Boolean(node.querySelector('text'));
+    });
 
     return {
       engine,
@@ -219,11 +241,13 @@ test('APP derivado exibe todos os fixos da rota processada também no mapa princ
         : (vector?.querySelectorAll('.ffrp-vfix').length || 0),
       labels: engine === 'leaflet' ? nativeTitles : vectorTitles,
       text: engine === 'leaflet' ? nativeTitles.join(' ') : (vector?.textContent || ''),
+      adepPermanent: engine === 'leaflet' ? nativeAdepPermanent : vectorAdepPermanent,
     };
   }, APP_DERIVED_FIXTURE);
 
   expect(result.routeCount).toBeGreaterThanOrEqual(1);
   expect(result.fixCount).toBeGreaterThanOrEqual(6);
+  expect(result.adepPermanent).toBe(false);
   for (const ident of ['SBBR', 'GEPMO', 'ANBIR', 'IREGU', 'REINA', 'SBCF']) {
     expect(result.text).toContain(ident);
   }
@@ -275,11 +299,17 @@ test('APP sem ETIM avança pela rota derivada após DEP e congela no TER da juri
 
   await expect.poll(() => page.evaluate(() => Number(window.__FlightFlowFirBridge?.state?.motion?.targetProgress || 0))).toBeGreaterThan(0);
 
+  await expect(page.locator('#ffrpMainBadge')).toContainText('5 PONTOS + ADES');
+
   await page.locator('#ffrpOpen').click();
   await expect(page.locator('#ffrpModal')).toBeVisible();
-  await expect(page.locator('#ffrpTime')).toContainText('posição derivada por DEP + rota/velocidade');
+  await expect(page.locator('#ffrpTime')).toContainText('posição congelada no TER 12:46:04');
   await expect.poll(() => page.locator('#ffrpRange').evaluate(input => Number(input.value))).toBeGreaterThan(0);
   await expect(page.locator('#ffrpRouteList .ffrp-point.active-point')).not.toContainText('SBBR');
+
+  await page.locator('#ffrpEventSelect').selectOption(String(setup.archiveIndex));
+  await expect.poll(() => page.evaluate(() => window.__FlightFlowFirBridge?.state?.index)).toBe(setup.archiveIndex);
+  await expect(page.locator('#ffrpTime')).toContainText('posição congelada no TER 12:46:04');
 });
 
 
