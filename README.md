@@ -9,7 +9,7 @@ Linha independente de evolução visual e de experiência do FlightFlow. Parte d
 - mudanças visuais deste repositório não retornam automaticamente ao ATS;
 - o núcleo temporal/espacial continua protegido pelos mesmos contratos até decisão explícita.
 
-A evolução visual foi consolidada até a **V11 — Flight Situation Strip**. As rodadas de aceitação humana geraram refinamentos incrementais até o **PR34**, mantendo a direção aprovada de Mission Rail, Command Bar técnica, mapa dominante, Quadro Operacional à direita e Temporal Deck integrado.
+A evolução visual foi consolidada até a **V11 — Flight Situation Strip**. As rodadas de aceitação e remediação geraram refinamentos incrementais até o **PR70**, mantendo a direção aprovada de Mission Rail, Command Bar técnica, mapa dominante, Quadro Operacional à direita e Temporal Deck integrado.
 
 ## Estado do projeto
 
@@ -20,10 +20,10 @@ A evolução visual foi consolidada até a **V11 — Flight Situation Strip**. A
 - **Quality gates:** auditoria estática, inventário de funções, testes Node, disponibilidade do navegador e Playwright
 - **Design System:** documentado em `docs/DESIGN_SYSTEM.md`
 - **Estado técnico certificado:** documentado em `docs/AI_CURRENT_STATE.md`
-- **Baseline funcional certificado pós-PR34:** `2d3ebd01b888f5760abe4ddd3d46ba287de0b782` — quality gate pós-merge #124, **698/698 Node + 108/108 Playwright**
+- **Baseline funcional certificado pós-PR70:** `ff6f2e7a63e475ae80caa1a54b28e0eb2440eaf2` — quality gate pós-merge #232, **134/134 Playwright**, sem marcadores críticos no log bruto
 - **Baseline histórico V11:** `a27ffee33577d88536a3828f9f3cca97b47fc898` — workflow pós-merge #59, **675/675 Node + 79/79 Playwright**
-- **Rodada de aceitação mais recente:** PR31 (tipografia nativa), PR32 (cabeçalho do Quadro Atual), PR33 (scroll seguindo o ponto atual na Rota Processada) e PR34 (proteção contra o cabeçalho sticky da sidebar)
-- **Aceitação manual da versão atual:** `docs/MANUAL-ACCEPTANCE.md` — **revalidação final pós-PR34 pendente**
+- **Rodada de remediação mais recente:** PR36–PR40 (Rota Processada, Dados do Plano, Mission Rail, shell superior e Temporal Deck) e PR70 (colisão visual dos marcos densos da timeline inferior)
+- **Aceitação manual da versão atual:** `docs/MANUAL-ACCEPTANCE.md` — **revalidação humana final pós-PR70 pendente**
 - **Modularização contínua:** encerrada após o PR #211; novas extrações só devem ocorrer quando houver necessidade funcional concreta
 
 > **Importante para testar as mudanças mais recentes:** a release `v0.2.0` não contém a linha visual consolidada V1–V11. Para validar o estado atual do FlightFlow Evolução, use a branch `main`.
