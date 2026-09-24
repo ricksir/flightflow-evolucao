@@ -1,21 +1,20 @@
 # Roadmap técnico — FlightFlow Evolução
 
-> Estado revisado em **22/09/2026**, após o fechamento técnico dos refinamentos de aceitação até o **PR34**.
+> Estado revisado em **24/09/2026**, após o fechamento técnico dos refinamentos e contratos operacionais até o **PR70**.
 
 ## Estado atual
 
-A rodada principal de evolução visual e os refinamentos derivados das aceitações humanas estão tecnicamente concluídos até o PR34. O baseline funcional certificado é:
+A rodada principal de evolução visual, as remediações de aceitação e os contratos APP/sessão estão tecnicamente concluídos até o PR70. O baseline funcional certificado é:
 
-`2d3ebd01b888f5760abe4ddd3d46ba287de0b782`
+`ff6f2e7a63e475ae80caa1a54b28e0eb2440eaf2`
 
-Certificação pós-merge atual:
+Certificação pós-merge do baseline funcional:
 
-- quality gate **#124**: sucesso;
-- **698/698** testes Node;
-- **108/108** testes Playwright;
-- zero `failed`, `flaky`, `retry`, `timeout`, `AssertionError`, `SPATIAL_EQ_DIAG` e `not ok`;
-- housekeeping **#36**: sucesso;
-- branch temporária do PR34 removida.
+- quality gate **#232**: sucesso;
+- **134/134** testes Playwright;
+- zero `failed`, `flaky`, `retry`, `timeout`, `AssertionError`, `SPATIAL_EQ_DIAG` e `not ok` no log bruto;
+- housekeeping **#70**: sucesso;
+- PRs documentais posteriores não alteram o comportamento funcional certificado.
 
 Baseline histórico V11: `a27ffee33577d88536a3828f9f3cca97b47fc898`, workflow #59, **675/675 Node + 79/79 Playwright**.
 
@@ -63,19 +62,24 @@ Baseline histórico V11: `a27ffee33577d88536a3828f9f3cca97b47fc898`, workflow #5
 - [x] PR #33 — sidebar da Rota Processada acompanha o waypoint atual;
 - [x] PR #34 — card ativo protegido contra o cabeçalho sticky;
 - [x] quality gate #124 verde no pós-merge do PR34;
-- [x] housekeeping #36 e remoção da branch temporária.
+- [x] housekeeping #36 e remoção da branch temporária;
+- [x] PRs #36–#40 — Rota Processada, Dados do Plano, Mission Rail, shell superior e Temporal Deck;
+- [x] PRs #54–#68 — contratos TAM3720, GLO7634, PSFBU e troca de sessão `pending` → `Ler e iniciar`;
+- [x] PR #70 — colisão visual dos marcos densos da timeline inferior corrigida sem alterar `buildTimeline()` ou `goTo()`;
+- [x] quality gate #232 verde no pós-merge do PR70;
+- [x] housekeeping #70 concluído.
 
 ## Rodada de fechamento
 
 ### 1. Documentação
 
-- [x] sincronizar README, Roadmap, estado técnico, changelog, Release Readiness e roteiro de aceitação com o fechamento PR20–PR23;
+- [x] sincronizar README, Roadmap, estado técnico, Release Readiness e roteiro de aceitação com o fechamento até PR70;
 - [x] manter a release publicada `v0.2.0` distinta da linha de desenvolvimento atual;
 - [x] registrar o fechamento técnico sem declarar revalidação humana inexistente.
 
 ### 2. Revalidação manual final — pendente
 
-Reexecutar `docs/MANUAL-ACCEPTANCE.md` no `main` pós-PR34, com histórico representativo, e registrar o resultado. A validação humana já identificou e direcionou PR32–PR34, mas ainda falta o reteste final do candidato atual. A aceitação anterior encontrou os quatro achados já corrigidos e não equivale à aprovação do estado atual.
+Reexecutar `docs/MANUAL-ACCEPTANCE.md` no `main` pós-PR70, com históricos representativos, e registrar o resultado. A validação humana anterior direcionou remediações posteriores, mas ainda falta o reteste final do candidato atual. Gates automatizados e aceitações anteriores não equivalem à aprovação do estado atual.
 
 Obrigatório antes de nova release:
 
@@ -84,6 +88,8 @@ Obrigatório antes de nova release:
 - [ ] validar fluxo abaixo de 900 px;
 - [ ] validar temas claro, escuro e Dashboard moderno;
 - [ ] validar TAM3774 e o fechamento terminal pré-TER/TER;
+- [ ] validar TAM3720, GLO7634 e PSFBU;
+- [ ] validar seleção `pending` → `Ler e iniciar`, inclusive autoplay já em andamento;
 - [ ] validar Próximo/Anterior/timeline/scrubber/teclado/autoplay;
 - [ ] validar Rota Processada, inclusive scroll automático do ponto atual e cabeçalho sticky;
 - [ ] validar STRIP e FPV;
