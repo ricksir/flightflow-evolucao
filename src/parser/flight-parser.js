@@ -596,8 +596,36 @@
   }
 
   function stageForProgress(progress, event) {
-    if (progress >= 0.995) return { id: 'archived', label: 'ARQUIVADO', scene: 'Registro concluído e arquivado.' };
-    if (progress >= 0.94) return { id: 'landed', label: 'POUSO E TÉRMINO', scene: 'A aeronave pousa, libera a pista e o plano é encerrado.' };
+    const snapshot = event && event.snapshot ? event.snapshot : {};
+    const eventText = normalizeSearchText([
+      event && event.operation,
+      event && event.messageType,
+      event && event.content,
+      event && event.rawBlock,
+      snapshot.status,
+      snapshot.groundState
+    ].filter(Boolean).join('\n'));
+    const hasArrivalEvidence = /(^|\s)ARR(\s|$)|RECEPCAO DE MENSAGEM ARR/.test(eventText);
+    const isTermination = /EVENTO AUTOMATICO DE TERMINO|(^|\s)TERMINADO(\s|$)|(^|\s)TER(\s|$)/.test(eventText);
+
+    if (progress >= 0.995) return {
+      id: 'archived',
+      label: 'ARQUIVADO',
+      scene: 'Registro concluído e arquivado. O arquivamento não cria uma nova posição de voo.'
+    };
+    if (progress >= 0.94) {
+      if (hasArrivalEvidence) {
+        return { id: 'landed', label: 'POUSO E TÉRMINO', scene: 'A chegada foi registrada por mensagem ARR e o plano é encerrado.' };
+      }
+      if (isTermination) {
+        return {
+          id: 'terminated',
+          label: 'TÉRMINO DO ACOMPANHAMENTO',
+          scene: 'O acompanhamento operacional é encerrado neste evento; não há evidência de pouso no ADES.'
+        };
+      }
+      return { id: 'landed', label: 'POUSO E TÉRMINO', scene: 'O plano alcança a fase final de chegada e término.' };
+    }
     if (progress >= 0.82) return { id: 'approach', label: 'DESCIDA / APROXIMAÇÃO', scene: 'A aeronave entra na terminal de chegada e recebe os eventos finais.' };
     if (progress >= 0.57) return { id: 'cruise', label: 'CRUZEIRO', scene: 'A aeronave progride na rota entre os órgãos de controle.' };
     if (progress >= 0.43) return { id: 'climb', label: 'SUBIDA', scene: 'A aeronave sobe após a decolagem e entra na fase em rota.' };
