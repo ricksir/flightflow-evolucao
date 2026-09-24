@@ -296,20 +296,23 @@ test('auto-fit do GLO7634 APP enquadra somente SBBR → MILIX e ignora KMCO remo
       east: bounds?.getEast?.(),
       south: bounds?.getSouth?.(),
       north: bounds?.getNorth?.(),
-      destinationInside: destination && bounds?.contains
-        ? bounds.contains([Number(destination.geo.lat), Number(destination.geo.lon)])
-        : null,
-      actualInside: bounds?.contains
-        ? actual.map(point => bounds.contains([point.lat, point.lon]))
-        : [],
     };
   }, GLO7634_APP);
 
   expect(result.boundary).toBe(true);
   expect(result.actual.map(point => point.ident)).toEqual(['SBBR', 'MILIX']);
   expect(result.destination?.ident).toBe('KMCO');
-  expect(result.actualInside).toEqual([true, true]);
-  expect(result.destinationInside).toBe(false);
+
+  const expectedWest = Math.min(...result.actual.map(point => point.lon));
+  const expectedEast = Math.max(...result.actual.map(point => point.lon));
+  const expectedSouth = Math.min(...result.actual.map(point => point.lat));
+  const expectedNorth = Math.max(...result.actual.map(point => point.lat));
+
+  expect(Number(result.west)).toBeCloseTo(expectedWest, 5);
+  expect(Number(result.east)).toBeCloseTo(expectedEast, 5);
+  expect(Number(result.south)).toBeCloseTo(expectedSouth, 5);
+  expect(Number(result.north)).toBeCloseTo(expectedNorth, 5);
   expect(Number(result.east) - Number(result.west)).toBeLessThan(3);
   expect(Number(result.north) - Number(result.south)).toBeLessThan(3);
+  expect(Number(result.destination.lon)).toBeLessThan(Number(result.west) - 20);
 });
