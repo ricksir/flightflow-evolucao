@@ -1,14 +1,14 @@
 # Aceitação Manual — FlightFlow Evolução / main
 
-Este roteiro valida em navegador real a linha visual **V1–V11**, os contratos operacionais preservados e as remediações acumuladas até o **PR34**.
+Este roteiro valida em navegador real a linha visual **V1–V11**, os contratos operacionais preservados e as remediações acumuladas até o **PR70**.
 
 > **Status atual:** fechamento técnico pós-aceitação certificado; **revalidação humana final pendente**.
 >
-> Baseline funcional certificado pós-PR34: `2d3ebd01b888f5760abe4ddd3d46ba287de0b782`.
+> Baseline atual pós-PR70: `ff6f2e7a63e475ae80caa1a54b28e0eb2440eaf2`.
 >
-> Pós-merge quality gate #124: **698/698 Node + 108/108 Playwright**, sem `failed`, `flaky`, `retry`, `timeout`, `AssertionError`, `not ok` ou `SPATIAL_EQ_DIAG`.
+> Último gate integral auditado antes do merge: PR #70, run #231, com **134/134 Playwright**, sem `failed`, `flaky`, `retry`, `timeout`, `AssertionError`, `not ok` ou `SPATIAL_EQ_DIAG`. O gate pós-merge deve ser conferido antes de qualquer release.
 >
-> A revalidação humana final deste baseline permanece **PENDENTE**; este roteiro deve ser reexecutado antes de qualquer nova release.
+> A revalidação humana final deste baseline permanece **PENDENTE**; este roteiro deve ser reexecutado sobre a `main` pós-PR70 antes de qualquer nova release.
 
 ## 1. Preparação
 
@@ -78,6 +78,12 @@ Validar em **claro**, **escuro** e **Dashboard moderno/Velox**:
 - [ ] **PR32 / cabeçalho do Quadro Atual:** títulos longos, como “Evento Automático de Envio de Mensagem ACT”, quebram sem invadir o primeiro card e o eyebrow mostra apenas “QUADRO ATUAL”;
 - [ ] **PR33 / scroll da Rota Processada:** em “Acompanhar timeline”, avançar e retroceder eventos move a lista lateral para manter o waypoint atual visível;
 - [ ] **PR34 / cabeçalho sticky:** o card atual permanece abaixo do cabeçalho “Quadro x/y / Mostrar quadro no FlightFlow”, sem ficar encoberto;
+- [ ] **PR36 / progresso da Rota Processada:** em progresso intermediário/avançado, o scroll acompanha o waypoint sem aparentar fim prematuro;
+- [ ] **PR37 / composição e atualização:** não há sobreposição de quadros/textos e os campos `ATUALIZADO` em Dados do Plano ficam perceptíveis sem comprometer legibilidade;
+- [ ] **PR38 / Mission Rail:** expandir/recolher altera de fato a largura útil do workspace/mapa e mantém controles acessíveis;
+- [ ] **PR39 / shell superior:** a faixa superior permanece compacta, alinhada e sem área morta excessiva;
+- [ ] **PR40 / Temporal Deck:** a barra inferior é contínua e homogênea, sem caixotes internos, mantendo Play, Anterior/Próximo, scrubber, velocidade e toggles operáveis;
+- [ ] **PR70 / marcos densos:** todos os ticks da timeline inferior permanecem presentes e os rótulos DEP densos não colidem em 1600×900;
 - [ ] o mapa continua sendo a superfície dominante após todas essas correções.
 
 ## 4. Fluxo operacional básico
@@ -93,7 +99,9 @@ Com histórico representativo:
 - [ ] setas/teclado convergem para o mesmo estado;
 - [ ] autoplay percorre a mesma sequência;
 - [ ] a aeronave aparece sobre os checkpoints correspondentes;
-- [ ] trocar de histórico limpa rota/eventos derivados da sessão anterior.
+- [ ] trocar de histórico após `Ler e iniciar` limpa rota/eventos derivados da sessão anterior;
+- [ ] apenas selecionar outro arquivo deixa a nova sessão em `pending` e preserva a sessão/Rota Processada atual até `Ler e iniciar`;
+- [ ] durante `pending`, Próximo/Anterior, ArrowLeft/ArrowRight, timeline, scrubber, autoplay e Home/End continuam navegando a sessão ativa.
 
 ## 5. Sequência crítica protegida
 
@@ -129,7 +137,40 @@ Validar:
 - [ ] avançar novamente ao TER reproduz a mesma geometria;
 - [ ] a linha final até o destino permanece visível conforme a semântica ativa.
 
-## 7. Ferramentas e painéis
+## 7. Cenários APP e troca de sessão
+
+### TAM3720
+
+- [ ] não existe quadro PONTOS/ETIM;
+- [ ] rota declarada `GEPMO UZ35 REINA` expande para `GEPMO → ANBIR → IREGU → REINA`;
+- [ ] velocidade `N0450` e DEP `12:29:11` são respeitados;
+- [ ] movimento derivado ocorre somente após DEP;
+- [ ] não é fabricado ETIM;
+- [ ] fixos aparecem no mapa principal e a navegação evento a evento é preservada.
+
+### GLO7634
+
+- [ ] ADEP `SBBR`, ADES `KMCO`, Fixo Saída `MILIX`;
+- [ ] ETO Saída `09-1225` não é tratado como ETIM;
+- [ ] DEP `12:27:35`, ACP `12:33:22` e TER `12:44:04` preservam a semântica do histórico;
+- [ ] a rota operacional APP termina em `MILIX`;
+- [ ] TER encerra a jurisdição em MILIX e não desloca a aeronave até KMCO.
+
+### PSFBU
+
+- [ ] ADEP `SBBR`, ADES `SBGO`, rota `DCT`, velocidade `N0300`;
+- [ ] possui CNL e não possui DEP;
+- [ ] regra **SEM DEP = SEM MOVIMENTO** é preservada;
+- [ ] ao ativar PSFBU após um APP em movimento, a rota/metadados derivados anteriores são limpos e o progresso espacial volta ao início.
+
+### Seleção `pending` → `Ler e iniciar`
+
+- [ ] selecionar outro arquivo muda apenas a seleção e mantém callsign, histórico e Rota Processada da sessão ativa;
+- [ ] autoplay já iniciado continua sobre a sessão ativa enquanto a nova seleção está `pending`;
+- [ ] ao clicar `Ler e iniciar`, playback anterior é interrompido, a nova sessão é ativada e o estado derivado antigo é limpo;
+- [ ] não há contaminação de rota, metadados ou progresso espacial entre as sessões.
+
+## 8. Ferramentas e painéis
 
 - [ ] Rota Processada abre sem cobrir indevidamente a rota;
 - [ ] em **Acompanhar timeline**, usar ▶/◀ por vários eventos faz a lista lateral acompanhar o waypoint atual;
@@ -142,7 +183,7 @@ Validar:
 - [ ] controles de mapa continuam funcionais;
 - [ ] Configurações e aparência continuam abrindo normalmente.
 
-## 8. Critério de aprovação
+## 9. Critério de aprovação
 
 A aceitação manual só pode ser marcada como concluída quando:
 
@@ -168,7 +209,7 @@ Histórico(s) usado(s): ____________________
 
 Observações: ______________________________
 
-## 9. Como registrar um problema
+## 10. Como registrar um problema
 
 Registrar:
 
