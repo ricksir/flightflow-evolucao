@@ -51,3 +51,50 @@ test('index carrega o módulo antes do consumidor window.FlightParser', () => {
     'implementação do parser não deve voltar a ficar inline no index.html'
   );
 });
+
+
+test('término APP sem ARR não declara pouso no ADES', () => {
+  const event = {
+    operation: 'Evento Automático de Término',
+    messageType: 'EVENTO',
+    content: '',
+    rawBlock: 'OPERAÇÃO : Evento Automático de Término',
+    snapshot: {
+      status: 'TERMINADO',
+      groundState: ''
+    }
+  };
+  const stage = api.stageForProgress(0.965, event);
+  assert.equal(stage.id, 'terminated');
+  assert.equal(stage.label, 'TÉRMINO DO ACOMPANHAMENTO');
+  assert.match(stage.scene, /não há evidência de pouso no ADES/i);
+  assert.doesNotMatch(stage.scene, /a aeronave pousa/i);
+});
+
+test('mensagem ARR preserva semântica de chegada/pouso', () => {
+  const event = {
+    operation: 'Recepção de Mensagem ARR',
+    messageType: 'ARR',
+    content: '(ARRSBCF-SBBR123-TAM3720-SBBR-SBCF1246)',
+    rawBlock: 'OPERAÇÃO : Recepção de Mensagem ARR',
+    snapshot: {
+      status: 'TERMINADO',
+      groundState: ''
+    }
+  };
+  const stage = api.stageForProgress(0.965, event);
+  assert.equal(stage.id, 'landed');
+  assert.equal(stage.label, 'POUSO E TÉRMINO');
+  assert.match(stage.scene, /registrada por mensagem ARR/i);
+});
+
+test('arquivamento não sugere novo deslocamento da aeronave', () => {
+  const stage = api.stageForProgress(1, {
+    operation: 'Evento Automático de Arquivamento',
+    messageType: 'EVENTO',
+    snapshot: { status: 'ARQUIVADO' }
+  });
+  assert.equal(stage.id, 'archived');
+  assert.equal(stage.label, 'ARQUIVADO');
+  assert.match(stage.scene, /não cria uma nova posição de voo/i);
+});
