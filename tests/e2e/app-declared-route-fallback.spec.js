@@ -277,9 +277,13 @@ test('APP sem ETIM avança pela rota derivada após DEP e congela no TER da juri
 
   await page.locator('#ffrpOpen').click();
   await expect(page.locator('#ffrpModal')).toBeVisible();
-  await expect(page.locator('#ffrpTime')).toContainText('posição derivada por DEP + rota/velocidade');
+  await expect(page.locator('#ffrpTime')).toContainText('posição congelada no TER');
   await expect.poll(() => page.locator('#ffrpRange').evaluate(input => Number(input.value))).toBeGreaterThan(0);
   await expect(page.locator('#ffrpRouteList .ffrp-point.active-point')).not.toContainText('SBBR');
+
+  await page.locator('#ffrpEventSelect').selectOption(String(setup.archiveIndex));
+  await expect.poll(() => page.evaluate(() => window.__FlightFlowFirBridge?.state?.index)).toBe(setup.archiveIndex);
+  await expect(page.locator('#ffrpTime')).toContainText('posição congelada no TER');
 });
 
 
