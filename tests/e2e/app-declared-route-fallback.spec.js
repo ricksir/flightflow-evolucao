@@ -274,6 +274,7 @@ test('APP sem ETIM avança pela rota derivada após DEP e congela no TER da juri
   expect(setup.routeTarget).toBe(setup.terTarget);
 
   await expect.poll(() => page.evaluate(() => Number(window.__FlightFlowFirBridge?.state?.motion?.targetProgress || 0))).toBeGreaterThan(0);
+  await expect(page.locator('#ffrpMainBadge')).toContainText('5 PONTOS + ADES');
 
   await page.locator('#ffrpOpen').click();
   await expect(page.locator('#ffrpModal')).toBeVisible();
