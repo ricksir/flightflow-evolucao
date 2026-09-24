@@ -297,6 +297,16 @@
         filter:none;
       }
 
+      /* ADES apenas planejado: referência terminal, não trecho voado/confirmado. */
+      .ffrp-map .ffrp-declared-destination-preview,
+      #ffrpVectorFixLayer .ffrp-vroute-destination-preview{
+        stroke:#b77908;
+        stroke-width:2.4;
+        stroke-dasharray:3 10;
+        stroke-opacity:.72;
+        filter:none;
+      }
+
       /* Terminal: mesma geometria, duas leituras visuais distintas. */
       .ffrp-map .route-terminal,
       #ffrpVectorFixLayer .ffrp-vroute-terminal{
@@ -1883,7 +1893,7 @@
       const declaredPreview=declaredDestinationPreview(snapshot);
       if(declaredPreview.visible&&!terminal.visible){
         const declaredLatLngs=[[Number(declaredPreview.from.geo.lat),Number(declaredPreview.from.geo.lon)],[Number(declaredPreview.destination.geo.lat),Number(declaredPreview.destination.geo.lon)]];
-        const declared=L.polyline(declaredLatLngs,{className:'ffrp-native-declared-destination-preview',color:'#0d7084',weight:3,opacity:.82,dashArray:'8 7',lineCap:'round',lineJoin:'round',interactive:true});
+        const declared=L.polyline(declaredLatLngs,{className:'ffrp-native-declared-destination-preview',color:'#b77908',weight:2.4,opacity:.72,dashArray:'3 10',lineCap:'round',lineJoin:'round',interactive:true});
         declared.bindTooltip('Trecho planejado até o ADES · trajetória terminal não especificada · sem ETIM histórico',{sticky:true});declared.addTo(model.nativeMapLayer);
       }
       if(terminal.visible&&terminal.from?.geo&&terminal.destination?.geo){
