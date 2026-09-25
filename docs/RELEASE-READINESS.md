@@ -1,23 +1,24 @@
 # Release Readiness — FlightFlow Evolução
 
-> **Status:** a release `v0.2.0` já foi publicada. A linha atual `main` / `0.2.1-dev` contém a evolução visual até a **V11**, os refinamentos de aceitação até o **PR70** e os contratos APP/sessão consolidados. Uma **revalidação humana final registrada** continua obrigatória antes de qualquer nova release.
+> **Status:** a release `v0.2.0` já foi publicada. A linha atual `main` / `0.2.1-dev` contém a evolução visual até a **V11**, os refinamentos de aceitação até o **PR87** e os contratos APP/sessão consolidados. Uma **revalidação humana final registrada** continua obrigatória antes de qualquer nova release.
 
 Este documento define quando o FlightFlow ATS pode ser considerado pronto para uma versão estável.
 
 
 
-## Baseline funcional atual — pós-PR70
+## Baseline funcional atual — pós-PR87
 
 Baseline funcional certificado:
 
-`ff6f2e7a63e475ae80caa1a54b28e0eb2440eaf2`
+`cb9d97485ecb10606de223e8a18cc0a851120552`
 
-Evidência automatizada pós-merge:
+Evidência automatizada atual:
 
-- quality gate **#232**: sucesso;
-- **134/134 Playwright**;
+- PR **#87**, run **#270**, head `eb6369ccad71ae5e926f492ca7932fc88d33045f`: sucesso;
+- **135/135 Playwright**;
 - zero `failed`, `flaky`, `retry`, `timeout`, `AssertionError`, `not ok` e `SPATIAL_EQ_DIAG` no log bruto;
-- housekeeping **#70**: sucesso.
+- merge `cb9d97485ecb10606de223e8a18cc0a851120552` com **0 arquivos diferentes** em relação ao head certificado;
+- não há, nesta sessão, enumeração disponível do workflow disparado por `push`; por isso a evidência pós-merge é registrada por equivalência de conteúdo, não por número de run.
 
 PRs documentais posteriores não alteram esse baseline funcional; qualquer candidato de release deve ser novamente certificado no SHA efetivamente escolhido.
 
@@ -28,7 +29,7 @@ A rodada de fechamento acumulou, sem alterar os contratos temporais/espaciais pr
 - PRs #54–#68 — TAM3720, GLO7634, PSFBU, isolamento entre sessões e equivalência de navegação durante seleção `pending`;
 - PR #70 — correção da colisão visual dos marcos densos da timeline inferior, preservando todos os ticks.
 
-A revalidação humana do novo `main` ainda é necessária antes de uma release.
+A revalidação humana do `main` pós-PR87 ainda é necessária antes de uma release.
 
 ## Baseline histórico — V11
 
@@ -123,7 +124,7 @@ Esses casos estão em `tests/real-plan-route-regressions.test.js` e testes relac
 
 ## Aceitação manual antes da versão estável
 
-A automação não substitui a validação do produto com históricos representativos. Para o baseline funcional pós-PR70 e o `main` documentalmente sincronizado, reexecutar integralmente `docs/MANUAL-ACCEPTANCE.md` e registrar o SHA testado, navegador, resoluções e históricos utilizados. A execução anterior e os gates automatizados não devem ser reutilizados como aprovação humana do estado atual. Antes de criar a versão estável, executar e registrar:
+A automação não substitui a validação do produto com históricos representativos. Para o baseline funcional pós-PR87 e o `main` documentalmente sincronizado, reexecutar integralmente `docs/MANUAL-ACCEPTANCE.md` e registrar o SHA testado, navegador, resoluções e históricos utilizados. A execução anterior e os gates automatizados não devem ser reutilizados como aprovação humana do estado atual. Antes de criar a versão estável, executar e registrar:
 
 - [ ] carregar pelo menos um histórico real representativo sem erro fatal;
 - [ ] validar DEP e evolução temporal;

@@ -1,14 +1,14 @@
 # Aceitação Manual — FlightFlow Evolução / main
 
-Este roteiro valida em navegador real a linha visual **V1–V11**, os contratos operacionais preservados e as remediações acumuladas até o **PR70**.
+Este roteiro valida em navegador real a linha visual **V1–V11**, os contratos operacionais preservados e as remediações acumuladas até o **PR87**.
 
 > **Status atual:** fechamento técnico pós-aceitação certificado; **revalidação humana final pendente**.
 >
-> Baseline atual pós-PR70: `ff6f2e7a63e475ae80caa1a54b28e0eb2440eaf2`.
+> Baseline atual pós-PR87: `cb9d97485ecb10606de223e8a18cc0a851120552`.
 >
-> Gate pós-merge #232 no SHA `ff6f2e7a63e475ae80caa1a54b28e0eb2440eaf2`: **134/134 Playwright**, sem `failed`, `flaky`, `retry`, `timeout`, `AssertionError`, `not ok` ou `SPATIAL_EQ_DIAG` no log bruto.
+> Evidência automatizada mais recente: PR87, run #270, head `eb6369ccad71ae5e926f492ca7932fc88d33045f`, **135/135 Playwright**, sem `failed`, `flaky`, `retry`, `timeout`, `AssertionError`, `not ok` ou `SPATIAL_EQ_DIAG`; o merge em `cb9d97485ecb10606de223e8a18cc0a851120552` apresentou **0 arquivos diferentes** em relação ao head testado.
 >
-> A revalidação humana final deste baseline permanece **PENDENTE**; este roteiro deve ser reexecutado sobre a `main` pós-PR70 antes de qualquer nova release.
+> A revalidação humana final deste baseline permanece **PENDENTE**; este roteiro deve ser reexecutado sobre a `main` pós-PR87 antes de qualquer nova release.
 
 ## 1. Preparação
 

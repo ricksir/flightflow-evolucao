@@ -2,7 +2,7 @@
 
 > Checkpoint técnico para continuidade entre conversas/agentes.
 >
-> Atualizado em **24/09/2026**, após o fechamento técnico da rodada APP e da correção visual da timeline pelos PRs **#54–#70**.
+> Atualizado em **25/09/2026**, após o fechamento técnico dos refinamentos APP/visuais até o PR **#87**.
 >
 > **Fase atual: REVALIDAÇÃO HUMANA FINAL e preparação de release, sem abertura automática de V12.**
 
@@ -14,10 +14,10 @@
 - Baseline de origem da evolução: `b2bb9acc03096beeebbd36098b8008ef81639df8`.
 - Baseline funcional com quality gate **pós-merge** explicitamente registrado:
   `28b572f25527628f5db110f2f2765010b6f772ba`.
-- Topo de `main` após o merge do PR **#70**:
-  `ff6f2e7a63e475ae80caa1a54b28e0eb2440eaf2`.
-- Último gate integral auditado antes desse merge: PR **#70**, run **#231**, com **134/134 Playwright** e zero `failed`, `flaky`, `retry`, `timeout`, `AssertionError`, `not ok` e `SPATIAL_EQ_DIAG`.
-- O workflow pós-merge **#232** no SHA `ff6f2e7a63e475ae80caa1a54b28e0eb2440eaf2` concluiu com sucesso: **134/134 Playwright** e zero `failed`, `flaky`, `retry`, `timeout`, `AssertionError`, `not ok` e `SPATIAL_EQ_DIAG` no log bruto.
+- Topo de `main` após o merge do PR **#87**:
+  `cb9d97485ecb10606de223e8a18cc0a851120552`.
+- Último gate integral auditado: PR **#87**, run **#270**, head `eb6369ccad71ae5e926f492ca7932fc88d33045f`, com **135/135 Playwright** e zero `failed`, `flaky`, `retry`, `timeout`, `AssertionError`, `not ok` e `SPATIAL_EQ_DIAG`.
+- O merge `cb9d97485ecb10606de223e8a18cc0a851120552` foi comparado ao head certificado da PR87 e apresentou **0 arquivos diferentes**; portanto, o conteúdo funcional em `main` é equivalente ao conteúdo testado. O conector usado nesta rodada não enumera workflows disparados por `push`, então não se registra aqui um novo número de gate pós-merge.
 - Baseline histórico V11:
   `a27ffee33577d88536a3828f9f3cca97b47fc898`.
 - O topo real de `main` pode conter commits exclusivamente documentais posteriores; sempre conferir o SHA atual antes de escrever.
@@ -48,8 +48,9 @@ Contratos APP protegidos:
 
 Fechamento observado:
 
-- `main` pós-PR70: `ff6f2e7a63e475ae80caa1a54b28e0eb2440eaf2`;
-- run **#231** no head do PR70: sucesso, **134/134 Playwright**, contadores críticos em zero;
+- `main` pós-PR87: `cb9d97485ecb10606de223e8a18cc0a851120552`;
+- run **#270** no head do PR87: sucesso, **135/135 Playwright**, contadores críticos em zero;
+- comparação head PR87 → merge: **0 arquivos diferentes**;
 - PR **#46** foi fechada sem merge por divergência do `main`; sua correção visual foi transplantada limpa e mergeada pela PR **#70**;
 - nenhuma tag/release foi criada e nenhuma V12 foi iniciada.
 
@@ -231,13 +232,13 @@ ETIM é alias visual/operacional. A abreviação normativa usada na MCA 100-27/2
 - PR #70 corrigiu a colisão visual dos marcos densos da timeline inferior, sem alterar `buildTimeline()`, `goTo()`, estado, navegação, rota, scrubber ou autoplay;
 - Rota Processada, Dados do Plano, Mission Rail, shell superior, Temporal Deck e fluxos APP possuem regressões específicas;
 - quality gate pós-merge #149 permanece como último gate pós-merge explicitamente registrado do baseline `28b572f25527628f5db110f2f2765010b6f772ba`;
-- run #231 do head do PR70 ficou verde com **134/134 Playwright** e contadores críticos em zero antes do merge para `ff6f2e7a63e475ae80caa1a54b28e0eb2440eaf2`;
+- run #231 do head do PR70 ficou verde com **134/134 Playwright** e contadores críticos em zero antes do merge para `ff6f2e7a63e475ae80caa1a54b28e0eb2440eaf2`; o workflow pós-merge **#232** desse baseline também ficou verde e permanece como evidência histórica;
 - housekeeping histórico #44 concluído;
 - PR #46 está fechada sem merge e substituída pela PR #70.
 
 ### Humano — revalidação final pendente
 
-A automação **não substitui** a aceitação visual/operacional. É necessário reexecutar `docs/MANUAL-ACCEPTANCE.md` sobre o `main` pós-PR70. O reteste prioritário deve cobrir: Rota Processada em progresso intermediário e avançado; Dados do Plano com campos atualizados; Mission Rail expandido/recolhido; dashboard completo após a compactação superior; barra inferior contínua nos temas claro, escuro e Velox; e os cenários APP TAM3720, GLO7634 e PSFBU, incluindo troca de arquivo em estado `pending`.
+A automação **não substitui** a aceitação visual/operacional. É necessário reexecutar `docs/MANUAL-ACCEPTANCE.md` sobre o `main` pós-PR87. O reteste prioritário deve cobrir: Rota Processada em progresso intermediário e avançado; Dados do Plano com campos atualizados; Mission Rail expandido/recolhido; dashboard completo após a compactação superior; barra inferior contínua nos temas claro, escuro e Velox; e os cenários APP TAM3720, GLO7634 e PSFBU, incluindo troca de arquivo em estado `pending`.
 
 Até essa revalidação:
 
