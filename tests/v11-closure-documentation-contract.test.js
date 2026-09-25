@@ -15,7 +15,7 @@ const MANUAL = read('docs/MANUAL-ACCEPTANCE.md');
 const RELEASE = read('docs/RELEASE-READINESS.md');
 const CHANGELOG = read('CHANGELOG.md');
 
-test('fechamento técnico atual preserva histórico V11/PR34 e registra certificação pós-PR70', () => {
+test('fechamento técnico atual preserva histórico V11/PR70 e registra certificação pós-PR87', () => {
   assert.ok(AI.includes('ricksir/flightflow-evolucao'));
   assert.ok(AI.includes('2d3ebd01b888f5760abe4ddd3d46ba287de0b782'));
   assert.ok(AI.includes('698/698 Node'));
@@ -25,18 +25,22 @@ test('fechamento técnico atual preserva histórico V11/PR34 e registra certific
   assert.ok(AI.includes('ff6f2e7a63e475ae80caa1a54b28e0eb2440eaf2'));
   assert.ok(AI.includes('134/134 Playwright'));
   assert.ok(AI.includes('workflow pós-merge **#232**'));
+  assert.ok(AI.includes('cb9d97485ecb10606de223e8a18cc0a851120552'));
+  assert.ok(AI.includes('135/135 Playwright'));
+  assert.ok(AI.includes('run **#270**'));
+  assert.ok(AI.includes('0 arquivos diferentes'));
   assert.ok(README.includes('V11 — Flight Situation Strip'));
-  assert.ok(README.includes('PR70'));
-  assert.ok(README.includes('quality gate pós-merge #232'));
+  assert.ok(README.includes('PR87'));
+  assert.ok(README.includes('135/135 Playwright'));
 });
 
 test('fechamento técnico não declara revalidação humana inexistente', () => {
-  assert.ok(README.includes('revalidação humana final pós-PR70 pendente'));
+  assert.ok(README.includes('revalidação humana final do baseline pós-PR87 pendente'));
   assert.ok(MANUAL.includes('revalidação humana final deste baseline permanece **PENDENTE**'));
   assert.ok(MANUAL.includes('**Resultado da aceitação:** [ ] APROVADO'));
-  assert.ok(RELEASE.includes('revalidação humana do novo `main` ainda é necessária'));
-  assert.ok(RELEASE.includes('Baseline funcional atual — pós-PR70'));
-  assert.ok(RELEASE.includes('quality gate **#232**'));
+  assert.ok(RELEASE.includes('revalidação humana do `main` pós-PR87 ainda é necessária'));
+  assert.ok(RELEASE.includes('Baseline funcional atual — pós-PR87'));
+  assert.ok(RELEASE.includes('run **#270**'));
   assert.ok(RELEASE.includes('TAM3720, GLO7634 e PSFBU'));
   assert.ok(AI.includes('aceitação humana foi **parcial**'));
 });
@@ -57,7 +61,7 @@ test('roadmap e changelog registram refinamentos concluídos e próximos passos'
   assert.ok(CHANGELOG.includes('698/698 Node + 108/108 Playwright'));
 });
 
-test('aceitação manual cobre breakpoints, fluxos protegidos e regressões até PR70', () => {
+test('aceitação manual cobre breakpoints, fluxos protegidos e baseline atual pós-PR87', () => {
   assert.ok(MANUAL.includes('1600×900'));
   assert.ok(MANUAL.includes('1100×820'));
   assert.ok(MANUAL.includes('Abaixo de 900 px'));
@@ -66,6 +70,8 @@ test('aceitação manual cobre breakpoints, fluxos protegidos e regressões até
   assert.ok(MANUAL.includes('PR33 / scroll da Rota Processada'));
   assert.ok(MANUAL.includes('PR34 / cabeçalho sticky'));
   assert.ok(MANUAL.includes('PR70 / marcos densos'));
+  assert.ok(MANUAL.includes('Baseline atual pós-PR87'));
+  assert.ok(MANUAL.includes('135/135 Playwright'));
   assert.ok(MANUAL.includes('TAM3720'));
   assert.ok(MANUAL.includes('GLO7634'));
   assert.ok(MANUAL.includes('PSFBU'));
