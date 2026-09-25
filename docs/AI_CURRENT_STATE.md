@@ -232,7 +232,7 @@ ETIM é alias visual/operacional. A abreviação normativa usada na MCA 100-27/2
 - PR #70 corrigiu a colisão visual dos marcos densos da timeline inferior, sem alterar `buildTimeline()`, `goTo()`, estado, navegação, rota, scrubber ou autoplay;
 - Rota Processada, Dados do Plano, Mission Rail, shell superior, Temporal Deck e fluxos APP possuem regressões específicas;
 - quality gate pós-merge #149 permanece como último gate pós-merge explicitamente registrado do baseline `28b572f25527628f5db110f2f2765010b6f772ba`;
-- run #231 do head do PR70 ficou verde com **134/134 Playwright** e contadores críticos em zero antes do merge para `ff6f2e7a63e475ae80caa1a54b28e0eb2440eaf2`;
+- run #231 do head do PR70 ficou verde com **134/134 Playwright** e contadores críticos em zero antes do merge para `ff6f2e7a63e475ae80caa1a54b28e0eb2440eaf2`; o workflow pós-merge **#232** desse baseline também ficou verde e permanece como evidência histórica;
 - housekeeping histórico #44 concluído;
 - PR #46 está fechada sem merge e substituída pela PR #70.
 
