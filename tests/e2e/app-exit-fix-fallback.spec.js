@@ -95,6 +95,7 @@ test('APP complexo usa Fixo Saída como limite operacional e não traça linha a
 
   await page.locator('#ffrpOpen').click();
   await expect(page.locator('#ffrpModal')).toBeVisible();
+  await expect(page.locator('#ffrpTitle')).toHaveText('GLO7634 · SBBR → KMCO');
   await expect(page.locator('#ffrpSubtitle')).toContainText('trecho APP operacional SBBR → MILIX');
   await expect(page.locator('#ffrpSubtitle')).toContainText('ADES do plano KMCO');
   await expect(page.locator('#ffrpSubtitle')).toHaveText(/^trecho APP operacional SBBR → MILIX · ADES do plano KMCO · /);
