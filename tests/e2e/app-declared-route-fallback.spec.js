@@ -434,6 +434,10 @@ test('PSFBU sem DEP permanece sem movimento ao navegar até o CNL', async ({ pag
   await expect(page.locator('#frameCounter')).toContainText('1 / 2');
   await expect(page.locator('#scrubber')).toHaveValue('0');
 
+  await page.waitForTimeout(1800);
+  const routeWarnings = page.locator('.ffrp-toast.warn').filter({ hasText: 'Não encontrei blocos PONTOS/ETIM nem uma rota declarada expansível no arquivo carregado.' });
+  await expect(routeWarnings).toHaveCount(1);
+
   await expect.poll(() => page.evaluate(() => {
     const state = window.__FlightFlowFirBridge?.state;
     const model = window.FlightFlowRouteProcessedV7412?.getModel?.();
