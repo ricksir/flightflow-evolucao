@@ -2263,7 +2263,7 @@
   async function analyzeText(text, sourceFile='histórico.txt') {
     ensureUi(); seedEmbeddedBase();
     const history=parseHistory(text,sourceFile);
-    if(!history.snapshots.length){clearRouteModel({clearNativeRoute:false});toast('Não encontrei blocos PONTOS/ETIM nem uma rota declarada expansível no arquivo carregado.', 'warn');return null;}
+    if(!history.snapshots.length){clearRouteModel({clearNativeRoute:false,preserveAppToken:true});toast('Não encontrei blocos PONTOS/ETIM nem uma rota declarada expansível no arquivo carregado.', 'warn');return null;}
     clearNativeLayers();model.lastNativeIndex=-1;
     model.history=history;model.sourceFile=sourceFile;model.lastSourceLabel=sourceFile;model.routeProgress=0;model.useFinalSnapshot=false;model.syncTimeline=true;
     model.resolvedSnapshots=await resolveAllSnapshots(history);
@@ -2488,8 +2488,8 @@
       try{await analyzeText(text,name)}catch(err){console.warn('[FlightFlow route safe bridge]',err)}
     },delay);
   }
-  function clearRouteModel({clearNativeRoute=true}={}){
-    model.history=null; model.resolvedSnapshots=[]; model.currentSnapshotIndex=0; model.routeProgress=0; model.sourceFile=''; model.lastNativeIndex=-1; model.movementProfile=null; lastAppToken='';
+  function clearRouteModel({clearNativeRoute=true,preserveAppToken=false}={}){
+    model.history=null; model.resolvedSnapshots=[]; model.currentSnapshotIndex=0; model.routeProgress=0; model.sourceFile=''; model.lastNativeIndex=-1; model.movementProfile=null;if(!preserveAppToken)lastAppToken='';
     clearNativeLayers({clearNativeRoute});
     model.lastSourceLabel='';model.lastTransferSignature='';
     const badge=qs('#ffrpMainBadge');if(badge)badge.hidden=true;
