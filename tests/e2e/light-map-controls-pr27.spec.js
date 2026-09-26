@@ -41,6 +41,7 @@ test('PR27 mantém controles do mapa claros e legíveis no tema claro', async ({
   ), { timeout: 5_000 }).toBeGreaterThanOrEqual(3);
 
   const metrics=await page.evaluate(()=>{
+    const controls=document.querySelector('#realMapControls');
     const nodes=[...document.querySelectorAll(
       '#realMapControls > .real-map-control-group, #realMapControls > .real-map-layer-switches'
     )].filter(n=>n.getBoundingClientRect().width>0);
@@ -66,6 +67,7 @@ test('PR27 mantém controles do mapa claros e legíveis no tema claro', async ({
     return {
       theme:document.documentElement.dataset.theme,
       palette:document.documentElement.dataset.palette||'',
+      controlsBackdrop:controls ? getComputedStyle(controls).backdropFilter : '',
       groups:nodes.map(mapNode),
       buttons:buttons.map(mapNode),
       labels:labels.map(mapNode)
@@ -74,6 +76,7 @@ test('PR27 mantém controles do mapa claros e legíveis no tema claro', async ({
 
   expect(metrics.theme).toBe('light');
   expect(metrics.palette).toBe('');
+  expect(metrics.controlsBackdrop).toBe('none');
   expect(metrics.groups.length).toBeGreaterThanOrEqual(2);
   expect(metrics.buttons.length).toBeGreaterThanOrEqual(3);
   expect(metrics.labels.length).toBeGreaterThanOrEqual(3);

@@ -6313,6 +6313,7 @@ html[data-theme="light"]:not([data-palette="velox"]) #realMapControls.real-map-c
   background: transparent !important;
   color: #234b59 !important;
   box-shadow: none !important;
+  backdrop-filter: none !important;
 }
 
 html[data-theme="light"]:not([data-palette="velox"]) #realMapControls.real-map-controls > .real-map-control-group,
