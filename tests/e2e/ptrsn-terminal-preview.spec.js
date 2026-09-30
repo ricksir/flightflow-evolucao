@@ -132,28 +132,47 @@ test('PTRSN liga a continuação declarada 0718S04941W ao ADES SNQE nas duas vis
   await expect.poll(() => page.evaluate(() => Number(window.__FlightFlowFirBridge?.state?.index ?? -1))).toBe(setup.terIndex - 1);
 
   const nativeVisual = await page.evaluate(() => {
-    window.FlightFlowRouteProcessedV7412?.applyProcessedRouteToFlightFlow();
+    const api = window.FlightFlowRouteProcessedV7412;
+    const applied = api?.applyProcessedRouteToFlightFlow() ?? false;
+    const model = api?.getModel?.();
+    const profileSnapshot = model?.movementProfile?.snapshot || model?.resolvedSnapshots?.at?.(-1) || null;
+    const terminal = profileSnapshot ? api?.terminalClosureState?.(profileSnapshot) : null;
     const leafletLine = document.querySelector('.ffrp-native-terminal-route.ffrp-native-terminal-preview');
     const leafletUnderlay = document.querySelector('.ffrp-native-terminal-underlay.ffrp-native-terminal-preview');
     const vectorLine = document.querySelector('#ffrpVectorFixLayer .ffrp-vroute-terminal.pending[data-terminal-state="preview"]');
     const vectorUnderlay = document.querySelector('#ffrpVectorFixLayer .ffrp-vroute-terminal-underlay.pending[data-terminal-state="preview"]');
     const line = leafletLine || vectorLine;
     const underlay = leafletUnderlay || vectorUnderlay;
-    if (!line) return null;
-    const style = getComputedStyle(line);
+    const nativeLayers = model?.nativeMapLayer?.getLayers?.().map(layer => ({
+      className: layer?.options?.className || '',
+      dashArray: layer?.options?.dashArray || '',
+      interactive: layer?.options?.interactive ?? null,
+    })) || [];
+    const style = line ? getComputedStyle(line) : null;
     return {
-      engine: leafletLine ? 'leaflet' : 'vector',
+      found: Boolean(line),
+      applied,
+      bridgeIndex: Number(window.__FlightFlowFirBridge?.state?.index ?? -1),
+      engine: window.__FlightFlowFirBridge?.realMapState?.engine || 'none',
+      sceneSvg: Boolean(document.querySelector('#sceneSvg')),
+      vectorLayer: Boolean(document.querySelector('#ffrpVectorFixLayer')),
+      nativeLayerCount: nativeLayers.length,
+      nativeLayers,
+      terminalVisible: Boolean(terminal?.visible),
+      terminalActive: Boolean(terminal?.active),
+      terminalFrom: terminal?.from?.ident || null,
+      terminalDestination: terminal?.destination?.ident || null,
       lineCount: Number(Boolean(leafletLine)) + Number(Boolean(vectorLine)),
       underlayCount: Number(Boolean(leafletUnderlay)) + Number(Boolean(vectorUnderlay)),
-      dash: style.strokeDasharray || line.getAttribute('stroke-dasharray') || '',
-      stroke: style.stroke || '',
-      opacity: Number.parseFloat(style.strokeOpacity || style.opacity || '1'),
+      dash: style?.strokeDasharray || line?.getAttribute?.('stroke-dasharray') || '',
+      stroke: style?.stroke || '',
+      opacity: style ? Number.parseFloat(style.strokeOpacity || style.opacity || '1') : null,
       from: vectorLine?.getAttribute('data-terminal-from') || null,
       destination: vectorLine?.getAttribute('data-terminal-destination') || null,
       state: vectorLine?.getAttribute('data-terminal-state') || null,
     };
   });
-  expect(nativeVisual).not.toBeNull();
+  expect(nativeVisual.found, JSON.stringify(nativeVisual, null, 2)).toBe(true);
   expect(nativeVisual.lineCount).toBe(1);
   expect(nativeVisual.underlayCount).toBe(1);
   expect(['leaflet', 'vector']).toContain(nativeVisual.engine);
