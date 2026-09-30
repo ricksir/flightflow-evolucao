@@ -98,7 +98,7 @@ test('sem Ordem TER o fechamento terminal permanece inativo e SBCT não entra no
   );
 });
 
-test('Ordem TER mantém um único segmento lógico UMGUL → SBCT com endpoint oficial e sem dados inventados', () => {
+test('Ordem TER mantém SBCT apenas como referência e congela a posição até o arquivamento', () => {
   const api = loadRouteApi();
   const { snapshot, seed } = prepare(api, FIXTURE_WITH_TER);
 
@@ -142,9 +142,16 @@ test('Ordem TER mantém um único segmento lógico UMGUL → SBCT com endpoint o
   const profile = api.buildMovementProfile();
   assert.ok(profile?.terminalClosure);
   assert.equal(profile.terminalClosure.nativeIndex, terIndex);
+  const timedLimit = api.timedProgressLimit(snapshot);
+  const terTarget = profile.targets[terIndex];
+  const archiveTarget = profile.targets[terIndex + 1];
+
   assert.ok(profile.targets[terIndex - 1] < 1, 'pré-TER deve permanecer antes do ADES');
-  assert.equal(profile.targets[terIndex], 1, 'TER deve terminar exatamente no ADES');
-  assert.ok(profile.targets.slice(terIndex).every(value => value === 1), 'após TER o endpoint não pode mudar');
+  assert.ok(terTarget > profile.targets[terIndex - 1], 'TER pode avançar até a última posição suportada pelo histórico');
+  assert.ok(terTarget < 1, 'TER não pode teleportar a aeronave ao ADES');
+  assert.ok(Math.abs(terTarget - timedLimit) < 1e-9, 'TER deve congelar no último limite temporal suportado');
+  assert.equal(archiveTarget, terTarget, 'ARQ não cria nova posição e deve preservar exatamente a posição de TER');
+  assert.equal(api.routePlaybackLimit(snapshot, terIndex), timedLimit, 'Ordem TER não libera o trecho planejado até o ADES para movimento');
 });
 
 
