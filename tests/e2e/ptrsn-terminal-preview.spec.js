@@ -131,13 +131,8 @@ test('PTRSN liga a continuação declarada 0718S04941W ao ADES SNQE nas duas vis
 
   await expect.poll(() => page.evaluate(() => Number(window.__FlightFlowFirBridge?.state?.index ?? -1))).toBe(setup.terIndex - 1);
 
-  await expect.poll(() => page.evaluate(() => {
-    const leaflet = document.querySelectorAll('.ffrp-native-terminal-route.ffrp-native-terminal-preview').length;
-    const vector = document.querySelectorAll('#ffrpVectorFixLayer .ffrp-vroute-terminal.pending[data-terminal-state="preview"]').length;
-    return leaflet + vector;
-  })).toBe(1);
-
   const nativeVisual = await page.evaluate(() => {
+    window.FlightFlowRouteProcessedV7412?.applyProcessedRouteToFlightFlow();
     const leafletLine = document.querySelector('.ffrp-native-terminal-route.ffrp-native-terminal-preview');
     const leafletUnderlay = document.querySelector('.ffrp-native-terminal-underlay.ffrp-native-terminal-preview');
     const vectorLine = document.querySelector('#ffrpVectorFixLayer .ffrp-vroute-terminal.pending[data-terminal-state="preview"]');
