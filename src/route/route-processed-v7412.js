@@ -1879,6 +1879,12 @@
       : movementLatLngs.concat(destination?.geo?[[Number(destination.geo.lat),Number(destination.geo.lon)]]:[]);
   }
 
+  function nativeAirportMarkerRepresents(ident, kind='') {
+    const target=norm(ident||'');if(!target)return false;
+    const selector='.ff-airport-marker'+(kind?'.'+kind:'')+' .ff-airport-text';
+    return qsa(selector).some(el=>norm(String(el?.textContent||'').split('·')[0])===target);
+  }
+
   function renderProcessedRouteOnNativeMap(snapshot,{fit=false}={}) {
     const bridge=window.__FlightFlowFirBridge;
     const badge=ensureMainBadge();
@@ -1928,6 +1934,10 @@
         const context=routeDisplayContext(snapshot,model.routeProgress);
         context.plotPoints.forEach((p,i)=>{
           const declared=!!p.declared,destOnly=!!p.destinationOnly;
+          const duplicateNativeDestination=destOnly
+            && norm(p.ident)===norm(model.history?.ades||'')
+            && nativeAirportMarkerRepresents(p.ident,'ades');
+          if(duplicateNativeDestination)return;
           const airport=destOnly||(/^[A-Z]{4}$/.test(p.ident)&&(i===0||i===snapshot.points.length-1));
           const state=pointDisplayState(context,i);
           const mk=L.circleMarker([Number(p.geo.lat),Number(p.geo.lon)],{radius:state.current?6.5:(airport?5.5:4),color:state.current?'#18a0c4':state.selected?'#d59a20':destOnly?'#a66b00':declared?'#0d7084':airport?'#a66b00':'#07576a',dashArray:(declared||destOnly)?'4 3':null,weight:state.current||state.selected?3:1.8,fillColor:destOnly?'#fff1b9':declared?'#e7f6f9':airport?'#ffe59a':'#ffffff',fillOpacity:state.muted?.55:1,opacity:state.muted?.55:1,interactive:true});
