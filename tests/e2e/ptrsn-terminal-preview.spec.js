@@ -137,52 +137,71 @@ test('PTRSN liga a continuação declarada 0718S04941W ao ADES SNQE nas duas vis
     const model = api?.getModel?.();
     const profileSnapshot = model?.movementProfile?.snapshot || model?.resolvedSnapshots?.at?.(-1) || null;
     const terminal = profileSnapshot ? api?.terminalClosureState?.(profileSnapshot) : null;
-    const leafletLine = document.querySelector('.ffrp-native-terminal-route.ffrp-native-terminal-preview');
-    const leafletUnderlay = document.querySelector('.ffrp-native-terminal-underlay.ffrp-native-terminal-preview');
+    const engine = window.__FlightFlowFirBridge?.realMapState?.engine || 'none';
+
+    const nativeLayers = model?.nativeMapLayer?.getLayers?.() || [];
+    const leafletLine = nativeLayers.find(layer =>
+      String(layer?.options?.className || '').includes('ffrp-native-terminal-route')
+      && String(layer?.options?.className || '').includes('ffrp-native-terminal-preview')
+    ) || null;
+    const leafletUnderlay = nativeLayers.find(layer =>
+      String(layer?.options?.className || '').includes('ffrp-native-terminal-underlay')
+      && String(layer?.options?.className || '').includes('ffrp-native-terminal-preview')
+    ) || null;
+
     const vectorLine = document.querySelector('#ffrpVectorFixLayer .ffrp-vroute-terminal.pending[data-terminal-state="preview"]');
     const vectorUnderlay = document.querySelector('#ffrpVectorFixLayer .ffrp-vroute-terminal-underlay.pending[data-terminal-state="preview"]');
-    const line = leafletLine || vectorLine;
-    const underlay = leafletUnderlay || vectorUnderlay;
-    const nativeLayers = model?.nativeMapLayer?.getLayers?.().map(layer => ({
-      className: layer?.options?.className || '',
-      dashArray: layer?.options?.dashArray || '',
-      interactive: layer?.options?.interactive ?? null,
-    })) || [];
-    const style = line ? getComputedStyle(line) : null;
+
+    const leafletLatLngs = leafletLine?.getLatLngs?.() || [];
+    const eq = (a, b) => Number.isFinite(Number(a)) && Number.isFinite(Number(b)) && Math.abs(Number(a) - Number(b)) < 1e-8;
+    const leafletStartMatches = Boolean(
+      leafletLatLngs[0] && terminal?.from?.geo
+      && eq(leafletLatLngs[0].lat, terminal.from.geo.lat)
+      && eq(leafletLatLngs[0].lng, terminal.from.geo.lon)
+    );
+    const leafletEndMatches = Boolean(
+      leafletLatLngs[1] && terminal?.destination?.geo
+      && eq(leafletLatLngs[1].lat, terminal.destination.geo.lat)
+      && eq(leafletLatLngs[1].lng, terminal.destination.geo.lon)
+    );
+
+    const vectorStyle = vectorLine ? getComputedStyle(vectorLine) : null;
+    const lineCount = Number(Boolean(leafletLine)) + Number(Boolean(vectorLine));
+    const underlayCount = Number(Boolean(leafletUnderlay)) + Number(Boolean(vectorUnderlay));
+
     return {
-      found: Boolean(line),
       applied,
-      bridgeIndex: Number(window.__FlightFlowFirBridge?.state?.index ?? -1),
-      engine: window.__FlightFlowFirBridge?.realMapState?.engine || 'none',
-      sceneSvg: Boolean(document.querySelector('#sceneSvg')),
-      vectorLayer: Boolean(document.querySelector('#ffrpVectorFixLayer')),
-      nativeLayerCount: nativeLayers.length,
-      nativeLayers,
+      engine,
       terminalVisible: Boolean(terminal?.visible),
       terminalActive: Boolean(terminal?.active),
       terminalFrom: terminal?.from?.ident || null,
       terminalDestination: terminal?.destination?.ident || null,
-      lineCount: Number(Boolean(leafletLine)) + Number(Boolean(vectorLine)),
-      underlayCount: Number(Boolean(leafletUnderlay)) + Number(Boolean(vectorUnderlay)),
-      dash: style?.strokeDasharray || line?.getAttribute?.('stroke-dasharray') || '',
-      stroke: style?.stroke || '',
-      opacity: style ? Number.parseFloat(style.strokeOpacity || style.opacity || '1') : null,
-      from: vectorLine?.getAttribute('data-terminal-from') || null,
-      destination: vectorLine?.getAttribute('data-terminal-destination') || null,
-      state: vectorLine?.getAttribute('data-terminal-state') || null,
+      lineCount,
+      underlayCount,
+      dash: leafletLine?.options?.dashArray
+        || vectorStyle?.strokeDasharray
+        || vectorLine?.getAttribute?.('stroke-dasharray')
+        || '',
+      startMatches: leafletLine ? leafletStartMatches : Boolean(vectorLine),
+      endpointMatches: leafletLine ? leafletEndMatches : Boolean(vectorLine),
+      from: leafletLine ? (terminal?.from?.ident || null) : (vectorLine?.getAttribute('data-terminal-from') || null),
+      destination: leafletLine ? (terminal?.destination?.ident || null) : (vectorLine?.getAttribute('data-terminal-destination') || null),
+      state: leafletLine ? (terminal?.active ? 'active' : 'preview') : (vectorLine?.getAttribute('data-terminal-state') || null),
     };
   });
-  expect(nativeVisual.found, JSON.stringify(nativeVisual, null, 2)).toBe(true);
+  expect(nativeVisual.applied).toBe(true);
+  expect(['leaflet', 'vector']).toContain(nativeVisual.engine);
+  expect(nativeVisual.terminalVisible).toBe(true);
+  expect(nativeVisual.terminalActive).toBe(false);
   expect(nativeVisual.lineCount).toBe(1);
   expect(nativeVisual.underlayCount).toBe(1);
-  expect(['leaflet', 'vector']).toContain(nativeVisual.engine);
   expect(nativeVisual.dash).not.toBe('');
   expect(nativeVisual.dash).not.toBe('none');
-  if (nativeVisual.engine === 'vector') {
-    expect(nativeVisual.from).toBe('0718S04941W');
-    expect(nativeVisual.destination).toBe('SNQE');
-    expect(nativeVisual.state).toBe('preview');
-  }
+  expect(nativeVisual.from).toBe('0718S04941W');
+  expect(nativeVisual.destination).toBe('SNQE');
+  expect(nativeVisual.state).toBe('preview');
+  expect(nativeVisual.startMatches).toBe(true);
+  expect(nativeVisual.endpointMatches).toBe(true);
 
   await page.locator('#ffrpOpen').evaluate(button => button.click());
   await expect(page.locator('#ffrpModal')).toBeVisible();
