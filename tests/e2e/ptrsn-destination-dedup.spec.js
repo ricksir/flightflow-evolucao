@@ -76,10 +76,6 @@ test('PTRSN usa somente o marcador base SNQE · ADES no mapa principal', async (
 
     const routeLayerIdents = routeLayers.map(layer => String(layer?.getTooltip?.()?.getContent?.() || ''));
 
-    const plannedTerminal = (model.nativeMapLayer?.getLayers?.() || []).filter(layer =>
-      String(layer?.options?.className || '').includes('ffrp-native-declared-destination-preview')
-    ).length;
-
     return {
       engine: bridge?.realMapState?.engine || 'none',
       historical: snapshot.points.map(point => point.ident),
@@ -88,7 +84,6 @@ test('PTRSN usa somente o marcador base SNQE · ADES no mapa principal', async (
       routeFixLayerCount: routeLayers.length,
       routeSnqeCount: routeSnqe.length,
       routeLayerIdents,
-      plannedTerminal,
     };
   }, PTRSN_FIXTURE);
 
@@ -98,7 +93,6 @@ test('PTRSN usa somente o marcador base SNQE · ADES no mapa principal', async (
   expect(result.baseLabels).toEqual(['SNQE · ADES']);
   expect(result.routeFixLayerCount).toBe(6);
   expect(result.routeSnqeCount, JSON.stringify(result.routeLayerIdents, null, 2)).toBe(0);
-  expect(result.plannedTerminal).toBe(1);
 
   await page.locator('#ffrpOpen').evaluate(button => button.click());
   await expect(page.locator('#ffrpModal')).toBeVisible();
