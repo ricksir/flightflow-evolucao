@@ -911,17 +911,33 @@
     return declaredAirwaySpanForRoute(model.history?.route||'');
   }
 
+  function declaredCoordinatePathForRoute(route) {
+    const seen=new Set();
+    return tokenList(route).map(token=>parseCoordinateIdent(token)).filter(point=>{
+      if(!point||seen.has(point.ident))return false;
+      seen.add(point.ident);
+      return true;
+    });
+  }
+
   function declaredRouteContinuation(snapshot) {
     if(!snapshot?.points?.length)return [];
-    const span=declaredAirwaySpan();if(!span?.points?.length)return [];
+    const span=declaredAirwaySpan();
+    const coordinatePath=span?.points?.length?[]:declaredCoordinatePathForRoute(model.history?.route||'');
+    const path=span?.points?.length?span.points:coordinatePath.map(point=>point.ident);
+    if(!path.length)return [];
     let lastPathIndex=-1;
     for(const p of snapshot.points){
-      const i=span.points.indexOf(norm(p.ident));
+      const i=path.indexOf(norm(p.ident));
       if(i>lastPathIndex)lastPathIndex=i;
     }
-    if(lastPathIndex<0||lastPathIndex>=span.points.length-1)return [];
-    return span.points.slice(lastPathIndex+1).map(ident=>{
-      const seed=officialSeedPoint(ident);if(!seed)return null;
+    if(lastPathIndex<0||lastPathIndex>=path.length-1)return [];
+    return path.slice(lastPathIndex+1).map(ident=>{
+      const seed=span?.points?.length
+        ? officialSeedPoint(ident)
+        : coordinatePath.find(point=>point.ident===ident);
+      if(!seed)return null;
+      const routeKind=span?.airway||'DCT';
       return {
         ident,
         etim:'',
@@ -929,10 +945,10 @@
         passed:false,
         cfl:'',
         etimKey:null,
-        geo:{...seed,source:`${seed.source} · rota declarada ${span.airway}`},
+        geo:{...seed,source:span?.airway?`${seed.source} · rota declarada ${span.airway}`:'Coordenada explícita da rota declarada · sem ETIM histórico'},
         declared:true,
         untimed:true,
-        airway:span.airway,
+        airway:routeKind,
       };
     }).filter(Boolean);
   }
