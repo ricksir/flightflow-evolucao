@@ -88,6 +88,8 @@ test('PTRSN liga a continuação declarada 0718S04941W ao ADES SNQE nas duas vis
     const terminal = api.terminalClosureState(snapshot, terIndex - 1);
     const profile = model.movementProfile;
     const preTerTarget = Number(profile?.targets?.[terIndex - 1]);
+    const terTarget = Number(profile?.targets?.[terIndex]);
+    const archiveTarget = Number(profile?.targets?.[terIndex + 1]);
 
     return {
       terIndex,
@@ -107,6 +109,8 @@ test('PTRSN liga a continuação declarada 0718S04941W ao ADES SNQE nas duas vis
       terminalEtim: terminal.destination?.etim ?? null,
       terminalStar: terminal.destination?.star ?? null,
       preTerTarget,
+      terTarget,
+      archiveTarget,
       timedLimit: api.timedProgressLimit(snapshot),
     };
   }, PTRSN_FIXTURE);
@@ -128,6 +132,9 @@ test('PTRSN liga a continuação declarada 0718S04941W ao ADES SNQE nas duas vis
   expect(setup.terminalStar).toBeNull();
   expect(setup.preTerTarget).toBeLessThan(1);
   expect(setup.preTerTarget).toBeLessThanOrEqual(setup.timedLimit + 1e-9);
+  expect(setup.terTarget).toBeLessThan(1);
+  expect(setup.terTarget).toBeCloseTo(setup.timedLimit, 9);
+  expect(setup.archiveTarget).toBeCloseTo(setup.terTarget, 9);
 
   await expect.poll(() => page.evaluate(() => Number(window.__FlightFlowFirBridge?.state?.index ?? -1))).toBe(setup.terIndex - 1);
 
