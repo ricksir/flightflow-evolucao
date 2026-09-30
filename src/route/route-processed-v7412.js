@@ -1049,8 +1049,6 @@
   }
 
   function routePlaybackLimit(snapshot,index=nativeEventIndex()) {
-    const terminal=terminalClosureState(snapshot,index);
-    if(terminal.active)return 1;
     const profile=model.movementProfile||buildMovementProfile();
     if(profile?.mode==='derived'&&profile.snapshot?.signature===snapshot?.signature)return 1;
     return timedProgressLimit(snapshot);
@@ -1328,9 +1326,14 @@
         const key=nativeEventTimeOrHistory(i,nativeEvents);
         let target=0;
         if(i<=startNative)target=0;
-        else if(terminal&&i>=terminal.nativeIndex)target=1;
         else if(arrivalIndex>=0&&i>=arrivalIndex)target=1;
-        else if(jurisdictionEndIndex>=0&&i>=jurisdictionEndIndex){
+        else if(terminal&&i>=terminal.nativeIndex){
+          if(freezeProgress==null){
+            const stopKey=nativeEventTimeOrHistory(terminal.nativeIndex,nativeEvents);
+            freezeProgress=Number.isFinite(stopKey)?derivedProgressAtKey(stopKey,depKey,derivedDistance.totalNm,speedKts):previous;
+          }
+          target=freezeProgress;
+        }else if(jurisdictionEndIndex>=0&&i>=jurisdictionEndIndex){
           if(freezeProgress==null){
             const stopKey=nativeEventTimeOrHistory(jurisdictionEndIndex,nativeEvents);
             freezeProgress=Number.isFinite(stopKey)?derivedProgressAtKey(stopKey,depKey,derivedDistance.totalNm,speedKts):previous;
@@ -1366,17 +1369,25 @@
     const depSnapshot=firstPostDepSnapshot(depKey)||master;
     const masterTail=pseudoDestinationTail(master);
     const terminal=terminalClosureContext();
+    const arrivalIndex=nativeEvents.findIndex((event,index)=>index>startNative&&isArrivalEvent(event));
     const targets=[];
-    let previous=0;
+    let previous=0,freezeProgress=null;
     for(let i=0;i<nativeTotal;i++){
       const key=nativeEventTimeOrHistory(i,nativeEvents);
       let target=0;
       if(i<=startNative){
         target=0; // a primeira DEP é o instante de decolagem: ainda no ADEP.
+      }else if(arrivalIndex>=0&&i>=arrivalIndex){
+        target=1; // somente ARR confirma chegada ao ADES.
       }else if(terminal&&i>=terminal.nativeIndex){
-        // Ordem TER encerra visualmente o plano no ADES. O valor 1 representa apenas
-        // o fechamento espacial derivado; nenhum ETIM/STAR/fixo é criado.
-        target=1;
+        if(freezeProgress==null){
+          const stopKey=nativeEventTimeOrHistory(terminal.nativeIndex,nativeEvents);
+          const stopSnap=snapshotForMovementKey(stopKey,depKey,depSnapshot);
+          freezeProgress=Math.max(previous,candidateProgressFromSnapshot(stopSnap,stopKey,canonical,masterTail,depKey));
+        }
+        // Ordem TER encerra o acompanhamento na última posição suportada.
+        // O ADES continua apenas como referência planejada; ARQ preserva a mesma posição.
+        target=freezeProgress;
       }else{
         const snap=snapshotForMovementKey(key,depKey,depSnapshot);
         target=candidateProgressFromSnapshot(snap,key,canonical,masterTail,depKey);
@@ -1386,7 +1397,7 @@
       target=clamp(target,0,1);
       targets.push(target);previous=target;
     }
-    // Se existir um evento de término posterior ao último fixo/ADES, mantém 100% sem regressão.
+    // ARR pode concluir em 100%; TER/ARQ sem ARR permanecem congelados abaixo do ADES.
     const endNative=targets.findIndex((v,i)=>i>startNative&&v>=.999999);
     const distanceFractions=routeDistanceFractions(canonical);
     const milestones=canonical.map((_,pi)=>{
@@ -2259,7 +2270,7 @@
 
   function renderModal(refreshRange=true) {
     ensureUi();if(!model.history||!model.resolvedSnapshots.length)return;
-    const idx=chooseSnapshotIndex();model.currentSnapshotIndex=idx;const snap=model.resolvedSnapshots[idx],continuation=declaredRouteContinuation(snap),destination=destinationRouteMarker(snap),terminal=terminalClosureState(snap),profile=model.movementProfile||buildMovementProfile(),derivedMode=profile?.mode==='derived'&&profile.snapshot?.signature===snap.signature,move=movementPointsForProfile(snap),timedLimit=timedProgressLimit(snap),playbackLimit=routePlaybackLimit(snap),timelineProgress=routePositionProgress(snap),requestedProgress=model.syncTimeline?timelineProgress:model.routeProgress,progress=Math.min(requestedProgress,derivedMode?playbackLimit:(terminal.active?1:timedLimit));if(model.syncTimeline)model.routeProgress=progress;const focusButton=qs('#ffrpFocusBtn');if(focusButton){focusButton.classList.toggle('active',model.focusMode);focusButton.setAttribute('aria-pressed',String(model.focusMode));}const legend=qs('#ffrpLegend');if(legend&&legend.open!==model.legendOpen)legend.open=model.legendOpen;
+    const idx=chooseSnapshotIndex();model.currentSnapshotIndex=idx;const snap=model.resolvedSnapshots[idx],continuation=declaredRouteContinuation(snap),destination=destinationRouteMarker(snap),terminal=terminalClosureState(snap),profile=model.movementProfile||buildMovementProfile(),derivedMode=profile?.mode==='derived'&&profile.snapshot?.signature===snap.signature,move=movementPointsForProfile(snap),timedLimit=timedProgressLimit(snap),playbackLimit=routePlaybackLimit(snap),timelineProgress=routePositionProgress(snap),requestedProgress=model.syncTimeline?timelineProgress:model.routeProgress,progress=Math.min(requestedProgress,derivedMode?playbackLimit:timedLimit);if(model.syncTimeline)model.routeProgress=progress;const focusButton=qs('#ffrpFocusBtn');if(focusButton){focusButton.classList.toggle('active',model.focusMode);focusButton.setAttribute('aria-pressed',String(model.focusMode));}const legend=qs('#ffrpLegend');if(legend&&legend.open!==model.legendOpen)legend.open=model.legendOpen;
     qs('#ffrpTitle').textContent=`${model.history.callsign||'Plano'} · ${model.history.adep||'????'} → ${model.history.ades||'????'}`;const appBoundarySubtitle=snap.jurisdictionBoundaryFallback?`trecho APP operacional ${model.history.adep||'ADEP'} → ${snap.appExitFix||snap.points.at(-1)?.ident||'Fixo Saída'} · ADES do plano ${model.history.ades||'—'}`:'';const subtitle=qs('#ffrpSubtitle');subtitle.textContent=snap.declaredFallback?(appBoundarySubtitle?`${appBoundarySubtitle} · ${model.sourceFile||'Histórico'} · rota declarada sem quadro PONTOS/ETIM · ${model.history.route||'—'}`:`${model.sourceFile||'Histórico'} · rota declarada sem quadro PONTOS/ETIM · ${model.history.route||'—'}`):`${model.sourceFile||'Histórico'} · ${model.history.snapshots.length} quadro(s) de PONTOS · rota declarada: ${model.history.route||'—'}`;subtitle.title=subtitle.textContent;qs('#ffrpIdPlano').innerHTML=renderIdPlanoMarkup(model.history.idPlano);qs('#ffrpSnapTitle').textContent=`Quadro ${idx+1}/${model.resolvedSnapshots.length} · ${snap.operation||'rota processada'}`;
     const nev=nativeEventCount(),nei=clamp(nativeEventIndex(),0,Math.max(0,nev-1)),sel=qs('#ffrpEventSelect');if(sel){const sig=`${nev}|${model.history.callsign}`;if(sel.dataset.sig!==sig){sel.innerHTML=Array.from({length:nev},(_,i)=>`<option value="${i}">${esc(nativeEventLabel(i))}</option>`).join('');sel.dataset.sig=sig;}if(nev)sel.value=String(nei)}const terminalStatus=qs('#ffrpTerminalStatus');if(terminalStatus){if(terminal.visible){const ades=terminal.destination?.ident||model.history?.ades||'ADES',active=terminal.active;terminalStatus.hidden=false;terminalStatus.dataset.state=active?'active':'preview';terminalStatus.innerHTML=active?`<span class="ffrp-terminal-status-icon" aria-hidden="true">✓</span><strong>Destino alcançado por Ordem TER</strong><span class="ffrp-terminal-status-ades">· ${esc(ades)}</span>`:`<span class="ffrp-terminal-status-icon" aria-hidden="true">○</span><strong>Destino previsto</strong><span class="ffrp-terminal-status-ades">· ${esc(ades)}</span>`;terminalStatus.setAttribute('aria-label',active?`Destino alcançado por Ordem TER: ${ades}`:`Destino previsto: ${ades}. Referência espacial derivada; aguardando Ordem TER.`);terminalStatus.title=active?'Fechamento terminal ativo: a Ordem TER levou a aeronave ao ADES.':'Referência espacial derivada: a aeronave ainda não percorreu o trecho terminal.';}else{terminalStatus.hidden=true;terminalStatus.removeAttribute('data-state');terminalStatus.removeAttribute('aria-label');terminalStatus.removeAttribute('title');terminalStatus.textContent='';}}const evInfo=qs('#ffrpEventInfo');if(evInfo)evInfo.textContent=nev?`Evento ${nei+1}/${nev} · ${model.syncTimeline?'seguindo timeline':'controle manual'}`:'Timeline não disponível';
     const transfers=transferMarkersForSnapshot(snap),transferByPoint=new Map(transfers.map(t=>[t.pointIndex,t]));
