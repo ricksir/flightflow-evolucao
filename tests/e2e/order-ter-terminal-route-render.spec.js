@@ -123,9 +123,9 @@ async function expectTerminal(page, expectedIndex, active, visible = true) {
   if (visible) {
     expect(state.statusHidden).toBe(false);
     expect(state.statusState).toBe(active ? 'active' : 'preview');
-    expect(state.statusText).toContain(active ? 'Destino alcançado por Ordem TER' : 'Destino previsto');
+    expect(state.statusText).toContain(active ? 'Acompanhamento encerrado por Ordem TER' : 'Destino previsto');
     expect(state.statusText).toContain('SBCT');
-    expect(state.statusAria).toContain(active ? 'Destino alcançado por Ordem TER' : 'Destino previsto');
+    expect(state.statusAria).toContain(active ? 'Acompanhamento encerrado por Ordem TER' : 'Destino previsto');
     expect(state.statusFontSize).toBeGreaterThanOrEqual(10.5);
     expect(state.statusBorderStyle).toBe(active ? 'solid' : 'dashed');
     expect(state.statusColor).not.toBe(state.statusBackgroundColor);
@@ -370,32 +370,25 @@ test('Ordem TER mantém um único fechamento UMGUL → SBCT estável em Próximo
   await page.locator('#nextBtn').evaluate(button => button.click());
   const atTer = await expectTerminal(page, setup.terIndex, true);
 
-  // Regressão de aceitação: o Play interno da Rota Processada deve concluir
-  // o trecho derivado UMGUL → SBCT quando a Ordem TER já está ativa.
-  await page.evaluate(() => {
+  // Ordem TER encerra o acompanhamento na última posição suportada.
+  // Sem ARR, o trecho planejado UMGUL → SBCT não pode ser percorrido.
+  const terFreeze = await page.evaluate(() => {
     const api = window.FlightFlowRouteProcessedV7412;
     const model = api.getModel();
-    model.syncTimeline = false;
-    model.routeProgress = 0.99;
-    const range = document.querySelector('#ffrpRange');
-    range.value = '990';
-    range.dispatchEvent(new Event('input', { bubbles: true }));
-  });
-  await page.locator('#ffrpPlay').click();
-  await expect.poll(
-    () => page.locator('#ffrpPlay').textContent(),
-    { timeout: 5_000 }
-  ).toBe('▶');
-
-  const playEnd = await page.evaluate(() => {
-    const api = window.FlightFlowRouteProcessedV7412;
-    const model = api.getModel();
+    const snapshot = model.resolvedSnapshots.at(-1);
+    const profile = model.movementProfile || api.buildMovementProfile();
+    const terminal = api.terminalClosureContext();
+    const target = Number(profile?.targets?.[terminal.nativeIndex]);
+    const limit = api.timedProgressLimit(snapshot);
     const svg = document.querySelector('#ffrpMap');
     const planeStem = svg?.querySelector('.ffrp-plane .stem');
     const destination = svg?.querySelector('.wp.destination circle');
     const n = (node, attr) => Number(node?.getAttribute(attr));
     const range = document.querySelector('#ffrpRange');
+
     return {
+      target,
+      limit,
       routeProgress: Number(model.routeProgress),
       rangeValue: Number(range?.value),
       rangeMax: Number(range?.max),
@@ -407,12 +400,71 @@ test('Ordem TER mantém um único fechamento UMGUL → SBCT estável em Próximo
     };
   });
 
-  expect(playEnd.routeProgress).toBeCloseTo(1, 6);
+  expect(terFreeze.target).toBeGreaterThan(0);
+  expect(terFreeze.target).toBeLessThan(1);
+  expect(terFreeze.target).toBeCloseTo(terFreeze.limit, 6);
+  expect(terFreeze.routeProgress).toBeCloseTo(terFreeze.target, 6);
+  expect(terFreeze.rangeValue).toBe(terFreeze.rangeMax);
+  expect(terFreeze.rangeMax).toBe(Math.round(terFreeze.limit * 1000));
+  expect(
+    Math.hypot(
+      terFreeze.planeX - terFreeze.destinationX,
+      terFreeze.planeY - terFreeze.destinationY
+    )
+  ).toBeGreaterThan(0.01);
+  expect(terFreeze.footer).toContain('posição congelada no TER');
+  expect(terFreeze.footer).toContain('ADES não confirmado');
+
+  // Mesmo no controle manual, o Play continua limitado à posição congelada.
+  await page.evaluate(() => {
+    const api = window.FlightFlowRouteProcessedV7412;
+    const model = api.getModel();
+    const snapshot = model.resolvedSnapshots.at(-1);
+    const limitValue = Math.max(0, Math.round(api.timedProgressLimit(snapshot) * 1000));
+    const range = document.querySelector('#ffrpRange');
+    model.syncTimeline = false;
+    range.value = String(Math.max(0, limitValue - 5));
+    range.dispatchEvent(new Event('input', { bubbles: true }));
+  });
+  await page.locator('#ffrpPlay').click();
+  await expect.poll(
+    () => page.locator('#ffrpPlay').textContent(),
+    { timeout: 5_000 }
+  ).toBe('▶');
+
+  const playEnd = await page.evaluate(() => {
+    const api = window.FlightFlowRouteProcessedV7412;
+    const model = api.getModel();
+    const snapshot = model.resolvedSnapshots.at(-1);
+    const svg = document.querySelector('#ffrpMap');
+    const planeStem = svg?.querySelector('.ffrp-plane .stem');
+    const destination = svg?.querySelector('.wp.destination circle');
+    const n = (node, attr) => Number(node?.getAttribute(attr));
+    const range = document.querySelector('#ffrpRange');
+    return {
+      routeProgress: Number(model.routeProgress),
+      timedLimit: api.timedProgressLimit(snapshot),
+      rangeValue: Number(range?.value),
+      rangeMax: Number(range?.max),
+      planeX: n(planeStem, 'x1'),
+      planeY: n(planeStem, 'y1'),
+      destinationX: n(destination, 'cx'),
+      destinationY: n(destination, 'cy'),
+      footer: document.querySelector('#ffrpTime')?.textContent || '',
+    };
+  });
+
+  expect(playEnd.routeProgress).toBeCloseTo(playEnd.timedLimit, 6);
+  expect(playEnd.routeProgress).toBeLessThan(1);
   expect(playEnd.rangeValue).toBe(playEnd.rangeMax);
-  expect(playEnd.rangeMax).toBe(1000);
-  expect(Math.abs(playEnd.planeX - playEnd.destinationX)).toBeLessThan(0.01);
-  expect(Math.abs(playEnd.planeY - playEnd.destinationY)).toBeLessThan(0.01);
-  expect(playEnd.footer).toContain('100%');
+  expect(playEnd.rangeMax).toBe(Math.round(playEnd.timedLimit * 1000));
+  expect(
+    Math.hypot(
+      playEnd.planeX - playEnd.destinationX,
+      playEnd.planeY - playEnd.destinationY
+    )
+  ).toBeGreaterThan(0.01);
+  expect(playEnd.footer).toContain('posição congelada no TER');
 
   await page.evaluate(() => {
     const model = window.FlightFlowRouteProcessedV7412.getModel();
@@ -431,6 +483,27 @@ test('Ordem TER mantém um único fechamento UMGUL → SBCT estável em Próximo
   expect(afterTer.geometry.coords).toEqual(atTer.geometry.coords);
   expect(afterTer.destinationLat).toBe(atTer.destinationLat);
   expect(afterTer.destinationLon).toBe(atTer.destinationLon);
+
+  const archiveFreeze = await page.evaluate(({ terIndex }) => {
+    const api = window.FlightFlowRouteProcessedV7412;
+    const model = api.getModel();
+    const profile = model.movementProfile || api.buildMovementProfile();
+    const svg = document.querySelector('#ffrpMap');
+    const planeStem = svg?.querySelector('.ffrp-plane .stem');
+    const n = (node, attr) => Number(node?.getAttribute(attr));
+    return {
+      terTarget: Number(profile?.targets?.[terIndex]),
+      archiveTarget: Number(profile?.targets?.[terIndex + 1]),
+      routeProgress: Number(model.routeProgress),
+      planeX: n(planeStem, 'x1'),
+      planeY: n(planeStem, 'y1'),
+    };
+  }, { terIndex: setup.terIndex });
+
+  expect(archiveFreeze.archiveTarget).toBeCloseTo(archiveFreeze.terTarget, 9);
+  expect(archiveFreeze.routeProgress).toBeCloseTo(archiveFreeze.terTarget, 6);
+  expect(archiveFreeze.planeX).toBeCloseTo(terFreeze.planeX, 6);
+  expect(archiveFreeze.planeY).toBeCloseTo(terFreeze.planeY, 6);
 
   await page.locator('#prevBtn').evaluate(button => button.click());
   const backToTer = await expectTerminal(page, setup.terIndex, true);
