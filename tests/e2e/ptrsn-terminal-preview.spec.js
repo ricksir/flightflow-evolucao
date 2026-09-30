@@ -80,6 +80,7 @@ test('PTRSN liga a continuação declarada 0718S04941W ao ADES SNQE nas duas vis
 
     await api.analyzeText(fixture, 'PTRSN_SWGI-1330.txt');
     api.jumpToFlightEvent(terIndex - 1, { snap: true });
+    await new Promise(resolve => setTimeout(resolve, 80));
     api.applyProcessedRouteToFlightFlow();
 
     const snapshot = model.resolvedSnapshots.at(-1);
