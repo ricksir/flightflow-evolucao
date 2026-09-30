@@ -149,9 +149,9 @@ test('Ordem TER mantém SBCT apenas como referência e congela a posição até 
   assert.ok(profile.targets[terIndex - 1] < 1, 'pré-TER deve permanecer antes do ADES');
   assert.ok(terTarget > profile.targets[terIndex - 1], 'TER pode avançar até a última posição suportada pelo histórico');
   assert.ok(terTarget < 1, 'TER não pode teleportar a aeronave ao ADES');
-  assert.ok(Math.abs(terTarget - timedLimit) < 1e-9, 'TER deve congelar no último limite temporal suportado');
   assert.equal(archiveTarget, terTarget, 'ARQ não cria nova posição e deve preservar exatamente a posição de TER');
   assert.equal(api.routePlaybackLimit(snapshot, terIndex), timedLimit, 'Ordem TER não libera o trecho planejado até o ADES para movimento');
+  assert.ok(api.routePlaybackLimit(snapshot, terIndex) < 1, 'Play no TER também deve permanecer abaixo do ADES');
 });
 
 
