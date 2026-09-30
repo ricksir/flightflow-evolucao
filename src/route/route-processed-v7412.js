@@ -312,8 +312,8 @@
       #ffrpVectorFixLayer .ffrp-vroute-terminal{
         stroke:#d58a00;
         stroke-width:3.8;
-        stroke-dasharray:none;
-        stroke-opacity:.98;
+        stroke-dasharray:6 9;
+        stroke-opacity:.90;
         filter:drop-shadow(0 0 2px rgba(213,138,0,.14));
       }
       .ffrp-map .route-terminal.pending,
@@ -336,9 +336,9 @@
 
       /* Leaflet nativo segue a mesma gramática sem alterar o estado do polyline. */
       .ffrp-native-terminal-route.ffrp-native-terminal-active{
-        stroke-dasharray:none!important;
+        stroke-dasharray:6 9!important;
         stroke:#d58a00!important;
-        stroke-opacity:.98!important;
+        stroke-opacity:.90!important;
       }
       .ffrp-native-terminal-route.ffrp-native-terminal-preview{
         stroke-dasharray:5 9!important;
