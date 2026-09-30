@@ -129,22 +129,44 @@ test('PTRSN liga a continuação declarada 0718S04941W ao ADES SNQE nas duas vis
 
   await expect.poll(() => page.evaluate(() => Number(window.__FlightFlowFirBridge?.state?.index ?? -1))).toBe(setup.terIndex - 1);
 
-  await expect(page.locator('.ffrp-native-terminal-route.ffrp-native-terminal-preview')).toHaveCount(1);
-  await expect(page.locator('.ffrp-native-terminal-underlay.ffrp-native-terminal-preview')).toHaveCount(1);
+  await expect.poll(() => page.evaluate(() => {
+    const leaflet = document.querySelectorAll('.ffrp-native-terminal-route.ffrp-native-terminal-preview').length;
+    const vector = document.querySelectorAll('#ffrpVectorFixLayer .ffrp-vroute-terminal.pending[data-terminal-state="preview"]').length;
+    return leaflet + vector;
+  })).toBe(1);
 
   const nativeVisual = await page.evaluate(() => {
-    const line = document.querySelector('.ffrp-native-terminal-route.ffrp-native-terminal-preview');
+    const leafletLine = document.querySelector('.ffrp-native-terminal-route.ffrp-native-terminal-preview');
+    const leafletUnderlay = document.querySelector('.ffrp-native-terminal-underlay.ffrp-native-terminal-preview');
+    const vectorLine = document.querySelector('#ffrpVectorFixLayer .ffrp-vroute-terminal.pending[data-terminal-state="preview"]');
+    const vectorUnderlay = document.querySelector('#ffrpVectorFixLayer .ffrp-vroute-terminal-underlay.pending[data-terminal-state="preview"]');
+    const line = leafletLine || vectorLine;
+    const underlay = leafletUnderlay || vectorUnderlay;
     if (!line) return null;
     const style = getComputedStyle(line);
     return {
+      engine: leafletLine ? 'leaflet' : 'vector',
+      lineCount: Number(Boolean(leafletLine)) + Number(Boolean(vectorLine)),
+      underlayCount: Number(Boolean(leafletUnderlay)) + Number(Boolean(vectorUnderlay)),
       dash: style.strokeDasharray || line.getAttribute('stroke-dasharray') || '',
       stroke: style.stroke || '',
       opacity: Number.parseFloat(style.strokeOpacity || style.opacity || '1'),
+      from: vectorLine?.getAttribute('data-terminal-from') || null,
+      destination: vectorLine?.getAttribute('data-terminal-destination') || null,
+      state: vectorLine?.getAttribute('data-terminal-state') || null,
     };
   });
   expect(nativeVisual).not.toBeNull();
+  expect(nativeVisual.lineCount).toBe(1);
+  expect(nativeVisual.underlayCount).toBe(1);
+  expect(['leaflet', 'vector']).toContain(nativeVisual.engine);
   expect(nativeVisual.dash).not.toBe('');
   expect(nativeVisual.dash).not.toBe('none');
+  if (nativeVisual.engine === 'vector') {
+    expect(nativeVisual.from).toBe('0718S04941W');
+    expect(nativeVisual.destination).toBe('SNQE');
+    expect(nativeVisual.state).toBe('preview');
+  }
 
   await page.locator('#ffrpOpen').evaluate(button => button.click());
   await expect(page.locator('#ffrpModal')).toBeVisible();
