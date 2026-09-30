@@ -34,7 +34,7 @@ test('aceitação pós-V11 harmoniza o tema claro e reduz área morta sem criar 
 
 test('Rota Processada separa ETIM histórico, fechamento terminal e playback derivado', () => {
   assert.match(ROUTE, /function routePlaybackLimit\(snapshot,index=nativeEventIndex\(\)\)/);
-  assert.match(ROUTE, /if\(terminal\.active\)return 1/);
+  assert.doesNotMatch(ROUTE, /if\(terminal\.active\)return 1/);
   assert.match(ROUTE, /profile\?\.mode==='derived'.*return 1/);
   assert.match(ROUTE, /return timedProgressLimit\(snapshot\)/);
   assert.match(ROUTE, /limit=routePlaybackLimit\(snap\)/);
