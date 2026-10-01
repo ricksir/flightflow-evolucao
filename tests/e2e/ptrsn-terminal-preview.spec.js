@@ -63,14 +63,17 @@ test('PTRSN liga a continuação declarada 0718S04941W ao ADES SNQE nas duas vis
 
     const events = bridge.state.parsed.events;
     const terIndex = Math.max(2, events.length - 2);
-    const stripTer = value => String(value || '').replace(/ORDEM\s+TER/gi, 'EVENTO FINAL');
+    const stripTerminalEvidence = value => String(value || '')
+      .replace(/ORDEM\s+TER/gi, 'EVENTO FINAL')
+      .replace(/RECEP(?:Ç|C)[AÃ]O DE MENSAGEM ARR/gi, 'EVENTO FINAL')
+      .replace(/\bARR\b/gi, 'EVENTO');
 
     events.forEach((event, index) => {
       if (index === terIndex) return;
-      event.operation = stripTer(event.operation);
-      event.rawBlock = stripTer(event.rawBlock);
-      event.content = stripTer(event.content);
-      event.messageType = stripTer(event.messageType);
+      event.operation = stripTerminalEvidence(event.operation);
+      event.rawBlock = stripTerminalEvidence(event.rawBlock);
+      event.content = stripTerminalEvidence(event.content);
+      event.messageType = stripTerminalEvidence(event.messageType);
     });
 
     events[terIndex].operation = 'Ordem TER';
