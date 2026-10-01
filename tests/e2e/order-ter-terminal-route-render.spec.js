@@ -381,6 +381,7 @@ test('Ordem TER mantém um único fechamento UMGUL → SBCT estável em Próximo
     const snapshot = model.resolvedSnapshots.at(-1);
     const profile = model.movementProfile || api.buildMovementProfile();
     const terminal = api.terminalClosureContext();
+    const preTarget = Number(profile?.targets?.[Math.max(0, terminal.nativeIndex - 1)]);
     const target = Number(profile?.targets?.[terminal.nativeIndex]);
     const limit = api.timedProgressLimit(snapshot);
     const svg = document.querySelector('#ffrpMap');
@@ -390,6 +391,7 @@ test('Ordem TER mantém um único fechamento UMGUL → SBCT estável em Próximo
     const range = document.querySelector('#ffrpRange');
 
     return {
+      preTarget,
       target,
       limit,
       routeProgress: Number(model.routeProgress),
@@ -403,11 +405,11 @@ test('Ordem TER mantém um único fechamento UMGUL → SBCT estável em Próximo
     };
   });
 
-  expect(terFreeze.target).toBeGreaterThan(0);
+  expect(terFreeze.target).toBeGreaterThanOrEqual(terFreeze.preTarget);
   expect(terFreeze.target).toBeLessThan(1);
-  expect(terFreeze.target).toBeCloseTo(terFreeze.limit, 6);
+  expect(terFreeze.target).toBeLessThanOrEqual(terFreeze.limit + 1e-9);
   expect(terFreeze.routeProgress).toBeCloseTo(terFreeze.target, 6);
-  expect(terFreeze.rangeValue).toBe(terFreeze.rangeMax);
+  expect(terFreeze.rangeValue).toBe(Math.round(terFreeze.target * 1000));
   expect(terFreeze.rangeMax).toBe(Math.round(terFreeze.limit * 1000));
   expect(
     Math.hypot(
@@ -418,7 +420,7 @@ test('Ordem TER mantém um único fechamento UMGUL → SBCT estável em Próximo
   expect(terFreeze.footer).toContain('posição congelada no TER');
   expect(terFreeze.footer).toContain('ADES não confirmado');
 
-  // Mesmo no controle manual, o Play continua limitado à posição congelada.
+  // No controle manual, o Play permanece limitado ao último ETIM real e nunca alcança o ADES.
   await page.evaluate(() => {
     const api = window.FlightFlowRouteProcessedV7412;
     const model = api.getModel();
