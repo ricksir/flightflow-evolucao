@@ -20,9 +20,9 @@ function v3Source() {
 test('Operational Map V3 formaliza as quatro classes visuais da rota', () => {
   const source = v3Source();
 
-  assert.match(source, /\.ffrp-map \.route-line,[\s\S]*stroke:#d92d2a;[\s\S]*stroke-dasharray:6 9/);
+  assert.match(source, /\.ffrp-map \.route-line,[\s\S]*stroke:#d92d2a;[\s\S]*stroke-dasharray:none/);
   assert.match(source, /\.ffrp-map \.route-declared,[\s\S]*stroke:#177b98;[\s\S]*stroke-dasharray:7 7/);
-  assert.match(source, /\.ffrp-map \.route-terminal,[\s\S]*stroke:#d58a00;[\s\S]*stroke-dasharray:none/);
+  assert.match(source, /\.ffrp-map \.route-terminal,[\s\S]*stroke:#d58a00;[\s\S]*stroke-dasharray:6 9/);
   assert.match(source, /\.ffrp-map \.route-terminal\.pending,[\s\S]*stroke-dasharray:5 9/);
 
   assert.match(source, /\.ffrp-native-terminal-route\.ffrp-native-terminal-active/);
