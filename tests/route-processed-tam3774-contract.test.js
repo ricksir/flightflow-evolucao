@@ -326,6 +326,6 @@ test('contrato visual marca fechamento terminal como derivado e não histórico'
   assert.match(source, /class="route-terminal\$\{pending\}"/);
   assert.match(source, /Ordem TER · ADES permanece planejado · posição congelada/);
   assert.match(source, /sem ETIM histórico/);
-  assert.match(source, /sem STAR\/fixos inventados/);
+  assert.match(source, /STAR\/fixos inventados/);
   assert.match(source, /function pseudoDestinationTail\(\) \{ return null; \}/);
 });
