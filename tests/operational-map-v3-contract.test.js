@@ -22,11 +22,11 @@ test('Operational Map V3 formaliza as quatro classes visuais da rota', () => {
 
   assert.match(source, /\.ffrp-map \.route-line,[\s\S]*stroke:#d92d2a;[\s\S]*stroke-dasharray:none/);
   assert.match(source, /\.ffrp-map \.route-declared,[\s\S]*stroke:#177b98;[\s\S]*stroke-dasharray:7 7/);
-  assert.match(source, /\.ffrp-map \.route-terminal,[\s\S]*stroke:#d58a00;[\s\S]*stroke-dasharray:none/);
+  assert.match(source, /\.ffrp-map \.route-terminal,[\s\S]*stroke:#d58a00;[\s\S]*stroke-dasharray:6 9/);
   assert.match(source, /\.ffrp-map \.route-terminal\.pending,[\s\S]*stroke-dasharray:5 9/);
 
   assert.match(source, /\.ffrp-native-terminal-route\.ffrp-native-terminal-active/);
-  assert.match(source, /stroke-dasharray:none!important/);
+  assert.match(source, /stroke-dasharray:6 9!important/);
   assert.match(source, /\.ffrp-native-terminal-route\.ffrp-native-terminal-preview/);
 });
 
@@ -34,7 +34,7 @@ test('legenda distingue histórico, continuação publicada, preview e TER ativo
   assert.match(ROUTE, /Histórico processado/);
   assert.match(ROUTE, /Continuação publicada · sem ETIM/);
   assert.match(ROUTE, /Terminal previsto/);
-  assert.match(ROUTE, /Terminal ativo · TER/);
+  assert.match(ROUTE, /TER encerrado · ADES planejado/);
   assert.match(ROUTE, /ffrp-lg-terminal-preview/);
   assert.match(ROUTE, /ffrp-lg-terminal-active/);
 });

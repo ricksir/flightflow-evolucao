@@ -196,7 +196,7 @@ Plano encerrado por Ordem TER
 ############################################################
 `;
 
-test('TAM3774 fecha visualmente no ADES somente após Ordem TER, sem alterar o histórico', () => {
+test('TAM3774 mantém o ADES apenas como referência após Ordem TER, sem alterar o histórico', () => {
   const api = loadRouteApi();
   const history = api.parseHistory(TAM3774_TER_FIXTURE, 'TAM3774-Ordem-TER.txt');
   const model = api.getModel();
@@ -274,15 +274,15 @@ test('TAM3774 fecha visualmente no ADES somente após Ordem TER, sem alterar o h
   const preTerPlaybackLimit = api.routePlaybackLimit(snapshot, terminalIndex - 1);
   assert.ok(preTerPlaybackLimit > 0 && preTerPlaybackLimit < 1, 'Play pré-TER deve continuar limitado ao último ETIM real');
   assertNear(preTerPlaybackLimit, limit, 'Play pré-TER preserva limite temporal em IMTBI');
-  assert.equal(api.routePlaybackLimit(snapshot, terminalIndex), 1, 'Play no TER deve percorrer o fechamento até o ADES');
-  assert.equal(api.routePlaybackLimit(snapshot, terminalIndex + 1), 1, 'Play após TER deve permanecer encerrado no ADES');
+  assertNear(api.routePlaybackLimit(snapshot, terminalIndex), limit, 'Play no TER deve permanecer limitado ao último ETIM real');
+  assertNear(api.routePlaybackLimit(snapshot, terminalIndex + 1), limit, 'Play após TER deve preservar o mesmo limite sem ARR');
   assert.ok(terminalIndex > 0, 'Ordem TER deve ocorrer depois do início do histórico');
   assert.ok(profile.targets[terminalIndex - 1] < 1, 'evento anterior à Ordem TER não pode antecipar o ADES');
-  assert.equal(profile.targets[terminalIndex], 1, 'Ordem TER deve levar a aeronave ao ADES');
-  assert.ok(profile.targets.slice(terminalIndex).every(value => value === 1), 'eventos posteriores devem permanecer encerrados no ADES');
+  assert.ok(profile.targets[terminalIndex] < 1, 'Ordem TER não pode levar a aeronave ao ADES sem ARR');
+  assert.ok(profile.targets.slice(terminalIndex).every(value => Math.abs(value - profile.targets[terminalIndex]) < 1e-12), 'eventos posteriores devem preservar a posição congelada do TER');
 
   const forward = api.transitionPlanForEvents(terminalIndex - 1, terminalIndex);
-  assert.equal(forward.toProgress, 1, 'Próximo até Ordem TER deve terminar no ADES');
+  assert.ok(forward.toProgress < 1, 'Próximo até Ordem TER deve terminar na última posição suportada, não no ADES');
   assert.equal(
     forward.checkpoints.some(point => point.ident === 'SBCT'),
     false,
@@ -290,8 +290,8 @@ test('TAM3774 fecha visualmente no ADES somente após Ordem TER, sem alterar o h
   );
 
   const backward = api.transitionPlanForEvents(terminalIndex, terminalIndex - 1);
-  assert.equal(backward.fromProgress, 1, 'Anterior parte do ADES quando retrocede a Ordem TER');
-  assert.ok(backward.toProgress < 1, 'Anterior deve retornar fielmente ao estado pré-TER');
+  assert.ok(backward.fromProgress < 1, 'Anterior parte da posição congelada do TER, não do ADES');
+  assert.ok(backward.toProgress < backward.fromProgress, 'Anterior deve retornar fielmente ao estado pré-TER');
   assert.equal(backward.forward, false);
 });
 
@@ -324,8 +324,8 @@ test('contrato visual marca fechamento terminal como derivado e não histórico'
   const source = fs.readFileSync(MODULE, 'utf8');
   assert.match(source, /ffrpTerminalClosureActive/);
   assert.match(source, /class="route-terminal\$\{pending\}"/);
-  assert.match(source, /Fechamento terminal derivado da Ordem TER/);
+  assert.match(source, /Ordem TER · ADES permanece planejado · posição congelada/);
   assert.match(source, /sem ETIM histórico/);
-  assert.match(source, /sem STAR\/fixos inventados/);
+  assert.match(source, /STAR\/fixos inventados/);
   assert.match(source, /function pseudoDestinationTail\(\) \{ return null; \}/);
 });

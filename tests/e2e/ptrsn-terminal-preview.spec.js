@@ -63,14 +63,17 @@ test('PTRSN liga a continuação declarada 0718S04941W ao ADES SNQE nas duas vis
 
     const events = bridge.state.parsed.events;
     const terIndex = Math.max(2, events.length - 2);
-    const stripTer = value => String(value || '').replace(/ORDEM\s+TER/gi, 'EVENTO FINAL');
+    const stripTerminalEvidence = value => String(value || '')
+      .replace(/ORDEM\s+TER/gi, 'EVENTO FINAL')
+      .replace(/RECEP(?:Ç|C)[AÃ]O DE MENSAGEM ARR/gi, 'EVENTO FINAL')
+      .replace(/\bARR\b/gi, 'EVENTO');
 
     events.forEach((event, index) => {
       if (index === terIndex) return;
-      event.operation = stripTer(event.operation);
-      event.rawBlock = stripTer(event.rawBlock);
-      event.content = stripTer(event.content);
-      event.messageType = stripTer(event.messageType);
+      event.operation = stripTerminalEvidence(event.operation);
+      event.rawBlock = stripTerminalEvidence(event.rawBlock);
+      event.content = stripTerminalEvidence(event.content);
+      event.messageType = stripTerminalEvidence(event.messageType);
     });
 
     events[terIndex].operation = 'Ordem TER';
@@ -88,6 +91,8 @@ test('PTRSN liga a continuação declarada 0718S04941W ao ADES SNQE nas duas vis
     const terminal = api.terminalClosureState(snapshot, terIndex - 1);
     const profile = model.movementProfile;
     const preTerTarget = Number(profile?.targets?.[terIndex - 1]);
+    const terTarget = Number(profile?.targets?.[terIndex]);
+    const archiveTarget = Number(profile?.targets?.[terIndex + 1]);
 
     return {
       terIndex,
@@ -107,6 +112,8 @@ test('PTRSN liga a continuação declarada 0718S04941W ao ADES SNQE nas duas vis
       terminalEtim: terminal.destination?.etim ?? null,
       terminalStar: terminal.destination?.star ?? null,
       preTerTarget,
+      terTarget,
+      archiveTarget,
       timedLimit: api.timedProgressLimit(snapshot),
     };
   }, PTRSN_FIXTURE);
@@ -128,6 +135,10 @@ test('PTRSN liga a continuação declarada 0718S04941W ao ADES SNQE nas duas vis
   expect(setup.terminalStar).toBeNull();
   expect(setup.preTerTarget).toBeLessThan(1);
   expect(setup.preTerTarget).toBeLessThanOrEqual(setup.timedLimit + 1e-9);
+  expect(setup.terTarget).toBeGreaterThanOrEqual(setup.preTerTarget);
+  expect(setup.terTarget).toBeLessThan(1);
+  expect(setup.terTarget).toBeLessThanOrEqual(setup.timedLimit + 1e-9);
+  expect(setup.archiveTarget).toBeCloseTo(setup.terTarget, 9);
 
   await expect.poll(() => page.evaluate(() => Number(window.__FlightFlowFirBridge?.state?.index ?? -1))).toBe(setup.terIndex - 1);
 
